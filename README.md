@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Haven Medical
 
-## Getting Started
+> **Premium Medical & Aesthetic Clinic Website**  
+> Built with Next.js 16 · Tailwind CSS 4 · GSAP · TypeScript
 
-First, run the development server:
+**Live:** https://haven-medical-clinic.vercel.app
+
+---
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # Development server → http://localhost:3000
+npm run build        # Production build
+npm start            # Serve production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or use the setup script:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+./scripts/setup.sh   # Install, generate placeholders, build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Admin Dashboard:** `/admin` — Username: `admin` · Password: `Haven2024!`
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| | Technology |
+|---|---|
+| Framework | Next.js 16.2.1 (App Router + Turbopack) |
+| UI | React 19.2.4 + TypeScript 5 |
+| Styling | Tailwind CSS 4 |
+| Animations | GSAP 3.14.2 + ScrollTrigger |
+| Icons | lucide-react 1.7.0 |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## What's Included
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **45 statically generated pages** — Home, About, 20 Services, 6 Blog Posts, Contact, Appointment, Gift Voucher, Membership, 8 Admin pages, 404
+- **Admin dashboard** — Appointments, newsletter, subscribers, subscriptions, services, blog, settings
+- **GSAP animations** — Scroll-triggered reveals, animated counters, magnetic hover, parallax
+- **Full SEO** — Sitemap, robots.txt, JSON-LD structured data, Open Graph, Twitter cards
+- **WCAG accessibility** — Skip-to-main, ARIA landmarks, focus-visible, reduced motion support
+- **PWA manifest** — Installable web app support
+- **WhatsApp integration** — Floating button + booking CTAs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Documentation
+
+Full documentation in the `docs/` folder:
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/ARCHITECTURE.md) | Project structure, tech stack, data flow |
+| [Design System](docs/DESIGN-SYSTEM.md) | Colors, typography, spacing, CSS utilities |
+| [Components](docs/COMPONENTS.md) | All React components with props and usage |
+| [Pages & Routes](docs/PAGES-ROUTES.md) | Every page, route, and data source |
+| [Admin Dashboard](docs/ADMIN-DASHBOARD.md) | Admin panel, auth, data types, pages |
+| [SEO & Accessibility](docs/SEO-ACCESSIBILITY.md) | Structured data, sitemap, ARIA, a11y |
+| [Animations](docs/ANIMATIONS.md) | GSAP hooks, scroll triggers, motion system |
+| [Scripts](docs/SCRIPTS.md) | All shell scripts and npm commands |
+| [Deployment](docs/DEPLOYMENT.md) | Vercel deployment, GitHub, CI/CD |
+
+---
+
+## Scripts
+
+```bash
+./scripts/dev.sh [port]            # Start dev server
+./scripts/build.sh                 # Lint + build
+./scripts/deploy.sh --prod         # Deploy to Vercel
+./scripts/push.sh "message"        # Git commit & push
+./scripts/lint.sh [--fix]          # Type check + lint
+./scripts/clean.sh [--all]         # Clean build artifacts
+./scripts/generate-placeholders.sh # Create placeholder images
+```
+
+---
+
+## License
+
+Private project — Haven Medical Clinic.
