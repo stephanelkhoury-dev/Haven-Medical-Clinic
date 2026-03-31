@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { clinicInfo } from "@/data/clinic";
+import Logo from "@/components/Logo";
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -102,10 +103,8 @@ export default function Header() {
 
       {/* Main nav */}
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between" aria-label="Main navigation">
-        <Link href="/" className="flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg" aria-label="Haven Medical — go to homepage">
-          <span className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-tight text-dark" aria-hidden="true">
-            Haven<span className="text-primary">Medical</span>
-          </span>
+        <Link href="/" className="flex items-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg" aria-label="Haven Medical — go to homepage">
+          <Logo className="h-12 w-auto" />
         </Link>
 
         {/* Desktop nav */}

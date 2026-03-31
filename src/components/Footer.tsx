@@ -3,6 +3,7 @@ import { Phone, Mail, MapPin, Clock, Globe, ExternalLink } from "lucide-react";
 import { clinicInfo } from "@/data/clinic";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import NewsletterSignup from "./NewsletterSignup";
+import Logo from "@/components/Logo";
 
 const serviceLinks = [
   { label: "Laser Hair Removal", href: "/services/laser-hair-removal" },
@@ -30,9 +31,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-block mb-4 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-dark rounded-lg" aria-label="Haven Medical — go to homepage">
-              <span className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-tight text-white" aria-hidden="true">
-                Haven<span className="text-accent">Medical</span>
-              </span>
+              <Logo className="h-12 w-auto" white />
             </Link>
             <p className="text-sm leading-relaxed text-white/60 mb-6">
               Where medical excellence meets luxury care. Premium aesthetic and

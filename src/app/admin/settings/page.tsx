@@ -188,12 +188,12 @@ export default function AdminSettings() {
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
-                      defaultValue="#8B7355"
+                      defaultValue="#1fbda6"
                       className="w-10 h-10 rounded border border-gray-200 cursor-pointer"
                     />
                     <input
                       type="text"
-                      defaultValue="#8B7355"
+                      defaultValue="#1fbda6"
                       className="px-4 py-2 rounded-lg border border-gray-200 text-sm w-32"
                     />
                   </div>
@@ -205,12 +205,12 @@ export default function AdminSettings() {
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
-                      defaultValue="#C9A96E"
+                      defaultValue="#1fbda6"
                       className="w-10 h-10 rounded border border-gray-200 cursor-pointer"
                     />
                     <input
                       type="text"
-                      defaultValue="#C9A96E"
+                      defaultValue="#1fbda6"
                       className="px-4 py-2 rounded-lg border border-gray-200 text-sm w-32"
                     />
                   </div>
