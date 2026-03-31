@@ -12,7 +12,7 @@ export function getOrganizationSchema() {
       "Premium medical and aesthetic clinic offering aesthetic treatments, surgical procedures, and wellness services.",
     url: BASE,
     logo: `${BASE}/logo.png`,
-    image: `${BASE}/og-image.jpg`,
+    image: `${BASE}/og-image.png`,
     telephone: clinicInfo.phone,
     email: clinicInfo.email,
     address: {

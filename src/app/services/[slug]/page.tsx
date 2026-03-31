@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Clock, CheckCircle2, ChevronDown, ChevronRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { services, getServiceBySlug, getRelatedServices } from "@/data/services";
@@ -101,8 +102,15 @@ export default async function ServiceDetailPage({
                 </Link>
               </div>
             </div>
-            <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-secondary to-secondary-light overflow-hidden shadow-lg flex items-center justify-center text-primary/20">
-              <Icon className="w-20 h-20" />
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg relative bg-gradient-to-br from-secondary to-secondary-light">
+              <Image
+                src={service.heroImage}
+                alt={service.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+              />
             </div>
           </div>
         </div>

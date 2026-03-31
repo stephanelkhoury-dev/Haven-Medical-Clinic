@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { services, serviceCategories, getServicesByCategory } from "@/data/services";
@@ -59,8 +60,18 @@ export default function ServicesPage() {
                     <ScrollReveal key={service.slug} delay={i * 80}>
                       <Link
                         href={`/services/${service.slug}`}
-                        className="group block bg-background rounded-xl border border-border-light p-6 card-hover h-full"
+                        className="group block bg-background rounded-xl border border-border-light overflow-hidden card-hover h-full"
                       >
+                        <div className="aspect-[16/10] relative bg-gradient-to-br from-secondary-light to-secondary overflow-hidden">
+                          <Image
+                            src={service.heroImage}
+                            alt={service.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        </div>
+                        <div className="p-6">
                         <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                           <Icon className="w-6 h-6 text-primary" />
                         </div>
@@ -81,6 +92,7 @@ export default function ServicesPage() {
                         <span className="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all">
                           Learn More <ChevronRight className="w-4 h-4" />
                         </span>
+                        </div>
                       </Link>
                     </ScrollReveal>
                   );

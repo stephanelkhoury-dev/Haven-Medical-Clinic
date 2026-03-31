@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Shield,
@@ -174,10 +175,15 @@ function HeroSection() {
           </div>
         </div>
         <div className="hidden lg:block relative" aria-hidden="true">
-          <div data-anim="image" className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-secondary-light to-secondary overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 flex items-center justify-center text-primary/20">
-              <Heart className="w-24 h-24" />
-            </div>
+          <div data-anim="image" className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary">
+            <Image
+              src="/og-image.png"
+              alt="Haven Medical & Beauty Clinic"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 0vw, 50vw"
+              priority
+            />
           </div>
 
           {/* Floating cards */}
@@ -318,11 +324,15 @@ export default function HomePage() {
       {/* About Preview */}
       <section className="py-20 lg:py-28 bg-muted" aria-labelledby="about-heading">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <div ref={aboutImageRef} aria-hidden="true">
-            <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-secondary to-secondary-light overflow-hidden shadow-lg">
-              <div className="w-full h-full flex items-center justify-center text-primary/20">
-                <Shield className="w-20 h-20" />
-              </div>
+          <div ref={aboutImageRef}>
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg relative bg-gradient-to-br from-secondary to-secondary-light">
+              <Image
+                src="/images/services/psychosexology.png"
+                alt="Haven Medical clinic interior"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             </div>
           </div>
           <div ref={aboutTextRef}>
@@ -388,8 +398,14 @@ export default function HomePage() {
           <div ref={doctorsGridRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {doctors.map((doc) => (
               <article key={doc.name} className="bg-white rounded-xl overflow-hidden border border-border-light card-hover">
-                <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary flex items-center justify-center text-primary/20" aria-hidden="true">
-                  <Users className="w-16 h-16" />
+                <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                  <Image
+                    src={doc.image}
+                    alt={doc.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
                 </div>
                 <div className="p-5">
                   <h3 className="font-semibold text-dark mb-1">{doc.name}</h3>

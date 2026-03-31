@@ -62,7 +62,7 @@ export const metadata: Metadata = {
       "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness in Beirut.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Haven Medical Clinic — Premium medical and aesthetic clinic in Beirut",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     title: "Haven Medical | Premium Medical & Aesthetic Clinic",
     description:
       "Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
