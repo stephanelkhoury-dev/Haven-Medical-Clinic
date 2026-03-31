@@ -34,6 +34,10 @@ export interface Service {
   faqs: { question: string; answer: string }[];
   relatedSlugs: string[];
   subServices?: { name: string; description: string }[];
+  price?: number;
+  priceFrom?: boolean;
+  priceNote?: string;
+  featured?: boolean;
 }
 
 export const serviceCategories = {

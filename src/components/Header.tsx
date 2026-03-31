@@ -1,10 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ChevronRight, Sparkles, Scissors, Stethoscope, Leaf, ArrowRight } from "lucide-react";
 import { clinicInfo } from "@/data/clinic";
 import Logo from "@/components/Logo";
+
+const categoryIcons = {
+  "Aesthetic Treatments": Sparkles,
+  "Surgical Procedures": Scissors,
+  "Medical & Specialist Care": Stethoscope,
+  "Wellness & Body Care": Leaf,
+};
+
+const categoryDescriptions: Record<string, string> = {
+  "Aesthetic Treatments": "Non-surgical beauty enhancements",
+  "Surgical Procedures": "Expert surgical transformations",
+  "Medical & Specialist Care": "Specialized medical consultations",
+  "Wellness & Body Care": "Holistic body wellness",
+};
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -16,38 +30,38 @@ const navigation = [
       {
         group: "Aesthetic Treatments",
         items: [
-          { label: "Laser Hair Removal", href: "/services/laser-hair-removal" },
-          { label: "Botox & Fillers", href: "/services/botox-fillers" },
-          { label: "Skin Boosters", href: "/services/skin-boosters" },
-          { label: "Facial Treatments", href: "/services/facial-treatments" },
+          { label: "Laser Hair Removal", href: "/services/laser-hair-removal", desc: "Permanent hair reduction with advanced laser" },
+          { label: "Botox & Fillers", href: "/services/botox-fillers", desc: "Smooth wrinkles & restore volume" },
+          { label: "Skin Boosters", href: "/services/skin-boosters", desc: "Deep hydration & skin rejuvenation" },
+          { label: "Facial Treatments", href: "/services/facial-treatments", desc: "Medical-grade facials for radiant skin" },
         ],
       },
       {
         group: "Surgical Procedures",
         items: [
-          { label: "Rhinoplasty", href: "/services/rhinoplasty" },
-          { label: "Blepharoplasty", href: "/services/blepharoplasty" },
-          { label: "Face Lifting", href: "/services/face-lifting" },
-          { label: "Lip Lift", href: "/services/lip-lift" },
-          { label: "Otoplasty", href: "/services/otoplasty" },
+          { label: "Rhinoplasty", href: "/services/rhinoplasty", desc: "Nose reshaping for harmony & function" },
+          { label: "Blepharoplasty", href: "/services/blepharoplasty", desc: "Eyelid surgery for a refreshed look" },
+          { label: "Face Lifting", href: "/services/face-lifting", desc: "Advanced facial rejuvenation" },
+          { label: "Lip Lift", href: "/services/lip-lift", desc: "Enhanced lip definition & proportion" },
+          { label: "Otoplasty", href: "/services/otoplasty", desc: "Ear reshaping & correction" },
         ],
       },
       {
         group: "Medical & Specialist Care",
         items: [
-          { label: "ORL Consultations", href: "/services/orl-consultations" },
-          { label: "Gyneco-Aesthetic", href: "/services/gyneco-aesthetic" },
-          { label: "Psychosexology", href: "/services/psychosexology" },
-          { label: "Physiotherapy", href: "/services/physiotherapy" },
-          { label: "Nutritionist", href: "/services/nutritionist" },
+          { label: "ORL Consultations", href: "/services/orl-consultations", desc: "Ear, nose & throat specialist care" },
+          { label: "Gyneco-Aesthetic", href: "/services/gyneco-aesthetic", desc: "Feminine wellness treatments" },
+          { label: "Psychosexology", href: "/services/psychosexology", desc: "Intimate health & wellbeing" },
+          { label: "Physiotherapy", href: "/services/physiotherapy", desc: "Physical rehabilitation & recovery" },
+          { label: "Nutritionist", href: "/services/nutritionist", desc: "Personalized nutrition programs" },
         ],
       },
       {
         group: "Wellness & Body Care",
         items: [
-          { label: "Lymphatic Drainage", href: "/services/lymphatic-drainage" },
-          { label: "Deep Tissue Massage", href: "/services/deep-tissue-massage" },
-          { label: "Medical Pedicure", href: "/services/medical-pedicure" },
+          { label: "Lymphatic Drainage", href: "/services/lymphatic-drainage", desc: "Detox & post-surgery recovery" },
+          { label: "Deep Tissue Massage", href: "/services/deep-tissue-massage", desc: "Therapeutic deep muscle relief" },
+          { label: "Medical Pedicure", href: "/services/medical-pedicure", desc: "Clinical foot care & treatment" },
         ],
       },
     ],
@@ -63,13 +77,28 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [activeGroup, setActiveGroup] = useState(0);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const openMega = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setServicesOpen(true);
+  };
+  const closeMega = () => {
+    timerRef.current = setTimeout(() => setServicesOpen(false), 200);
+  };
+  const cancelClose = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
+  const servicesNav = navigation.find(n => n.children);
 
   return (
     <header
@@ -114,47 +143,117 @@ export default function Header() {
               <div
                 key={item.label}
                 className="relative"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
+                onMouseEnter={openMega}
+                onMouseLeave={closeMega}
               >
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1 text-sm font-medium text-dark-light hover:text-primary transition-colors"
+                  className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                    servicesOpen ? "text-primary" : "text-dark-light hover:text-primary"
+                  }`}
                 >
                   {item.label}
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${servicesOpen ? "rotate-180" : ""}`} />
                 </Link>
+
+                {/* ── MEGA MENU ── */}
                 {servicesOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4">
-                    <div className="glass border border-border-light rounded-xl shadow-xl p-6 grid grid-cols-2 gap-6 min-w-[560px]">
-                      {item.children.map((group) => (
-                        <div key={group.group}>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-3">
-                            {group.group}
-                          </p>
-                          <ul className="space-y-2">
-                            {group.items.map((sub) => (
-                              <li key={sub.href}>
-                                <Link
-                                  href={sub.href}
-                                  className="text-sm text-dark-light hover:text-primary transition-colors"
-                                  onClick={() => setServicesOpen(false)}
-                                >
-                                  {sub.label}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-5"
+                    onMouseEnter={cancelClose}
+                    onMouseLeave={closeMega}
+                  >
+                    <div className="bg-white/95 backdrop-blur-xl border border-border-light rounded-2xl shadow-2xl shadow-dark/10 overflow-hidden animate-[fadeIn_0.2s_ease-out] min-w-[780px]">
+                      <div className="flex">
+                        {/* Left: Category sidebar */}
+                        <div className="w-[240px] bg-gradient-to-b from-muted/80 to-muted/40 p-3 border-r border-border-light">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-dark-light/50 px-3 py-2">Categories</p>
+                          {servicesNav?.children?.map((group, idx) => {
+                            const Icon = categoryIcons[group.group as keyof typeof categoryIcons] || Sparkles;
+                            return (
+                              <button
+                                key={group.group}
+                                onMouseEnter={() => setActiveGroup(idx)}
+                                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 ${
+                                  activeGroup === idx
+                                    ? "bg-white shadow-sm text-dark"
+                                    : "text-dark-light hover:bg-white/60"
+                                }`}
+                              >
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200 ${
+                                  activeGroup === idx ? "bg-primary/10" : "bg-dark-light/5"
+                                }`}>
+                                  <Icon className={`w-[18px] h-[18px] transition-colors duration-200 ${
+                                    activeGroup === idx ? "text-primary" : "text-dark-light/60"
+                                  }`} />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className={`text-sm font-medium leading-tight truncate ${
+                                    activeGroup === idx ? "text-dark" : "text-dark-light"
+                                  }`}>{group.group.replace("& ", "& ")}</p>
+                                  <p className="text-[10px] text-dark-light/50 leading-tight mt-0.5 truncate">{categoryDescriptions[group.group]}</p>
+                                </div>
+                                <ChevronRight className={`w-3.5 h-3.5 ml-auto shrink-0 transition-all duration-200 ${
+                                  activeGroup === idx ? "text-primary opacity-100" : "opacity-0"
+                                }`} />
+                              </button>
+                            );
+                          })}
                         </div>
-                      ))}
-                      <div className="col-span-2 pt-4 border-t border-border-light">
-                        <Link
-                          href="/services"
-                          className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
-                          onClick={() => setServicesOpen(false)}
-                        >
-                          View All Services →
-                        </Link>
+
+                        {/* Right: Service items */}
+                        <div className="flex-1 p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-primary">
+                              {servicesNav?.children?.[activeGroup]?.group}
+                            </h3>
+                            <span className="text-[10px] text-dark-light/40">
+                              {servicesNav?.children?.[activeGroup]?.items.length} services
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1">
+                            {servicesNav?.children?.[activeGroup]?.items.map((sub) => (
+                              <Link
+                                key={sub.href}
+                                href={sub.href}
+                                onClick={() => setServicesOpen(false)}
+                                className="group/item flex items-start gap-3 p-3 rounded-xl hover:bg-primary/5 transition-all duration-200"
+                              >
+                                <div className="w-2 h-2 rounded-full bg-primary/30 mt-1.5 shrink-0 group-hover/item:bg-primary group-hover/item:scale-125 transition-all" />
+                                <div>
+                                  <p className="text-sm font-medium text-dark group-hover/item:text-primary transition-colors leading-tight">
+                                    {sub.label}
+                                  </p>
+                                  {"desc" in sub && (
+                                    <p className="text-[11px] text-dark-light/60 leading-tight mt-0.5">
+                                      {(sub as { desc: string }).desc}
+                                    </p>
+                                  )}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+
+                          {/* Bottom CTA */}
+                          <div className="mt-5 pt-4 border-t border-border-light flex items-center justify-between">
+                            <Link
+                              href="/services"
+                              className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary-dark transition-colors group/all"
+                              onClick={() => setServicesOpen(false)}
+                            >
+                              View All Services
+                              <ArrowRight className="w-4 h-4 group-hover/all:translate-x-1 transition-transform" />
+                            </Link>
+                            <Link
+                              href="/appointment"
+                              className="text-xs font-medium px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors"
+                              onClick={() => setServicesOpen(false)}
+                            >
+                              Book Now
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -211,27 +310,38 @@ export default function Header() {
                     />
                   </button>
                   {mobileServicesOpen && (
-                    <div className="mt-3 ml-4 space-y-4">
-                      {item.children.map((group) => (
-                        <div key={group.group}>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
-                            {group.group}
-                          </p>
-                          <ul className="space-y-2">
-                            {group.items.map((sub) => (
-                              <li key={sub.href}>
-                                <Link
-                                  href={sub.href}
-                                  className="text-sm text-dark-light"
-                                  onClick={() => setMobileOpen(false)}
-                                >
-                                  {sub.label}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                    <div className="mt-3 space-y-4">
+                      {item.children.map((group) => {
+                        const Icon = categoryIcons[group.group as keyof typeof categoryIcons] || Sparkles;
+                        return (
+                          <div key={group.group}>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2 flex items-center gap-2 ml-1">
+                              <Icon className="w-3.5 h-3.5" />
+                              {group.group}
+                            </p>
+                            <ul className="space-y-1 ml-1">
+                              {group.items.map((sub) => (
+                                <li key={sub.href}>
+                                  <Link
+                                    href={sub.href}
+                                    className="block py-1.5 pl-6 text-sm text-dark-light hover:text-primary transition-colors border-l-2 border-border-light hover:border-primary"
+                                    onClick={() => setMobileOpen(false)}
+                                  >
+                                    {sub.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                      <Link
+                        href="/services"
+                        className="block ml-1 mt-2 text-sm font-medium text-primary"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        View All Services →
+                      </Link>
                     </div>
                   )}
                 </div>
