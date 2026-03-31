@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect fill="#8B7355" width="512" height="512"/>
+  <rect fill="#8B7355" x="136" y="236" width="240" height="40" rx="8"/>
+  <text fill="#FDFBF7" font-family="system-ui,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="256" y="261">HM</text>
+</svg>
