@@ -13,6 +13,8 @@ export async function GET() {
     const [blogCount] = await sql`SELECT COUNT(*) as count FROM blog_posts`;
     const [campaignCount] = await sql`SELECT COUNT(*) as count FROM campaigns`;
     const [mediaCount] = await sql`SELECT COUNT(*) as count FROM media`;
+    const [doctorCount] = await sql`SELECT COUNT(*) as count FROM doctors`;
+    const [testimonialCount] = await sql`SELECT COUNT(*) as count FROM testimonials`;
 
     return NextResponse.json({
       totalAppointments: Number(appointmentCount.count),
@@ -23,6 +25,8 @@ export async function GET() {
       totalBlogPosts: Number(blogCount.count),
       totalCampaigns: Number(campaignCount.count),
       totalMedia: Number(mediaCount.count),
+      totalDoctors: Number(doctorCount.count),
+      totalTestimonials: Number(testimonialCount.count),
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

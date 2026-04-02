@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Gift, CreditCard, Heart, MessageCircle } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { services } from "@/data/services";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import type { Metadata } from "next";
 

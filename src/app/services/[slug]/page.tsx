@@ -1,15 +1,83 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Clock, CheckCircle2, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowRight, Clock, CheckCircle2, ChevronDown, ChevronRight, Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear, Stethoscope, Brain, Activity, Apple, Leaf, HandMetal, Scissors, Shield, Award, Users, Star, Check, type LucideIcon } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { services, getServiceBySlug, getRelatedServices } from "@/data/services";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { getServiceSchema, getFAQSchema, getBreadcrumbSchema } from "@/lib/schema";
+import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
 
-export function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
+export const dynamic = "force-dynamic";
+
+const iconMap: Record<string, LucideIcon> = {
+  Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear,
+  Stethoscope, Brain, Activity, Apple, Leaf, HandMetal, Scissors,
+  Shield, Award, Users, Star, Clock, Check,
+};
+
+interface DbService {
+  slug: string;
+  title: string;
+  shortDescription: string;
+  category: string;
+  iconName: string;
+  heroImage: string;
+  overview: string;
+  whoIsItFor: string;
+  benefits: string[];
+  procedureSteps: string[];
+  duration: string;
+  recovery: string;
+  expectedResults: string;
+  faqs: { question: string; answer: string }[];
+  relatedSlugs: string[];
+  subServices: { name: string; description: string }[];
+}
+
+async function getServiceBySlug(slug: string): Promise<DbService | null> {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT * FROM admin_services WHERE slug = ${slug} LIMIT 1`;
+    if (!rows.length) return null;
+    const r = rows[0];
+    return {
+      slug: r.slug as string,
+      title: r.title as string,
+      shortDescription: (r.short_description || "") as string,
+      category: (r.category || "") as string,
+      iconName: (r.icon_name || "Sparkles") as string,
+      heroImage: (r.hero_image || "") as string,
+      overview: (r.overview || "") as string,
+      whoIsItFor: (r.who_is_it_for || "") as string,
+      benefits: (r.benefits || []) as string[],
+      procedureSteps: (r.procedure_steps || []) as string[],
+      duration: (r.duration || "") as string,
+      recovery: (r.recovery || "") as string,
+      expectedResults: (r.expected_results || "") as string,
+      faqs: (r.faqs || []) as { question: string; answer: string }[],
+      relatedSlugs: (r.related_slugs || []) as string[],
+      subServices: (r.sub_services || []) as { name: string; description: string }[],
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function getRelatedServices(relatedSlugs: string[]): Promise<{ slug: string; title: string; shortDescription: string; iconName: string }[]> {
+  if (!relatedSlugs.length) return [];
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT slug, title, short_description, icon_name FROM admin_services WHERE slug = ANY(${relatedSlugs})`;
+    return rows.map((r) => ({
+      slug: r.slug as string,
+      title: r.title as string,
+      shortDescription: (r.short_description || "") as string,
+      iconName: (r.icon_name || "Sparkles") as string,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -18,7 +86,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = getServiceBySlug(slug);
+  const service = await getServiceBySlug(slug);
   if (!service) return {};
   const title = `${service.title} in Beirut — Haven Medical`;
   const description = `${service.shortDescription} Expert ${service.title.toLowerCase()} treatment at Haven Medical Clinic, Beirut, Lebanon. Board-certified specialists. Book your consultation today.`;
@@ -41,11 +109,11 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = getServiceBySlug(slug);
+  const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
-  const Icon = service.icon;
-  const related = getRelatedServices(service);
+  const Icon = iconMap[service.iconName] || Sparkles;
+  const related = await getRelatedServices(service.relatedSlugs);
 
   const serviceSchema = getServiceSchema(service);
   const faqSchema = service.faqs?.length
@@ -272,7 +340,7 @@ export default async function ServiceDetailPage({
             </ScrollReveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {related.map((rel, i) => {
-                const RelIcon = rel.icon;
+                const RelIcon = iconMap[rel.iconName] || Sparkles;
                 return (
                   <ScrollReveal key={rel.slug} delay={i * 80}>
                     <Link

@@ -20,6 +20,8 @@ import {
   Lock,
   Eye,
   EyeOff,
+  UserCheck,
+  MessageSquareQuote,
 } from "lucide-react";
 
 // Admin credentials
@@ -30,11 +32,13 @@ const AUTH_KEY = "haven_admin_auth";
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Appointments", href: "/admin/appointments", icon: Calendar },
+  { label: "Services", href: "/admin/services", icon: Stethoscope },
+  { label: "Doctors", href: "/admin/doctors", icon: UserCheck },
+  { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
+  { label: "Blog Posts", href: "/admin/blog", icon: FileText },
   { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { label: "Subscribers", href: "/admin/subscribers", icon: Users },
   { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
-  { label: "Services", href: "/admin/services", icon: Stethoscope },
-  { label: "Blog Posts", href: "/admin/blog", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

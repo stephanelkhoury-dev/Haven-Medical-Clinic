@@ -32,8 +32,63 @@ async function getLatestPosts() {
   }
 }
 
+async function getServices() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT slug, title, short_description, category, icon_name, hero_image, sub_services FROM admin_services ORDER BY title ASC`;
+    return rows.map((r) => ({
+      slug: r.slug as string,
+      title: r.title as string,
+      shortDescription: (r.short_description || "") as string,
+      category: r.category as string,
+      iconName: (r.icon_name || "Sparkles") as string,
+      heroImage: (r.hero_image || "") as string,
+      subServices: r.sub_services || [],
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function getDoctors() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT name, title, specialty, image, bio FROM doctors ORDER BY sort_order ASC`;
+    return rows.map((r) => ({
+      name: r.name as string,
+      title: (r.title || "") as string,
+      specialty: (r.specialty || "") as string,
+      image: (r.image || "") as string,
+      bio: (r.bio || "") as string,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function getTestimonials() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT name, treatment, text, rating FROM testimonials ORDER BY id ASC`;
+    return rows.map((r) => ({
+      name: r.name as string,
+      treatment: (r.treatment || "") as string,
+      text: (r.text || "") as string,
+      rating: (r.rating ?? 5) as number,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const latestPosts = await getLatestPosts();
+  const [latestPosts, dbServices, dbDoctors, dbTestimonials] = await Promise.all([
+    getLatestPosts(),
+    getServices(),
+    getDoctors(),
+    getTestimonials(),
+  ]);
+
   const breadcrumb = getBreadcrumbSchema([
     { name: "Home", url: "/" },
   ]);
@@ -66,7 +121,12 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
       />
-      <HomeClient latestPosts={latestPosts} />
+      <HomeClient
+        latestPosts={latestPosts}
+        services={dbServices}
+        doctors={dbDoctors}
+        testimonials={dbTestimonials}
+      />
     </>
   );
 }

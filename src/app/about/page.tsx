@@ -1,8 +1,11 @@
 import { Shield, Award, Users, Heart, Target, Eye } from "lucide-react";
+import Image from "next/image";
 import ScrollReveal from "@/components/ScrollReveal";
-import { doctors } from "@/data/clinic";
 import { getAboutPageSchema, getBreadcrumbSchema } from "@/lib/schema";
+import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "About Us — Board-Certified Specialists in Beirut",
@@ -16,7 +19,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  let doctors: { name: string; title: string; specialty: string; image: string; bio: string }[] = [];
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT name, title, specialty, image, bio FROM doctors ORDER BY sort_order ASC`;
+    doctors = rows.map((r) => ({
+      name: r.name as string,
+      title: (r.title || "") as string,
+      specialty: (r.specialty || "") as string,
+      image: (r.image || "") as string,
+      bio: (r.bio || "") as string,
+    }));
+  } catch { /* fallback to empty */ }
+
   const aboutSchema = getAboutPageSchema();
   const breadcrumb = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -134,8 +150,12 @@ export default function AboutPage() {
             {doctors.map((doc, i) => (
               <ScrollReveal key={doc.name} delay={i * 100}>
                 <div className="bg-white rounded-xl overflow-hidden border border-border-light card-hover">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary flex items-center justify-center text-primary/20">
-                    <Users className="w-16 h-16" />
+                  <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                    {doc.image ? (
+                      <Image src={doc.image} alt={doc.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-primary/20"><Users className="w-16 h-16" /></div>
+                    )}
                   </div>
                   <div className="p-5">
                     <h3 className="font-semibold text-dark mb-1">{doc.name}</h3>

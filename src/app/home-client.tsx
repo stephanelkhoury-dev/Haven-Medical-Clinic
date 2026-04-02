@@ -14,11 +14,39 @@ import {
   ChevronRight,
   Sparkles,
   Check,
+  Zap,
+  Syringe,
+  Droplets,
+  SmilePlus,
+  Eye,
+  Ear,
+  Stethoscope,
+  Brain,
+  Activity,
+  Apple,
+  Leaf,
+  HandMetal,
+  Scissors,
+  type LucideIcon,
 } from "lucide-react";
 import { gsap } from "gsap";
-import { services, serviceCategories } from "@/data/services";
-import { doctors, testimonials, clinicInfo } from "@/data/clinic";
+import { clinicInfo } from "@/data/clinic";
 import type { BlogPost } from "@/data/blog";
+
+// ── Icon mapping for DB-stored icon names ─────────────────────────────
+const iconMap: Record<string, LucideIcon> = {
+  Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear,
+  Stethoscope, Brain, Activity, Apple, Leaf, HandMetal, Scissors,
+  Shield, Award, Users, Star, Clock, Check,
+};
+
+// ── Service categories (labels for UI) ────────────────────────────────
+const serviceCategories: Record<string, { label: string }> = {
+  aesthetic: { label: "Aesthetic Treatments" },
+  surgical: { label: "Surgical Procedures" },
+  medical: { label: "Medical & Specialist Care" },
+  wellness: { label: "Wellness & Body Care" },
+};
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import SocialFeed from "@/components/SocialFeed";
 
@@ -221,7 +249,41 @@ function HeroSection() {
 }
 
 // ── Main page export ──────────────────────────────────────────────────
-export default function HomePage({ latestPosts }: { latestPosts: BlogPost[] }) {
+// ── Types for DB-driven props ─────────────────────────────────────────
+interface DbService {
+  slug: string;
+  title: string;
+  shortDescription: string;
+  category: string;
+  iconName: string;
+  heroImage: string;
+  subServices: unknown[];
+}
+interface DbDoctor {
+  name: string;
+  title: string;
+  specialty: string;
+  image: string;
+  bio: string;
+}
+interface DbTestimonial {
+  name: string;
+  treatment: string;
+  text: string;
+  rating: number;
+}
+
+export default function HomePage({
+  latestPosts,
+  services,
+  doctors,
+  testimonials,
+}: {
+  latestPosts: BlogPost[];
+  services: DbService[];
+  doctors: DbDoctor[];
+  testimonials: DbTestimonial[];
+}) {
   const featuredServices = services.slice(0, 6);
 
   const servicesHeaderRef = useGsapReveal("up");
@@ -293,7 +355,7 @@ export default function HomePage({ latestPosts }: { latestPosts: BlogPost[] }) {
 
           <div ref={servicesGridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredServices.map((service) => {
-              const Icon = service.icon;
+              const Icon = iconMap[service.iconName] || Sparkles;
               return (
                 <Link
                   key={service.slug}

@@ -1,10 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear, Stethoscope, Brain, Activity, Apple, Leaf, HandMetal, Scissors, Shield, Award, Users, Star, Clock, Check, type LucideIcon } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { services, serviceCategories, getServicesByCategory } from "@/data/services";
 import { getServiceListSchema, getBreadcrumbSchema } from "@/lib/schema";
+import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+
+const iconMap: Record<string, LucideIcon> = {
+  Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear,
+  Stethoscope, Brain, Activity, Apple, Leaf, HandMetal, Scissors,
+  Shield, Award, Users, Star, Clock, Check,
+};
+
+const serviceCategories: Record<string, { label: string; description: string }> = {
+  aesthetic: { label: "Aesthetic Treatments", description: "Enhance your natural beauty with advanced non-surgical treatments" },
+  surgical: { label: "Surgical Procedures", description: "Expert surgical solutions for lasting transformation" },
+  medical: { label: "Medical & Specialist Care", description: "Comprehensive medical consultations and specialized care" },
+  wellness: { label: "Wellness & Body Care", description: "Holistic treatments for complete body wellness" },
+};
 
 export const metadata: Metadata = {
   title: "All Services — Aesthetic, Surgical & Wellness Treatments",
@@ -18,13 +33,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
-  const categories = Object.entries(serviceCategories) as [
-    keyof typeof serviceCategories,
-    (typeof serviceCategories)[keyof typeof serviceCategories]
-  ][];
+export default async function ServicesPage() {
+  let allServices: { slug: string; title: string; shortDescription: string; category: string; iconName: string; heroImage: string; subServices: { name: string; description: string }[] }[] = [];
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT slug, title, short_description, category, icon_name, hero_image, sub_services FROM admin_services ORDER BY title ASC`;
+    allServices = rows.map((r) => ({
+      slug: r.slug as string,
+      title: r.title as string,
+      shortDescription: (r.short_description || "") as string,
+      category: (r.category || "aesthetic") as string,
+      iconName: (r.icon_name || "Sparkles") as string,
+      heroImage: (r.hero_image || "") as string,
+      subServices: (r.sub_services || []) as { name: string; description: string }[],
+    }));
+  } catch { /* fallback to empty */ }
 
-  const serviceListSchema = getServiceListSchema(services);
+  const categories = Object.entries(serviceCategories) as [string, { label: string; description: string }][];
+
+  const serviceListSchema = getServiceListSchema(allServices);
   const breadcrumb = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Services", url: "/services" },
@@ -50,7 +77,8 @@ export default function ServicesPage() {
 
       {/* Services by category */}
       {categories.map(([key, cat], catIdx) => {
-        const catServices = getServicesByCategory(key);
+        const catServices = allServices.filter((s) => s.category === key);
+        if (catServices.length === 0) return null;
         return (
           <section
             key={key}
@@ -71,7 +99,7 @@ export default function ServicesPage() {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {catServices.map((service, i) => {
-                  const Icon = service.icon;
+                  const Icon = iconMap[service.iconName] || Sparkles;
                   return (
                     <ScrollReveal key={service.slug} delay={i * 80}>
                       <Link
