@@ -1,13 +1,32 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronRight, Clock, Tag, ArrowLeft } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { blogPosts } from "@/data/blog";
+import { getDb } from "@/lib/db";
 import { getArticleSchema, getBreadcrumbSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+export const dynamic = "force-dynamic";
+
+async function getAllPosts() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT * FROM blog_posts ORDER BY date DESC`;
+    return rows.map((r) => ({
+      slug: r.slug as string,
+      title: r.title as string,
+      excerpt: (r.excerpt || "") as string,
+      content: (r.content || "") as string,
+      category: r.category as string,
+      image: (r.image || "") as string,
+      author: (r.author || "") as string,
+      date: r.date as string,
+      readTime: (r.read_time || "5 min read") as string,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -16,12 +35,22 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const posts = await getAllPosts();
+  const post = posts.find((p) => p.slug === slug);
   if (!post) return {};
   return {
-    title: post.title,
+    title: `${post.title} — Haven Medical Blog`,
     description: post.excerpt,
-    alternates: { canonical: `https://www.havenmedical.com/blog/${slug}` },
+    alternates: { canonical: `https://www.haven-beautyclinic.com/blog/${slug}` },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `https://www.haven-beautyclinic.com/blog/${slug}`,
+      type: "article",
+      publishedTime: post.date,
+      authors: [post.author],
+      images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : [],
+    },
   };
 }
 
@@ -31,6 +60,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const blogPosts = await getAllPosts();
   const post = blogPosts.find((p) => p.slug === slug);
   if (!post) notFound();
 
@@ -93,33 +123,32 @@ export default async function BlogPostPage({
       {/* Featured Image */}
       <section className="bg-white">
         <div className="max-w-4xl mx-auto px-6 -mt-8">
-          <div className="aspect-[16/9] rounded-2xl bg-gradient-to-br from-secondary-light to-secondary overflow-hidden shadow-lg" />
+          <div className="aspect-[16/9] rounded-2xl bg-gradient-to-br from-secondary-light to-secondary overflow-hidden shadow-lg relative">
+            {post.image && (
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 896px"
+                priority
+              />
+            )}
+          </div>
         </div>
       </section>
 
-      {/* Content placeholder */}
+      {/* Content */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-6">
           <ScrollReveal>
-            <div className="prose prose-lg max-w-none text-dark-light leading-relaxed space-y-6">
-              <p>{post.content}</p>
-              <p>
-                This is a placeholder for the full blog article content. In the production version, this will be
-                fetched from WordPress via WPGraphQL and rendered with rich formatting, images, and embedded media.
-              </p>
-              <p>
-                Each blog article supports full SEO optimization with structured data, meta tags, and social sharing
-                capabilities to maximize organic reach and establish Haven Medical as an authority in medical aesthetics.
-              </p>
-              <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-dark">Key Takeaways</h2>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Always consult with a qualified specialist before any treatment.</li>
-                <li>Follow post-treatment care instructions for optimal results.</li>
-                <li>Regular maintenance treatments help sustain long-term results.</li>
-              </ul>
-              <p>
-                If you have any questions about this topic, don&apos;t hesitate to contact our team at Haven Medical.
-                We are always happy to provide personalized advice.
+            <article
+              className="prose prose-lg max-w-none text-dark-light leading-relaxed prose-headings:font-[family-name:var(--font-heading)] prose-headings:text-dark prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-4 prose-li:mb-1 prose-ul:my-4 prose-ol:my-4 prose-strong:text-dark"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+            <div className="mt-12 p-6 bg-muted rounded-xl border border-border-light">
+              <p className="text-sm text-dark-light">
+                <strong className="text-dark">Disclaimer:</strong> This article is for informational purposes only and does not replace professional medical advice. Always consult with a qualified specialist at Haven Medical before undergoing any treatment.
               </p>
             </div>
           </ScrollReveal>

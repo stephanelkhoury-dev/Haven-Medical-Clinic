@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/Haven Images/
 
 # debug
 npm-debug.log*

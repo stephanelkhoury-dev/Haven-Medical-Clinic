@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Plus, Edit, Trash2, Eye, Search, X, Save,
   Upload, Image as ImageIcon, DollarSign, Clock, ChevronDown, Star, GripVertical,
 } from "lucide-react";
-import { services as defaultServices, serviceCategories, type Service } from "@/data/services";
-
-const STORAGE_KEY = "haven_admin_services";
+import { serviceCategories } from "@/data/services";
 const categories = ["all", "aesthetic", "surgical", "medical", "wellness"] as const;
 
 type ServiceCategory = "aesthetic" | "surgical" | "medical" | "wellness";
@@ -33,31 +31,6 @@ interface AdminService {
   priceNote?: string;
   featured?: boolean;
   subServices?: { name: string; description: string }[];
-}
-
-function toAdminService(s: Service): AdminService {
-  return {
-    slug: s.slug,
-    title: s.title,
-    shortDescription: s.shortDescription,
-    category: s.category,
-    iconName: s.icon?.displayName || s.icon?.name || "Sparkles",
-    heroImage: s.heroImage,
-    overview: s.overview,
-    whoIsItFor: s.whoIsItFor,
-    benefits: s.benefits,
-    procedureSteps: s.procedureSteps,
-    duration: s.duration,
-    recovery: s.recovery,
-    expectedResults: s.expectedResults,
-    faqs: s.faqs,
-    relatedSlugs: s.relatedSlugs,
-    price: s.price,
-    priceFrom: s.priceFrom,
-    priceNote: s.priceNote,
-    featured: s.featured,
-    subServices: s.subServices,
-  };
 }
 
 function createBlankService(): AdminService {
@@ -96,26 +69,17 @@ export default function AdminServices() {
   const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load from localStorage or default data
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setAllServices(JSON.parse(stored));
-      } catch {
-        setAllServices(defaultServices.map(toAdminService));
+  // Load from API
+  const loadData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/services");
+      if (res.ok) {
+        setAllServices(await res.json());
       }
-    } else {
-      setAllServices(defaultServices.map(toAdminService));
-    }
+    } catch { /* API unavailable */ }
   }, []);
 
-  // Save to localStorage on change
-  useEffect(() => {
-    if (allServices.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allServices));
-    }
-  }, [allServices]);
+  useEffect(() => { loadData(); }, [loadData]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -143,13 +107,18 @@ export default function AdminServices() {
     setActiveTab("basic");
   };
 
-  const handleDelete = (slug: string) => {
-    setAllServices((prev) => prev.filter((s) => s.slug !== slug));
-    setDeleteConfirm(null);
-    showToast("Service deleted successfully");
+  const handleDelete = async (slug: string) => {
+    try {
+      await fetch(`/api/admin/services/${slug}`, { method: "DELETE" });
+      setAllServices((prev) => prev.filter((s) => s.slug !== slug));
+      setDeleteConfirm(null);
+      showToast("Service deleted successfully");
+    } catch {
+      showToast("Failed to delete service");
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editing) return;
     // Auto-generate slug
     if (!editing.slug && editing.title) {
@@ -162,19 +131,33 @@ export default function AdminServices() {
       showToast("Title is required");
       return;
     }
-    if (isNew) {
-      // Check for duplicate slug
-      if (allServices.some((s) => s.slug === editing.slug)) {
-        showToast("A service with this URL slug already exists");
-        return;
+    try {
+      if (isNew) {
+        // Check for duplicate slug
+        if (allServices.some((s) => s.slug === editing.slug)) {
+          showToast("A service with this URL slug already exists");
+          return;
+        }
+        await fetch("/api/admin/services", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editing),
+        });
+        setAllServices((prev) => [...prev, editing]);
+        showToast("Service created successfully");
+      } else {
+        await fetch(`/api/admin/services/${editing.slug}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editing),
+        });
+        setAllServices((prev) =>
+          prev.map((s) => (s.slug === editing.slug ? editing : s))
+        );
+        showToast("Service updated successfully");
       }
-      setAllServices((prev) => [...prev, editing]);
-      showToast("Service created successfully");
-    } else {
-      setAllServices((prev) =>
-        prev.map((s) => (s.slug === editing.slug ? editing : s))
-      );
-      showToast("Service updated successfully");
+    } catch {
+      showToast("Failed to save service");
     }
     setEditing(null);
     setIsNew(false);

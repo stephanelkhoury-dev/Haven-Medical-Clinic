@@ -1,18 +1,59 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Clock, Tag } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { blogPosts, blogCategories } from "@/data/blog";
+import { blogCategories } from "@/data/blog";
+import { getBlogListSchema, getBreadcrumbSchema } from "@/lib/schema";
+import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Blog — Expert Aesthetic & Medical Insights",
   description:
-    "Expert insights on skincare, aesthetic medicine, wellness, nutrition, and post-treatment care from the Haven Medical team.",
+    "Expert articles on Botox, rhinoplasty aftercare, laser hair removal, skincare routines, nutrition, and wellness from Haven Medical specialists in Beirut, Lebanon.",
+  alternates: { canonical: "https://www.haven-beautyclinic.com/blog" },
+  openGraph: {
+    title: "Haven Medical Blog — Aesthetic & Medical Insights",
+    description: "Expert articles on aesthetic medicine, skincare, wellness, and post-treatment care from our Beirut-based specialists.",
+    url: "https://www.haven-beautyclinic.com/blog",
+  },
 };
 
-export default function BlogPage() {
+export const dynamic = "force-dynamic";
+
+async function getBlogPosts() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT * FROM blog_posts ORDER BY date DESC`;
+    return rows.map((r) => ({
+      slug: r.slug,
+      title: r.title,
+      excerpt: r.excerpt || "",
+      content: r.content || "",
+      category: r.category,
+      image: r.image || "",
+      author: r.author || "",
+      date: r.date,
+      readTime: r.read_time || "5 min read",
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export default async function BlogPage() {
+  const blogPosts = await getBlogPosts();
+  const blogListSchema = getBlogListSchema(blogPosts.map((p) => ({ title: p.title as string, slug: p.slug as string })));
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-gradient-to-br from-muted via-background to-muted-dark">
         <div className="max-w-7xl mx-auto px-6 text-center">
@@ -55,7 +96,17 @@ export default function BlogPage() {
                   href={`/blog/${post.slug}`}
                   className="group block bg-background rounded-xl overflow-hidden border border-border-light card-hover"
                 >
-                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary" />
+                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                    {post.image && (
+                      <Image
+                        src={post.image as string}
+                        alt={post.title as string}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    )}
+                  </div>
                   <div className="p-6">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="inline-flex items-center gap-1 text-xs text-primary font-medium">

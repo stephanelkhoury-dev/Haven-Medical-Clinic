@@ -1,12 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import WhatsAppFAB from "@/components/WhatsAppFAB";
-import ScrollProgress from "@/components/ScrollProgress";
 import SkipToMain from "@/components/SkipToMain";
-import { getOrganizationSchema } from "@/lib/schema";
+import { getOrganizationSchema, getWebSiteSchema } from "@/lib/schema";
+import LayoutShell from "@/components/LayoutShell";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,7 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.havenmedical.com"),
+  metadataBase: new URL("https://www.haven-beautyclinic.com"),
   title: {
     default: "Haven Medical | Premium Medical & Aesthetic Clinic in Beirut",
     template: "%s | Haven Medical",
@@ -37,16 +34,36 @@ export const metadata: Metadata = {
   description:
     "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon. Book your appointment today.",
   keywords: [
+    "Haven Medical",
+    "Haven Medical Clinic",
     "medical clinic Beirut",
-    "aesthetic treatments Lebanon",
+    "aesthetic clinic Beirut",
     "Botox Beirut",
+    "Botox Lebanon",
+    "fillers Beirut",
     "fillers Lebanon",
     "rhinoplasty Beirut",
+    "rhinoplasty Lebanon",
+    "nose job Beirut",
+    "laser hair removal Beirut",
     "laser hair removal Lebanon",
-    "skin boosters",
-    "face lifting",
+    "skin boosters Beirut",
+    "face lifting Beirut",
+    "face lifting Lebanon",
+    "blepharoplasty Beirut",
+    "lip lift Beirut",
+    "otoplasty Beirut",
     "physiotherapy Beirut",
+    "lymphatic drainage Beirut",
+    "deep tissue massage Beirut",
+    "nutritionist Beirut",
+    "aesthetic treatments Lebanon",
+    "cosmetic surgery Beirut",
+    "beauty clinic Beirut",
+    "medical aesthetics Lebanon",
     "luxury clinic Lebanon",
+    "best dermatologist Beirut",
+    "plastic surgery Lebanon",
   ],
   authors: [{ name: "Haven Medical" }],
   creator: "Haven Medical",
@@ -55,14 +72,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.havenmedical.com",
+    url: "https://www.haven-beautyclinic.com",
     siteName: "Haven Medical",
     title: "Haven Medical | Premium Medical & Aesthetic Clinic",
     description:
       "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness in Beirut.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.webp",
         width: 1200,
         height: 630,
         alt: "Haven Medical Clinic — Premium medical and aesthetic clinic in Beirut",
@@ -74,7 +91,7 @@ export const metadata: Metadata = {
     title: "Haven Medical | Premium Medical & Aesthetic Clinic",
     description:
       "Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon.",
-    images: ["/og-image.png"],
+    images: ["/og-image.webp"],
   },
   robots: {
     index: true,
@@ -88,7 +105,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://www.havenmedical.com",
+    canonical: "https://www.haven-beautyclinic.com",
   },
 };
 
@@ -98,6 +115,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const jsonLd = getOrganizationSchema();
+  const siteSchema = getWebSiteSchema();
 
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
@@ -106,16 +124,14 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <SkipToMain />
-        <ScrollProgress />
-        <Header />
-        <main id="main-content" className="flex-1" role="main">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppFAB />
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );

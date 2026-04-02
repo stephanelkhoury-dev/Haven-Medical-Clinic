@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
-  <rect fill="#D4C5A9" width="1200" height="600"/>
-  <rect fill="#8B7355" x="480" y="280" width="240" height="40" rx="8"/>
-  <text fill="#FDFBF7" font-family="system-ui,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="600" y="305">nutrition-counseling</text>
-</svg>

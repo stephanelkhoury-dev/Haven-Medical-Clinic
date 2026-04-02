@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
-  <rect fill="#D4C5A9" width="400" height="500"/>
-  <rect fill="#8B7355" x="80" y="230" width="240" height="40" rx="8"/>
-  <text fill="#FDFBF7" font-family="system-ui,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="200" y="255">Doctor 3</text>
-</svg>

@@ -1,15 +1,39 @@
 import type { Metadata } from "next";
 import HomeClient from "./home-client";
 import { getBreadcrumbSchema, getFAQSchema } from "@/lib/schema";
+import { getDb } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Haven Medical | Premium Medical & Aesthetic Clinic in Beirut",
   description:
     "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon. Book your appointment today.",
-  alternates: { canonical: "https://www.havenmedical.com" },
+  alternates: { canonical: "https://www.haven-beautyclinic.com" },
 };
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+async function getLatestPosts() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT slug, title, excerpt, category, image, author, date, read_time FROM blog_posts ORDER BY date DESC LIMIT 3`;
+    return rows.map((r) => ({
+      slug: r.slug as string,
+      title: r.title as string,
+      excerpt: (r.excerpt || "") as string,
+      content: "",
+      category: r.category as string,
+      image: (r.image || "") as string,
+      author: (r.author || "") as string,
+      date: r.date as string,
+      readTime: (r.read_time || "5 min read") as string,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const latestPosts = await getLatestPosts();
   const breadcrumb = getBreadcrumbSchema([
     { name: "Home", url: "/" },
   ]);
@@ -42,7 +66,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
       />
-      <HomeClient />
+      <HomeClient latestPosts={latestPosts} />
     </>
   );
 }

@@ -1,16 +1,43 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Check, Star, ArrowRight } from "lucide-react";
-import { subscriptionPlans } from "@/data/admin";
+import { getDb } from "@/lib/db";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "Membership Plans | Haven Medical",
+  title: "Membership Plans — VIP Aesthetic & Wellness Care",
   description:
-    "Join our exclusive membership plans for premium medical and aesthetic care at preferential rates. Choose from Essential, Premium, or Elite tiers.",
+    "Join Haven Medical's exclusive membership: Essential ($49/mo), Premium ($129/mo), or Elite ($299/mo). Save up to 30% on all treatments including Botox, facials, massage, and more.",
+  alternates: { canonical: "https://www.haven-beautyclinic.com/membership" },
+  openGraph: {
+    title: "Haven Medical Membership — Save on All Treatments",
+    description: "Exclusive membership plans starting at $49/month. Priority booking, discounts on Botox, facials, and all treatments.",
+    url: "https://www.haven-beautyclinic.com/membership",
+  },
 };
 
-export default function MembershipPage() {
+export const dynamic = "force-dynamic";
+
+async function getPlans() {
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT * FROM subscription_plans ORDER BY price ASC`;
+    return rows.map((r) => ({
+      id: r.id as string,
+      name: r.name as string,
+      price: r.price as number,
+      interval: r.interval as string,
+      features: (r.features || []) as string[],
+      popular: r.popular as boolean,
+      description: (r.description || "") as string,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export default async function MembershipPage() {
+  const subscriptionPlans = await getPlans();
   return (
     <div>
       {/* Hero */}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -12,51 +13,85 @@ import {
   Clock,
   Stethoscope,
 } from "lucide-react";
-import {
-  dashboardStats,
-  mockAppointments,
-  mockCampaigns,
-  mockMemberSubscriptions,
-} from "@/data/admin";
+import type { AppointmentRequest, NewsletterCampaign, MemberSubscription } from "@/data/admin";
 
-const statCards = [
-  {
-    label: "Total Appointments",
-    value: dashboardStats.totalAppointments,
-    sub: `${dashboardStats.pendingAppointments} pending`,
-    icon: Calendar,
-    color: "bg-blue-500",
-    href: "/admin/appointments",
-  },
-  {
-    label: "Newsletter Subscribers",
-    value: dashboardStats.totalSubscribers,
-    sub: `+${dashboardStats.newSubscribersThisMonth} this month`,
-    icon: Mail,
-    color: "bg-green-500",
-    href: "/admin/subscribers",
-  },
-  {
-    label: "Active Members",
-    value: dashboardStats.activeMembers,
-    sub: "Subscription plans",
-    icon: CreditCard,
-    color: "bg-purple-500",
-    href: "/admin/subscriptions",
-  },
-  {
-    label: "Monthly Revenue",
-    value: `$${dashboardStats.monthlyRevenue.toLocaleString()}`,
-    sub: "From subscriptions",
-    icon: TrendingUp,
-    color: "bg-amber-500",
-    href: "/admin/subscriptions",
-  },
-];
+interface DashboardStats {
+  totalAppointments: number;
+  pendingAppointments: number;
+  totalSubscribers: number;
+  activeMembers: number;
+  totalServices: number;
+  totalBlogPosts: number;
+  totalCampaigns: number;
+}
 
 export default function AdminDashboard() {
-  const recentAppointments = mockAppointments.slice(0, 5);
-  const recentCampaigns = mockCampaigns.slice(0, 3);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentAppointments, setRecentAppointments] = useState<AppointmentRequest[]>([]);
+  const [recentCampaigns, setRecentCampaigns] = useState<NewsletterCampaign[]>([]);
+  const [memberSubs, setMemberSubs] = useState<MemberSubscription[]>([]);
+
+  const loadData = useCallback(async () => {
+    try {
+      const [statsRes, aptsRes, campaignsRes, membersRes] = await Promise.all([
+        fetch("/api/admin/stats"),
+        fetch("/api/admin/appointments"),
+        fetch("/api/admin/campaigns"),
+        fetch("/api/admin/members"),
+      ]);
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (aptsRes.ok) {
+        const apts = await aptsRes.json();
+        setRecentAppointments(apts.slice(0, 5));
+      }
+      if (campaignsRes.ok) {
+        const camps = await campaignsRes.json();
+        setRecentCampaigns(camps.slice(0, 3));
+      }
+      if (membersRes.ok) setMemberSubs(await membersRes.json());
+    } catch { /* API unavailable */ }
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const monthlyRevenue = memberSubs
+    .filter((m) => m.status === "active")
+    .reduce((sum, m) => sum + m.amount, 0);
+
+  const statCards = [
+    {
+      label: "Total Appointments",
+      value: stats?.totalAppointments ?? 0,
+      sub: `${stats?.pendingAppointments ?? 0} pending`,
+      icon: Calendar,
+      color: "bg-blue-500",
+      href: "/admin/appointments",
+    },
+    {
+      label: "Newsletter Subscribers",
+      value: stats?.totalSubscribers ?? 0,
+      sub: "Active subscribers",
+      icon: Mail,
+      color: "bg-green-500",
+      href: "/admin/subscribers",
+    },
+    {
+      label: "Active Members",
+      value: stats?.activeMembers ?? 0,
+      sub: "Subscription plans",
+      icon: CreditCard,
+      color: "bg-purple-500",
+      href: "/admin/subscriptions",
+    },
+    {
+      label: "Monthly Revenue",
+      value: `$${monthlyRevenue.toLocaleString()}`,
+      sub: "From subscriptions",
+      icon: TrendingUp,
+      color: "bg-amber-500",
+      href: "/admin/subscriptions",
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -269,7 +304,7 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {mockMemberSubscriptions.map((sub) => (
+              {memberSubs.map((sub) => (
                 <tr key={sub.id}>
                   <td className="px-5 py-3">
                     <p className="font-medium text-gray-900">

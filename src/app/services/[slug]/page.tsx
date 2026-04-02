@@ -20,10 +20,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = getServiceBySlug(slug);
   if (!service) return {};
+  const title = `${service.title} in Beirut — Haven Medical`;
+  const description = `${service.shortDescription} Expert ${service.title.toLowerCase()} treatment at Haven Medical Clinic, Beirut, Lebanon. Board-certified specialists. Book your consultation today.`;
   return {
-    title: service.title,
-    description: service.shortDescription,
-    alternates: { canonical: `https://www.havenmedical.com/services/${slug}` },
+    title,
+    description,
+    alternates: { canonical: `https://www.haven-beautyclinic.com/services/${slug}` },
+    openGraph: {
+      title,
+      description: service.shortDescription,
+      url: `https://www.haven-beautyclinic.com/services/${slug}`,
+      images: [{ url: service.heroImage, width: 1200, height: 630, alt: `${service.title} at Haven Medical Beirut` }],
+    },
   };
 }
 

@@ -3,12 +3,19 @@ import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { services, serviceCategories, getServicesByCategory } from "@/data/services";
+import { getServiceListSchema, getBreadcrumbSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "All Services — Aesthetic, Surgical & Wellness Treatments",
   description:
-    "Explore our comprehensive range of aesthetic treatments, surgical procedures, medical consultations, and wellness services at Haven Medical.",
+    "Explore 17+ treatments at Haven Medical Beirut: Botox, fillers, rhinoplasty, laser hair removal, face lifting, skin boosters, physiotherapy, nutritionist, and more. Board-certified specialists.",
+  alternates: { canonical: "https://www.haven-beautyclinic.com/services" },
+  openGraph: {
+    title: "Haven Medical Services — Aesthetic & Medical Treatments in Beirut",
+    description: "Botox, fillers, rhinoplasty, laser hair removal, face lifting, physiotherapy, and 10+ more treatments by certified specialists.",
+    url: "https://www.haven-beautyclinic.com/services",
+  },
 };
 
 export default function ServicesPage() {
@@ -17,8 +24,17 @@ export default function ServicesPage() {
     (typeof serviceCategories)[keyof typeof serviceCategories]
   ][];
 
+  const serviceListSchema = getServiceListSchema(services);
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Services", url: "/services" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceListSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-gradient-to-br from-muted via-background to-muted-dark">
         <div className="max-w-7xl mx-auto px-6 text-center">

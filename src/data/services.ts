@@ -66,7 +66,7 @@ export const services: Service[] = [
     shortDescription: "Permanent hair reduction with state-of-the-art laser technology for smooth, hair-free skin.",
     category: "aesthetic",
     icon: Zap,
-    heroImage: "/images/services/laser-hair-removal.png",
+    heroImage: "/images/services/laser-hair-removal.webp",
     overview: "Our advanced laser hair removal uses the latest diode and alexandrite laser technology to target hair follicles precisely. This FDA-approved treatment delivers long-lasting results with minimal discomfort, suitable for all skin types.",
     whoIsItFor: "Ideal for anyone looking to eliminate unwanted hair on the face, arms, legs, underarms, bikini area, back, or chest. Suitable for men and women of all skin types.",
     benefits: [
@@ -102,7 +102,7 @@ export const services: Service[] = [
     shortDescription: "Restore youthful volume and smooth wrinkles with expert injectable treatments.",
     category: "aesthetic",
     icon: Syringe,
-    heroImage: "/images/services/botox-fillers.png",
+    heroImage: "/images/services/botox-fillers.webp",
     overview: "Our skilled practitioners use premium-grade botulinum toxin and hyaluronic acid fillers to rejuvenate your appearance naturally. Each treatment is customized to your unique facial anatomy for beautiful, balanced results.",
     whoIsItFor: "Adults seeking to reduce fine lines, wrinkles, and loss of facial volume. Ideal for forehead lines, crow's feet, nasolabial folds, lips, and jawline enhancement.",
     benefits: [
@@ -138,7 +138,7 @@ export const services: Service[] = [
     shortDescription: "Deep hydration and rejuvenation treatments for radiant, glowing skin from within.",
     category: "aesthetic",
     icon: Droplets,
-    heroImage: "/images/services/skin-boosters.png",
+    heroImage: "/images/services/skin-boosters.webp",
     overview: "Skin boosters deliver hyaluronic acid micro-injections deep into the skin to improve hydration, elasticity, and overall skin quality. Unlike fillers, skin boosters hydrate the skin from within for a natural, dewy glow.",
     whoIsItFor: "Anyone experiencing dull, dehydrated, or tired-looking skin. Ideal for those wanting to improve skin texture, fine lines, and overall radiance without altering facial features.",
     benefits: [
@@ -173,7 +173,7 @@ export const services: Service[] = [
     shortDescription: "Customized facial therapies combining medical expertise with luxury skincare.",
     category: "aesthetic",
     icon: Sparkles,
-    heroImage: "/images/services/facial-treatments.jpg",
+    heroImage: "/images/services/facial-treatments.webp",
     overview: "Our medical-grade facial treatments combine advanced skincare technologies with luxurious techniques. From deep cleansing and chemical peels to microneedling and LED therapy, each treatment is tailored to your specific skin concerns.",
     whoIsItFor: "Anyone seeking professional skincare solutions for acne, aging, hyperpigmentation, dull skin, or simply wanting to maintain healthy, glowing skin.",
     benefits: [
@@ -208,7 +208,7 @@ export const services: Service[] = [
     shortDescription: "Expert nose reshaping surgery for improved aesthetics and function.",
     category: "surgical",
     icon: SmilePlus,
-    heroImage: "/images/services/rhinoplasty.png",
+    heroImage: "/images/services/rhinoplasty.webp",
     overview: "Rhinoplasty at Haven Medical is performed by highly experienced surgeons who specialize in both aesthetic and functional nose surgery. We use the latest techniques to achieve natural, harmonious results that complement your facial features.",
     whoIsItFor: "Individuals seeking to improve the shape, size, or proportion of their nose, or those with breathing difficulties due to structural issues.",
     benefits: [
@@ -244,7 +244,7 @@ export const services: Service[] = [
     shortDescription: "Eyelid surgery to rejuvenate and refresh your eye area for a youthful look.",
     category: "surgical",
     icon: Eye,
-    heroImage: "/images/services/blepharoplasty.jpg",
+    heroImage: "/images/services/blepharoplasty.webp",
     overview: "Blepharoplasty removes excess skin, fat, and muscle from the upper and/or lower eyelids to create a more youthful, refreshed appearance. Our surgeons use precise techniques to achieve natural results that open up the eyes.",
     whoIsItFor: "Adults experiencing drooping upper eyelids, under-eye bags, or excess skin around the eyes that creates a tired or aged appearance.",
     benefits: [
@@ -279,7 +279,7 @@ export const services: Service[] = [
     shortDescription: "Advanced surgical face lifting to restore youthful contours and firmness.",
     category: "surgical",
     icon: Heart,
-    heroImage: "/images/services/face-lifting.png",
+    heroImage: "/images/services/face-lifting.webp",
     overview: "Our facelift procedures address sagging skin, deep folds, and loss of jawline definition. Using modern surgical techniques, we achieve natural-looking rejuvenation that turns back the clock while preserving your unique features.",
     whoIsItFor: "Men and women experiencing significant signs of facial aging including jowls, sagging cheeks, deep nasolabial folds, and neck laxity.",
     benefits: [
@@ -314,7 +314,7 @@ export const services: Service[] = [
     shortDescription: "Surgical enhancement to create a more defined, youthful upper lip.",
     category: "surgical",
     icon: SmilePlus,
-    heroImage: "/images/services/lip-lift.png",
+    heroImage: "/images/services/lip-lift.webp",
     overview: "A lip lift is a subtle surgical procedure that shortens the distance between the nose and the upper lip, creating a more youthful and defined lip appearance. Unlike fillers, a lip lift provides a permanent enhancement of your lip contour.",
     whoIsItFor: "Individuals who feel their upper lip appears thin or elongated, or those seeking a more permanent alternative to lip fillers for upper lip enhancement.",
     benefits: [
@@ -349,7 +349,7 @@ export const services: Service[] = [
     shortDescription: "Ear reshaping surgery for improved symmetry and confidence.",
     category: "surgical",
     icon: Ear,
-    heroImage: "/images/services/otoplasty.png",
+    heroImage: "/images/services/otoplasty.webp",
     overview: "Otoplasty corrects protruding or misshapen ears through precise surgical reshaping. Our surgeons create natural-looking results that bring balance to your facial features and boost your confidence.",
     whoIsItFor: "Children (from age 5) and adults who are self-conscious about protruding, asymmetrical, or unusually shaped ears.",
     benefits: [
@@ -384,7 +384,7 @@ export const services: Service[] = [
     shortDescription: "Expert ear, nose, and throat consultations for comprehensive ENT care.",
     category: "medical",
     icon: Stethoscope,
-    heroImage: "/images/services/orl-consultations.png",
+    heroImage: "/images/services/orl-consultations.webp",
     overview: "Our ORL (Otorhinolaryngology) specialists provide comprehensive consultations for ear, nose, and throat conditions. From chronic sinusitis and hearing issues to voice disorders, we offer thorough diagnostic evaluations and treatment plans.",
     whoIsItFor: "Patients experiencing ear infections, hearing loss, nasal congestion, sinusitis, throat problems, snoring, or any ENT-related concerns.",
     benefits: [
@@ -419,7 +419,7 @@ export const services: Service[] = [
     shortDescription: "Specialized gynecological aesthetic treatments in a confidential, caring environment.",
     category: "medical",
     icon: Heart,
-    heroImage: "/images/services/gyneco-aesthetic.png",
+    heroImage: "/images/services/gyneco-aesthetic.webp",
     overview: "Our gyneco-aesthetic services address intimate concerns with the utmost discretion and professionalism. Using the latest medical technologies, we offer treatments to improve comfort, confidence, and quality of life.",
     whoIsItFor: "Women seeking solutions for intimate aesthetic or functional concerns, including post-childbirth changes, hormonal effects, or age-related changes.",
     benefits: [
@@ -453,7 +453,7 @@ export const services: Service[] = [
     shortDescription: "Professional psychosexual therapy for intimate health and wellbeing.",
     category: "medical",
     icon: Brain,
-    heroImage: "/images/services/psychosexology.png",
+    heroImage: "/images/services/psychosexology.webp",
     overview: "Our psychosexology services provide professional, empathetic counseling for sexual and intimate health concerns. Our qualified therapists offer a safe, non-judgmental space to address psychological and relational aspects of sexual wellbeing.",
     whoIsItFor: "Individuals or couples experiencing sexual difficulties, intimacy concerns, relationship challenges related to sexual health, or seeking to improve their intimate wellbeing.",
     benefits: [
@@ -487,7 +487,7 @@ export const services: Service[] = [
     shortDescription: "Expert physiotherapy for rehabilitation, pain management, and physical wellness.",
     category: "medical",
     icon: Activity,
-    heroImage: "/images/services/physiotherapy.png",
+    heroImage: "/images/services/physiotherapy.webp",
     overview: "Our physiotherapy department offers evidence-based treatments for musculoskeletal conditions, sports injuries, post-surgical rehabilitation, and chronic pain. Our qualified physiotherapists develop personalized programs to restore mobility and enhance your quality of life.",
     whoIsItFor: "Anyone experiencing pain, limited mobility, sports injuries, post-surgical recovery needs, or seeking preventive physical health maintenance.",
     benefits: [
@@ -522,7 +522,7 @@ export const services: Service[] = [
     shortDescription: "Personalized nutrition plans for optimal health, wellness, and body composition.",
     category: "medical",
     icon: Apple,
-    heroImage: "/images/services/nutritionist.jpg",
+    heroImage: "/images/services/nutritionist.webp",
     overview: "Our nutrition specialists provide science-based dietary guidance tailored to your unique needs. From weight management and body composition optimization to medical nutrition therapy, we help you achieve lasting health through proper nutrition.",
     whoIsItFor: "Anyone seeking to improve their diet, manage weight, optimize body composition, address nutritional deficiencies, or manage diet-related health conditions.",
     benefits: [
@@ -561,7 +561,7 @@ export const services: Service[] = [
     shortDescription: "Gentle massage technique to stimulate lymph flow and reduce swelling.",
     category: "wellness",
     icon: Leaf,
-    heroImage: "/images/services/lymphatic-drainage.png",
+    heroImage: "/images/services/lymphatic-drainage.webp",
     overview: "Manual lymphatic drainage is a gentle, rhythmic massage technique that stimulates the lymphatic system to reduce fluid retention, boost immunity, and promote detoxification. This therapeutic treatment is both relaxing and medically beneficial.",
     whoIsItFor: "Individuals experiencing fluid retention, post-surgical swelling, heavy legs, or those seeking detoxification and immune system support.",
     benefits: [
@@ -596,7 +596,7 @@ export const services: Service[] = [
     shortDescription: "Targeted massage therapy for chronic tension, pain relief, and muscle recovery.",
     category: "wellness",
     icon: HandMetal,
-    heroImage: "/images/services/deep-tissue-massage.jpg",
+    heroImage: "/images/services/deep-tissue-massage.webp",
     overview: "Our deep tissue massage targets the deeper layers of muscle and connective tissue to release chronic tension patterns, alleviate pain, and promote muscle recovery. Our trained therapists use firm pressure and specialized techniques for therapeutic results.",
     whoIsItFor: "Individuals with chronic muscle tension, athletes needing recovery, those with postural problems, or anyone seeking deep muscular relief.",
     benefits: [
@@ -631,7 +631,7 @@ export const services: Service[] = [
     shortDescription: "Professional medical foot care for nail health and foot wellness.",
     category: "wellness",
     icon: Scissors,
-    heroImage: "/images/services/medical-pedicure.jpg",
+    heroImage: "/images/services/nail-repair.webp",
     overview: "Our medical pedicure goes beyond cosmetic foot care to address medical podiatric conditions. Performed in a sterile clinical environment using specialized instruments, we treat ingrown nails, fungal infections, calluses, and more.",
     whoIsItFor: "Anyone with nail problems, fungal infections, diabetic foot concerns, ingrown toenails, or those seeking professional clinical-grade foot care.",
     benefits: [

@@ -18,8 +18,9 @@ import {
 import { gsap } from "gsap";
 import { services, serviceCategories } from "@/data/services";
 import { doctors, testimonials, clinicInfo } from "@/data/clinic";
-import { blogPosts } from "@/data/blog";
+import type { BlogPost } from "@/data/blog";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import SocialFeed from "@/components/SocialFeed";
 
 // ── GSAP scroll-triggered reveal hook ─────────────────────────────────
 function useGsapReveal(direction: "up" | "left" | "right" = "up") {
@@ -177,7 +178,7 @@ function HeroSection() {
         <div className="hidden lg:block relative" aria-hidden="true">
           <div data-anim="image" className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary">
             <Image
-              src="/og-image.png"
+              src="/og-image.webp"
               alt="Haven Medical & Beauty Clinic"
               fill
               className="object-cover"
@@ -220,9 +221,8 @@ function HeroSection() {
 }
 
 // ── Main page export ──────────────────────────────────────────────────
-export default function HomePage() {
+export default function HomePage({ latestPosts }: { latestPosts: BlogPost[] }) {
   const featuredServices = services.slice(0, 6);
-  const latestPosts = blogPosts.slice(0, 3);
 
   const servicesHeaderRef = useGsapReveal("up");
   const servicesGridRef = useStaggerChildren(0.1);
@@ -327,7 +327,7 @@ export default function HomePage() {
           <div ref={aboutImageRef}>
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg relative bg-gradient-to-br from-secondary to-secondary-light">
               <Image
-                src="/images/services/psychosexology.png"
+                src="/images/services/psychosexology.webp"
                 alt="Haven Medical clinic interior"
                 fill
                 className="object-cover"
@@ -505,6 +505,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Social Media Feeds */}
+      <SocialFeed />
 
       {/* Booking CTA */}
       <section className="py-20 lg:py-28 bg-dark text-white relative overflow-hidden" aria-labelledby="booking-heading">

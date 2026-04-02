@@ -6,9 +6,15 @@ import { getWhatsAppUrl } from "@/lib/whatsapp";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gift Voucher",
+  title: "Gift Voucher — Beauty & Wellness Gifts",
   description:
-    "Give the gift of beauty and wellness with a Haven Medical gift voucher. Choose from our treatments or set a custom value.",
+    "Give the gift of beauty, wellness, and confidence with a Haven Medical gift voucher. Choose Botox, facial treatments, massages, or set a custom value from $50-$500.",
+  alternates: { canonical: "https://www.haven-beautyclinic.com/gift-voucher" },
+  openGraph: {
+    title: "Haven Medical Gift Vouchers — Give the Gift of Beauty",
+    description: "Gift vouchers for aesthetic treatments and wellness services at Haven Medical Beirut.",
+    url: "https://www.haven-beautyclinic.com/gift-voucher",
+  },
 };
 
 const voucherAmounts = [50, 100, 150, 200, 300, 500];

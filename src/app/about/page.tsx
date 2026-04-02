@@ -1,17 +1,33 @@
 import { Shield, Award, Users, Heart, Target, Eye } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { doctors } from "@/data/clinic";
+import { getAboutPageSchema, getBreadcrumbSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "About Us — Board-Certified Specialists in Beirut",
   description:
-    "Learn about Haven Medical — our story, mission, medical philosophy, and the certified specialists dedicated to your care.",
+    "Meet Haven Medical's board-certified plastic surgeons, dermatologists, and aesthetic specialists in Beirut, Lebanon. 15+ years of experience, 5,000+ satisfied patients.",
+  alternates: { canonical: "https://www.haven-beautyclinic.com/about" },
+  openGraph: {
+    title: "About Haven Medical — Our Story & Specialists",
+    description: "Board-certified plastic surgeons, dermatologists, and aesthetic specialists in Beirut with 15+ years of experience.",
+    url: "https://www.haven-beautyclinic.com/about",
+  },
 };
 
 export default function AboutPage() {
+  const aboutSchema = getAboutPageSchema();
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "About", url: "/about" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-gradient-to-br from-muted via-background to-muted-dark">
         <div className="max-w-7xl mx-auto px-6 text-center">

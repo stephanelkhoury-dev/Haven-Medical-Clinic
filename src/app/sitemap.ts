@@ -1,11 +1,18 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/data/services";
-import { blogPosts } from "@/data/blog";
+import { getDb } from "@/lib/db";
 
-const BASE = "https://www.havenmedical.com";
+const BASE = "https://www.haven-beautyclinic.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
+
+  let blogSlugs: string[] = [];
+  try {
+    const sql = getDb();
+    const rows = await sql`SELECT slug FROM blog_posts`;
+    blogSlugs = rows.map((r) => r.slug as string);
+  } catch { /* fallback to empty */ }
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
@@ -25,8 +32,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const blogPages: MetadataRoute.Sitemap = blogPosts.map((p) => ({
-    url: `${BASE}/blog/${p.slug}`,
+  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${BASE}/blog/${slug}`,
     lastModified: now,
     changeFrequency: "monthly" as const,
     priority: 0.6,

@@ -83,7 +83,7 @@ export default function AppointmentPage() {
                       required
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="+961 XX XXX XXX"
+                      placeholder="+961 71 888 930"
                       className="w-full px-4 py-3 rounded-lg border border-border bg-background text-dark placeholder:text-dark-light/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                     />
                   </div>
