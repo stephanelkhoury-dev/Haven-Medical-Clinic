@@ -134,9 +134,13 @@ export async function POST() {
         size_bytes INTEGER DEFAULT 0,
         width INTEGER,
         height INTEGER,
-        uploaded_at TEXT NOT NULL DEFAULT ''
+        uploaded_at TEXT NOT NULL DEFAULT '',
+        file_data BYTEA
       )
     `;
+
+    // Add file_data column if missing (existing tables)
+    await sql`ALTER TABLE media ADD COLUMN IF NOT EXISTS file_data BYTEA`;
 
     await sql`
       CREATE TABLE IF NOT EXISTS doctors (

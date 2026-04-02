@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Edit, Trash2, Save, X, GripVertical } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, GripVertical, Upload, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 interface Doctor {
@@ -24,6 +24,7 @@ export default function AdminDoctors() {
   const [isNew, setIsNew] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -66,6 +67,24 @@ export default function AdminDoctors() {
       setDeleteConfirm(null);
       showToast("Doctor removed");
     } catch { showToast("Failed to delete"); }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("category", "doctors");
+      fd.append("alt", editing.name || file.name);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error); }
+      const { url } = await res.json();
+      setEditing({ ...editing, image: url });
+      showToast("Image uploaded");
+    } catch (err) { showToast(err instanceof Error ? err.message : "Upload failed"); }
+    setUploading(false);
   };
 
   return (
@@ -142,7 +161,6 @@ export default function AdminDoctors() {
                 { label: "Full Name", key: "name", placeholder: "Dr. John Doe" },
                 { label: "Title / Role", key: "title", placeholder: "Medical Director" },
                 { label: "Specialty", key: "specialty", placeholder: "Plastic & Reconstructive Surgery" },
-                { label: "Image URL", key: "image", placeholder: "/images/doctors/photo.webp" },
               ].map(({ label, key, placeholder }) => (
                 <div key={key}>
                   <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
@@ -155,6 +173,46 @@ export default function AdminDoctors() {
                   />
                 </div>
               ))}
+
+              {/* Image Upload */}
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Photo</label>
+                <div className="flex items-start gap-4">
+                  {/* Preview */}
+                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 shrink-0 relative">
+                    {editing.image ? (
+                      <Image src={editing.image} alt="Preview" fill className="object-cover" sizes="96px" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <label className={`flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+                      {uploading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+                      ) : (
+                        <><Upload className="w-4 h-4" /> Choose File</>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                      />
+                    </label>
+                    <p className="text-[11px] text-gray-400">JPEG, PNG, WebP or GIF. Max 5 MB.</p>
+                    {/* Fallback manual URL input */}
+                    <input
+                      type="text"
+                      value={editing.image}
+                      onChange={(e) => setEditing({ ...editing, image: e.target.value })}
+                      placeholder="Or paste image URL"
+                      className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-500 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    />
+                  </div>
+                </div>
+              </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Bio</label>
                 <textarea
