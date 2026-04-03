@@ -6,14 +6,14 @@
   --color-primary: #1fbda6;
   --color-primary-light: #3dd4bd;
   --color-primary-dark: #179e8b;
-  --color-secondary: #616161;
-  --color-secondary-light: #8a8a8a;
+  --color-secondary: #555555;
+  --color-secondary-light: #757575;
   --color-accent: #1fbda6;
   --color-accent-light: #66d4c3;
   --color-muted: #F2F4F3;
   --color-muted-dark: #E4E8E6;
   --color-dark: #3b3b3b;
-  --color-dark-light: #616161;
+  --color-dark-light: #555555;
   --color-white: #FFFFFF;
   --color-border: #D9E0DD;
   --color-border-light: #EDF0EE;
@@ -188,4 +188,11 @@ body {
 }
 .img-reveal.revealed {
   clip-path: inset(0 0 0 0);
+}
+
+/* ── Scroll reveal (CLS-safe) ────────────────────────────── */
+.scroll-reveal-hidden {
+  opacity: 0;
+  will-change: opacity, transform;
+  contain: layout style;
 }

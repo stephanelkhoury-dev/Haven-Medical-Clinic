@@ -29,7 +29,6 @@ import {
   Scissors,
   type LucideIcon,
 } from "lucide-react";
-import { gsap } from "gsap";
 import { clinicInfo } from "@/data/clinic";
 import type { BlogPost } from "@/data/blog";
 
@@ -48,7 +47,21 @@ const serviceCategories: Record<string, { label: string }> = {
   wellness: { label: "Wellness & Body Care" },
 };
 import { getWhatsAppUrl } from "@/lib/whatsapp";
-import SocialFeed from "@/components/SocialFeed";
+import dynamic from "next/dynamic";
+
+const SocialFeed = dynamic(() => import("@/components/SocialFeed"), {
+  ssr: false,
+  loading: () => <div className="py-16" />,
+});
+
+async function loadGsap() {
+  const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+    import("gsap"),
+    import("gsap/ScrollTrigger"),
+  ]);
+  gsap.registerPlugin(ScrollTrigger);
+  return gsap;
+}
 
 // ── GSAP scroll-triggered reveal hook ─────────────────────────────────
 function useGsapReveal(direction: "up" | "left" | "right" = "up") {
@@ -57,26 +70,17 @@ function useGsapReveal(direction: "up" | "left" | "right" = "up") {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let ScrollTrigger: typeof import("gsap/ScrollTrigger").ScrollTrigger;
-
-    import("gsap/ScrollTrigger").then((mod) => {
-      ScrollTrigger = mod.ScrollTrigger;
-      gsap.registerPlugin(ScrollTrigger);
-
+    loadGsap().then((gsap) => {
       const axis = direction === "up" ? "y" : "x";
-      const dist = direction === "right" ? -50 : 50;
+      const dist = direction === "right" ? -30 : 30;
 
-      gsap.fromTo(
-        el,
-        { opacity: 0, [axis]: dist },
-        {
-          opacity: 1,
-          [axis]: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 85%", once: true },
-        }
-      );
+      gsap.from(el, {
+        opacity: 0,
+        [axis]: dist,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 85%", once: true },
+      });
     });
   }, [direction]);
   return ref;
@@ -88,20 +92,15 @@ function useStaggerChildren(stagger = 0.12) {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    import("gsap/ScrollTrigger").then((mod) => {
-      gsap.registerPlugin(mod.ScrollTrigger);
-      gsap.fromTo(
-        el.children,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          stagger,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 80%", once: true },
-        }
-      );
+    loadGsap().then((gsap) => {
+      gsap.from(el.children, {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        stagger,
+        ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 80%", once: true },
+      });
     });
   }, [stagger]);
   return ref;
@@ -118,8 +117,7 @@ function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
       return;
     }
 
-    import("gsap/ScrollTrigger").then((mod) => {
-      gsap.registerPlugin(mod.ScrollTrigger);
+    loadGsap().then((gsap) => {
       const obj = { val: 0 };
       gsap.to(obj, {
         val: value,
@@ -143,23 +141,22 @@ function HeroSection() {
     const el = heroRef.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-    const subtitle = el.querySelector("[data-anim='subtitle']");
-    const title = el.querySelector("[data-anim='title']");
-    const desc = el.querySelector("[data-anim='desc']");
-    const cta = el.querySelector("[data-anim='cta']");
-    const image = el.querySelector("[data-anim='image']");
-    const floats = el.querySelectorAll("[data-anim='float']");
+    loadGsap().then((gsap) => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const subtitle = el.querySelector("[data-anim='subtitle']");
+      const title = el.querySelector("[data-anim='title']");
+      const desc = el.querySelector("[data-anim='desc']");
+      const cta = el.querySelector("[data-anim='cta']");
+      const image = el.querySelector("[data-anim='image']");
+      const floats = el.querySelectorAll("[data-anim='float']");
 
-    tl.set([subtitle, title, desc, cta], { opacity: 0, y: 50 })
-      .set(image, { opacity: 0, scale: 0.9, x: 30 })
-      .set(floats, { opacity: 0, y: 30, scale: 0.9 })
-      .to(subtitle, { opacity: 1, y: 0, duration: 0.7 }, 0.3)
-      .to(title, { opacity: 1, y: 0, duration: 0.9 }, 0.5)
-      .to(desc, { opacity: 1, y: 0, duration: 0.7 }, 0.8)
-      .to(cta, { opacity: 1, y: 0, duration: 0.6 }, 1.0)
-      .to(image, { opacity: 1, scale: 1, x: 0, duration: 1.2 }, 0.4)
-      .to(floats, { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.2 }, 1.1);
+      tl.from(subtitle, { opacity: 0, y: 30, duration: 0.7 }, 0.3)
+        .from(title, { opacity: 0, y: 30, duration: 0.9 }, 0.5)
+        .from(desc, { opacity: 0, y: 30, duration: 0.7 }, 0.8)
+        .from(cta, { opacity: 0, y: 30, duration: 0.6 }, 1.0)
+        .from(image, { opacity: 0, scale: 0.95, x: 20, duration: 1.2 }, 0.4)
+        .from(floats, { opacity: 0, y: 20, scale: 0.95, duration: 0.7, stagger: 0.2 }, 1.1);
+    });
   }, []);
 
   return (

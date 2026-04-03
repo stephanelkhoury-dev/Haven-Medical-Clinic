@@ -19,8 +19,8 @@ export default function ScrollReveal({ children, className = "", delay = 0 }: Pr
       ([entry]) => {
         if (entry.isIntersecting) {
           setTimeout(() => {
+            el.classList.remove("scroll-reveal-hidden");
             el.classList.add("animate-fade-in-up");
-            el.style.opacity = "1";
           }, delay);
           observer.unobserve(el);
         }
@@ -33,7 +33,7 @@ export default function ScrollReveal({ children, className = "", delay = 0 }: Pr
   }, [delay]);
 
   return (
-    <div ref={ref} className={className} style={{ opacity: 0 }}>
+    <div ref={ref} className={`scroll-reveal-hidden ${className}`}>
       {children}
     </div>
   );
