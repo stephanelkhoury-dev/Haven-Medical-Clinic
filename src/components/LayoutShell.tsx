@@ -18,7 +18,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     <>
       <ScrollProgress />
       <Header />
-      <main id="main-content" className="flex-1" role="main">
+      <main id="main-content" className="flex-1">
         {children}
       </main>
       <Footer />

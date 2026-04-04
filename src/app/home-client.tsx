@@ -54,23 +54,36 @@ const SocialFeed = dynamic(() => import("@/components/SocialFeed"), {
   loading: () => <div className="py-16" />,
 });
 
-async function loadGsap() {
-  const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-    import("gsap"),
-    import("gsap/ScrollTrigger"),
-  ]);
-  gsap.registerPlugin(ScrollTrigger);
-  return gsap;
+// ── Deferred GSAP loader — only loads after page is idle ──────────────
+let gsapPromise: Promise<typeof import("gsap").gsap> | null = null;
+function loadGsapDeferred() {
+  if (!gsapPromise) {
+    gsapPromise = new Promise((resolve) => {
+      const load = () =>
+        Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(
+          ([{ gsap }, { ScrollTrigger }]) => {
+            gsap.registerPlugin(ScrollTrigger);
+            resolve(gsap);
+          }
+        );
+      if (typeof requestIdleCallback !== "undefined") {
+        requestIdleCallback(load, { timeout: 2000 });
+      } else {
+        setTimeout(load, 100);
+      }
+    });
+  }
+  return gsapPromise;
 }
 
-// ── GSAP scroll-triggered reveal hook ─────────────────────────────────
+// ── GSAP scroll-triggered reveal hook (deferred) ──────────────────────
 function useGsapReveal(direction: "up" | "left" | "right" = "up") {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    loadGsap().then((gsap) => {
+    loadGsapDeferred().then((gsap) => {
       const axis = direction === "up" ? "y" : "x";
       const dist = direction === "right" ? -30 : 30;
 
@@ -92,7 +105,7 @@ function useStaggerChildren(stagger = 0.12) {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    loadGsap().then((gsap) => {
+    loadGsapDeferred().then((gsap) => {
       gsap.from(el.children, {
         opacity: 0,
         y: 30,
@@ -106,7 +119,7 @@ function useStaggerChildren(stagger = 0.12) {
   return ref;
 }
 
-// ── Animated counter ──────────────────────────────────────────────────
+// ── Animated counter (deferred GSAP) ──────────────────────────────────
 function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -117,7 +130,7 @@ function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
       return;
     }
 
-    loadGsap().then((gsap) => {
+    loadGsapDeferred().then((gsap) => {
       const obj = { val: 0 };
       gsap.to(obj, {
         val: value,
@@ -133,35 +146,10 @@ function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
   return <span ref={ref} aria-label={`${value}${suffix}`}>0</span>;
 }
 
-// ── Hero component with GSAP timeline ─────────────────────────────────
+// ── Hero component with pure CSS animations (no GSAP) ────────────────
 function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    loadGsap().then((gsap) => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      const subtitle = el.querySelector("[data-anim='subtitle']");
-      const title = el.querySelector("[data-anim='title']");
-      const desc = el.querySelector("[data-anim='desc']");
-      const cta = el.querySelector("[data-anim='cta']");
-      const image = el.querySelector("[data-anim='image']");
-      const floats = el.querySelectorAll("[data-anim='float']");
-
-      tl.from(subtitle, { opacity: 0, y: 30, duration: 0.7 }, 0.3)
-        .from(title, { opacity: 0, y: 30, duration: 0.9 }, 0.5)
-        .from(desc, { opacity: 0, y: 30, duration: 0.7 }, 0.8)
-        .from(cta, { opacity: 0, y: 30, duration: 0.6 }, 1.0)
-        .from(image, { opacity: 0, scale: 0.95, x: 20, duration: 1.2 }, 0.4)
-        .from(floats, { opacity: 0, y: 20, scale: 0.95, duration: 0.7, stagger: 0.2 }, 1.1);
-    });
-  }, []);
-
   return (
     <section
-      ref={heroRef}
       className="relative min-h-screen flex items-center bg-gradient-to-br from-muted via-background to-muted-dark overflow-hidden"
       aria-label="Welcome to Haven Medical"
     >
@@ -172,19 +160,19 @@ function HeroSection() {
 
       <div className="relative max-w-7xl mx-auto px-6 py-32 lg:py-40 grid lg:grid-cols-2 gap-12 items-center">
         <div>
-          <p data-anim="subtitle" className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-4 flex items-center gap-2">
+          <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-4 flex items-center gap-2 animate-fade-in-up stagger-1">
             <Sparkles className="w-4 h-4" aria-hidden="true" />
             Welcome to Haven Medical
           </p>
-          <h1 data-anim="title" className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dark leading-[1.1] mb-6">
+          <h1 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dark leading-[1.1] mb-6 animate-fade-in-up stagger-2">
             Where Medical Excellence{" "}
             <span className="gradient-text">Meets Luxury Care</span>
           </h1>
-          <p data-anim="desc" className="text-lg text-dark-light leading-relaxed mb-8 max-w-lg">
+          <p className="text-lg text-dark-light leading-relaxed mb-8 max-w-lg animate-fade-in-up stagger-3">
             Experience premium aesthetic and medical treatments delivered by
             certified specialists in a refined, welcoming environment.
           </p>
-          <div data-anim="cta" className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 animate-fade-in-up stagger-4">
             <Link
               href="/appointment"
               className="group inline-flex items-center gap-2 bg-primary text-white px-7 py-3.5 rounded-full font-medium hover:bg-primary-dark transition-all hover:shadow-lg hover:shadow-primary/25 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -201,7 +189,7 @@ function HeroSection() {
           </div>
         </div>
         <div className="hidden lg:block relative" aria-hidden="true">
-          <div data-anim="image" className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary">
+          <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary animate-fade-in stagger-2">
             <Image
               src="/og-image.webp"
               alt="Haven Medical & Beauty Clinic"
@@ -213,7 +201,7 @@ function HeroSection() {
           </div>
 
           {/* Floating cards */}
-          <div data-anim="float" className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3 animate-gentle-bob">
+          <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3 animate-gentle-bob animate-fade-in stagger-5">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Award className="w-5 h-5 text-primary" />
             </div>
@@ -222,7 +210,7 @@ function HeroSection() {
               <p className="text-xs text-dark-light">Board-certified doctors</p>
             </div>
           </div>
-          <div data-anim="float" className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3 animate-gentle-bob" style={{ animationDelay: "2s" }}>
+          <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3 animate-gentle-bob animate-fade-in stagger-6" style={{ animationDelay: "2s" }}>
             <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
               <Star className="w-5 h-5 text-accent fill-accent" />
             </div>
