@@ -529,7 +529,17 @@ export default function HomePage({
             {latestPosts.map((post) => (
               <article key={post.slug}>
                 <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-xl overflow-hidden border border-border-light card-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
-                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary" aria-hidden="true" />
+                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                    {post.image && (
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    )}
+                  </div>
                   <div className="p-5">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs text-primary font-medium">{post.category}</span>
