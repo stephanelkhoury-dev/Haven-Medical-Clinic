@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Check, Star, ArrowRight } from "lucide-react";
+import { Check, Star, ArrowRight, Award, CalendarCheck, Gift } from "lucide-react";
 import { getDb } from "@/lib/db";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -138,23 +138,25 @@ export default async function MembershipPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                icon: "💎",
+                icon: Award,
                 title: "Exclusive Savings",
                 desc: "Enjoy preferential rates on all treatments and products with your membership tier.",
               },
               {
-                icon: "📅",
+                icon: CalendarCheck,
                 title: "Priority Booking",
                 desc: "Skip the queue with priority scheduling for all appointments and consultations.",
               },
               {
-                icon: "🎁",
+                icon: Gift,
                 title: "Member-Only Perks",
                 desc: "Access exclusive events, complimentary treatments, and personalized wellness plans.",
               },
             ].map((benefit) => (
               <div key={benefit.title} className="text-center">
-                <span className="text-4xl block mb-3">{benefit.icon}</span>
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                  <benefit.icon className="w-7 h-7 text-primary" />
+                </div>
                 <h3 className="font-semibold text-dark mb-2">
                   {benefit.title}
                 </h3>
