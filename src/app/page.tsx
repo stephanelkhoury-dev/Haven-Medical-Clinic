@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.haven-beautyclinic.com" },
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 async function getLatestPosts() {
   try {

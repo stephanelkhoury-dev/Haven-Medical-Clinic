@@ -7,7 +7,7 @@ import { getDb } from "@/lib/db";
 import { getArticleSchema, getBreadcrumbSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 async function getAllPosts() {
   try {

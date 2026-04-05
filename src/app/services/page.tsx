@@ -6,7 +6,7 @@ import { getServiceListSchema, getBreadcrumbSchema } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const iconMap: Record<string, LucideIcon> = {
   Sparkles, Zap, Syringe, Droplets, SmilePlus, Eye, Heart, Ear,

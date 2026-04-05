@@ -5,7 +5,7 @@ import { getAboutPageSchema, getBreadcrumbSchema } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "About Us — Board-Certified Specialists in Beirut",
