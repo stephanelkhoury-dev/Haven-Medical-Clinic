@@ -54,7 +54,7 @@ const SocialFeed = dynamic(() => import("@/components/SocialFeed"), {
   loading: () => <div className="py-16" />,
 });
 
-// ── Deferred GSAP loader — only loads after page is idle ──────────────
+// ── Deferred GSAP loader — only for Counter animation ─────────────────
 let gsapPromise: Promise<typeof import("gsap").gsap> | null = null;
 function loadGsapDeferred() {
   if (!gsapPromise) {
@@ -76,46 +76,53 @@ function loadGsapDeferred() {
   return gsapPromise;
 }
 
-// ── GSAP scroll-triggered reveal hook (deferred) ──────────────────────
-function useGsapReveal(direction: "up" | "left" | "right" = "up") {
+// ── CSS-based scroll reveal (replaces GSAP) ───────────────────────────
+function useRevealOnScroll() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    loadGsapDeferred().then((gsap) => {
-      const axis = direction === "up" ? "y" : "x";
-      const dist = direction === "right" ? -30 : 30;
-
-      gsap.from(el, {
-        opacity: 0,
-        [axis]: dist,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: { trigger: el, start: "top 85%", once: true },
-      });
-    });
-  }, [direction]);
+    el.classList.add("scroll-reveal-hidden");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.remove("scroll-reveal-hidden");
+          el.classList.add("animate-fade-in-up");
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   return ref;
 }
 
-function useStaggerChildren(stagger = 0.12) {
+function useStaggerOnScroll(staggerMs = 120) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    loadGsapDeferred().then((gsap) => {
-      gsap.from(el.children, {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        stagger,
-        ease: "power3.out",
-        scrollTrigger: { trigger: el, start: "top 80%", once: true },
-      });
-    });
-  }, [stagger]);
+    const children = Array.from(el.children) as HTMLElement[];
+    children.forEach((child) => child.classList.add("scroll-reveal-hidden"));
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          children.forEach((child, i) => {
+            setTimeout(() => {
+              child.classList.remove("scroll-reveal-hidden");
+              child.classList.add("animate-fade-in-up");
+            }, i * staggerMs);
+          });
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [staggerMs]);
   return ref;
 }
 
@@ -271,23 +278,23 @@ export default function HomePage({
 }) {
   const featuredServices = services.slice(0, 6);
 
-  const servicesHeaderRef = useGsapReveal("up");
-  const servicesGridRef = useStaggerChildren(0.1);
-  const aboutImageRef = useGsapReveal("left");
-  const aboutTextRef = useGsapReveal("right");
-  const whyHeaderRef = useGsapReveal("up");
-  const whyGridRef = useStaggerChildren(0.12);
-  const doctorsHeaderRef = useGsapReveal("up");
-  const doctorsGridRef = useStaggerChildren(0.1);
-  const giftRef = useGsapReveal("up");
-  const testimonialsHeaderRef = useGsapReveal("up");
-  const testimonialsGridRef = useStaggerChildren(0.12);
-  const blogHeaderRef = useGsapReveal("up");
-  const blogGridRef = useStaggerChildren(0.1);
-  const bookingRef = useGsapReveal("up");
-  const contactTextRef = useGsapReveal("left");
-  const contactMapRef = useGsapReveal("right");
-  const statsRef = useStaggerChildren(0.15);
+  const servicesHeaderRef = useRevealOnScroll();
+  const servicesGridRef = useStaggerOnScroll(100);
+  const aboutImageRef = useRevealOnScroll();
+  const aboutTextRef = useRevealOnScroll();
+  const whyHeaderRef = useRevealOnScroll();
+  const whyGridRef = useStaggerOnScroll(120);
+  const doctorsHeaderRef = useRevealOnScroll();
+  const doctorsGridRef = useStaggerOnScroll(100);
+  const giftRef = useRevealOnScroll();
+  const testimonialsHeaderRef = useRevealOnScroll();
+  const testimonialsGridRef = useStaggerOnScroll(120);
+  const blogHeaderRef = useRevealOnScroll();
+  const blogGridRef = useStaggerOnScroll(100);
+  const bookingRef = useRevealOnScroll();
+  const contactTextRef = useRevealOnScroll();
+  const contactMapRef = useRevealOnScroll();
+  const statsRef = useStaggerOnScroll(150);
 
   return (
     <>
