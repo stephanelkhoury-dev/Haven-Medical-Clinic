@@ -257,6 +257,7 @@ interface DbDoctor {
   specialty: string;
   image: string;
   bio: string;
+  slug: string;
 }
 interface DbTestimonial {
   name: string;
@@ -452,20 +453,22 @@ export default function HomePage({
           <div ref={doctorsGridRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {doctors.map((doc) => (
               <article key={doc.name} className="bg-white rounded-xl overflow-hidden border border-border-light card-hover">
-                <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
-                  <Image
-                    src={doc.image}
-                    alt={doc.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-dark mb-1">{doc.name}</h3>
-                  <p className="text-xs text-primary font-medium mb-1">{doc.title}</p>
-                  <p className="text-xs text-dark-light">{doc.specialty}</p>
-                </div>
+                <Link href={doc.slug ? `/doctors/${doc.slug}` : "/about"} className="block">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                    <Image
+                      src={doc.image}
+                      alt={doc.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-dark mb-1">{doc.name}</h3>
+                    <p className="text-xs text-primary font-medium mb-1">{doc.title}</p>
+                    <p className="text-xs text-dark-light">{doc.specialty}</p>
+                  </div>
+                </Link>
               </article>
             ))}
           </div>

@@ -1,5 +1,6 @@
 import { Shield, Award, Users, Heart, Target, Eye } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import { getAboutPageSchema, getBreadcrumbSchema } from "@/lib/schema";
 import { getDb } from "@/lib/db";
@@ -20,16 +21,17 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  let doctors: { name: string; title: string; specialty: string; image: string; bio: string }[] = [];
+  let doctors: { name: string; title: string; specialty: string; image: string; bio: string; slug: string }[] = [];
   try {
     const sql = getDb();
-    const rows = await sql`SELECT name, title, specialty, image, bio FROM doctors ORDER BY sort_order ASC`;
+    const rows = await sql`SELECT name, title, specialty, image, bio, slug FROM doctors ORDER BY sort_order ASC`;
     doctors = rows.map((r) => ({
       name: r.name as string,
       title: (r.title || "") as string,
       specialty: (r.specialty || "") as string,
       image: (r.image || "") as string,
       bio: (r.bio || "") as string,
+      slug: (r.slug || "") as string,
     }));
   } catch { /* fallback to empty */ }
 
@@ -149,7 +151,7 @@ export default async function AboutPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {doctors.map((doc, i) => (
               <ScrollReveal key={doc.name} delay={i * 100}>
-                <div className="bg-white rounded-xl overflow-hidden border border-border-light card-hover">
+                <Link href={doc.slug ? `/doctors/${doc.slug}` : "#"} className="block bg-white rounded-xl overflow-hidden border border-border-light card-hover">
                   <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
                     {doc.image ? (
                       <Image src={doc.image} alt={doc.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
@@ -163,7 +165,7 @@ export default async function AboutPage() {
                     <p className="text-xs text-dark-light">{doc.specialty}</p>
                     <p className="text-xs text-dark-light mt-2 leading-relaxed">{doc.bio}</p>
                   </div>
-                </div>
+                </Link>
               </ScrollReveal>
             ))}
           </div>

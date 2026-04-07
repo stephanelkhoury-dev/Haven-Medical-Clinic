@@ -53,13 +53,14 @@ async function getServices() {
 async function getDoctors() {
   try {
     const sql = getDb();
-    const rows = await sql`SELECT name, title, specialty, image, bio FROM doctors ORDER BY sort_order ASC`;
+    const rows = await sql`SELECT name, title, specialty, image, bio, slug FROM doctors ORDER BY sort_order ASC`;
     return rows.map((r) => ({
       name: r.name as string,
       title: (r.title || "") as string,
       specialty: (r.specialty || "") as string,
       image: (r.image || "") as string,
       bio: (r.bio || "") as string,
+      slug: (r.slug || "") as string,
     }));
   } catch {
     return [];
