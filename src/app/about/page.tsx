@@ -205,8 +205,8 @@ export default async function AboutPage() {
                 { num: "100%", label: "Commitment to Care" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="text-4xl font-bold text-accent mb-2">{stat.num}</p>
-                  <p className="text-sm text-white/70">{stat.label}</p>
+                  <p className="text-4xl font-bold text-white mb-2">{stat.num}</p>
+                  <p className="text-sm text-white">{stat.label}</p>
                 </div>
               ))}
             </div>
