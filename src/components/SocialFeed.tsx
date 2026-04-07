@@ -220,7 +220,7 @@ export default function SocialFeed() {
           <p className="text-dark-light max-w-2xl mx-auto">
             Follow Haven Medical for the latest treatments, patient
             transformations, and expert wellness tips from our specialists in
-            Beirut.
+            Lebanon.
           </p>
         </div>
 

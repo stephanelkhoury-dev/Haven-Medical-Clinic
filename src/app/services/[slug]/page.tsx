@@ -88,8 +88,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) return {};
-  const title = `${service.title} in Beirut — Haven Medical`;
-  const description = `${service.shortDescription} Expert ${service.title.toLowerCase()} treatment at Haven Medical Clinic, Beirut, Lebanon. Board-certified specialists. Book your consultation today.`;
+  const title = `${service.title} in Lebanon — Haven Medical`;
+  const description = `${service.shortDescription} Expert ${service.title.toLowerCase()} treatment at Haven Medical Clinic, Qornet Chehwan, Lebanon. Board-certified specialists. Book your consultation today.`;
   return {
     title,
     description,
@@ -98,7 +98,7 @@ export async function generateMetadata({
       title,
       description: service.shortDescription,
       url: `https://www.haven-beautyclinic.com/services/${slug}`,
-      images: [{ url: service.heroImage, width: 1200, height: 630, alt: `${service.title} at Haven Medical Beirut` }],
+      images: [{ url: service.heroImage, width: 1200, height: 630, alt: `${service.title} at Haven Medical` }],
     },
   };
 }

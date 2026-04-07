@@ -76,8 +76,8 @@ export const clinicInfo = {
   phone: "+961 71 888 930",
   whatsapp: "+96171888930",
   email: "havenmedicalcliniclb@gmail.com",
-  address: "Beirut, Lebanon",
-  mapUrl: "https://share.google/RsMJIAPIZSKSuflWX",
+  address: "Bayada, Qornet Chehwan, Lebanon",
+  mapUrl: "https://maps.app.goo.gl/WqVuyVYVu6yYSPv87",
   hours: {
     weekdays: "Monday – Friday: 9:00 AM – 7:00 PM",
     saturday: "Saturday: 9:00 AM – 3:00 PM",
@@ -87,6 +87,6 @@ export const clinicInfo = {
     instagram: "https://www.instagram.com/havenmedicalcliniclb/",
     facebook: "https://www.facebook.com/profile.php?id=100093368561027",
     tiktok: "https://tiktok.com/@havenmedical",
-    google: "https://share.google/RsMJIAPIZSKSuflWX",
+    google: "https://maps.app.goo.gl/WqVuyVYVu6yYSPv87",
   },
 };

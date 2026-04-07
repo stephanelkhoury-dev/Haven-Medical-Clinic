@@ -4,9 +4,9 @@ import { getBreadcrumbSchema, getFAQSchema } from "@/lib/schema";
 import { getDb } from "@/lib/db";
 
 export const metadata: Metadata = {
-  title: "Haven Medical | Premium Medical & Aesthetic Clinic in Beirut",
+  title: "Haven Medical | Premium Medical & Aesthetic Clinic in Lebanon",
   description:
-    "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon. Book your appointment today.",
+    "Where medical excellence meets luxury care. Premium aesthetic treatments, surgical procedures, and wellness services in Qornet Chehwan, Lebanon. Book your appointment today.",
   alternates: { canonical: "https://www.haven-beautyclinic.com" },
 };
 
@@ -108,7 +108,7 @@ export default async function HomePage() {
     {
       question: "Where is Haven Medical located?",
       answer:
-        "Haven Medical is located in Beirut, Lebanon. Visit our contact page for the full address, directions, and a map to our clinic.",
+        "Haven Medical is located in Bayada, Qornet Chehwan, Lebanon. Visit our contact page for the full address, directions, and a map to our clinic.",
     },
   ]);
 

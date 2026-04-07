@@ -24,10 +24,10 @@ export const blogCategories = [
 export const blogPosts: BlogPost[] = [
   {
     slug: "ultimate-guide-laser-hair-removal",
-    title: "The Ultimate Guide to Laser Hair Removal in Beirut: What to Expect",
-    excerpt: "Everything you need to know before your first laser hair removal session in Beirut — from preparation to aftercare, costs, and expected results at Haven Medical.",
+    title: "The Ultimate Guide to Laser Hair Removal in Lebanon: What to Expect",
+    excerpt: "Everything you need to know before your first laser hair removal session in Lebanon — from preparation to aftercare, costs, and expected results at Haven Medical.",
     content: `<h2>Why Laser Hair Removal Is the Gold Standard</h2>
-<p>Laser hair removal has become the most sought-after aesthetic treatment in Beirut and across Lebanon. At Haven Medical, we use FDA-approved diode and alexandrite laser technology that safely treats all skin types — from fair to dark skin tones common in the Middle East.</p>
+<p>Laser hair removal has become the most sought-after aesthetic treatment in Lebanon. At Haven Medical, we use FDA-approved diode and alexandrite laser technology that safely treats all skin types — from fair to dark skin tones common in the Middle East.</p>
 
 <h2>How Does Laser Hair Removal Work?</h2>
 <p>The laser emits concentrated light that is absorbed by the melanin (pigment) in the hair follicle. This light energy converts to heat, which damages the follicle and inhibits future hair growth. Each session targets hair in the active growth phase, which is why multiple sessions are needed for complete results.</p>
@@ -46,16 +46,16 @@ export const blogPosts: BlogPost[] = [
 <p>Your specialist at Haven Medical will first assess your skin type and hair color, then calibrate the laser settings accordingly. You will wear protective eyewear, and a cooling gel may be applied. Most patients describe the sensation as a mild snapping or tingling — far less painful than waxing.</p>
 
 <h2>Areas We Treat</h2>
-<p>At Haven Medical in Beirut, we perform laser hair removal on virtually every body area: face (upper lip, chin, sideburns), underarms, arms, legs, bikini line, Brazilian, back, chest, and abdomen. Treatment times range from 10 minutes for the upper lip to 45 minutes for full legs.</p>
+<p>At Haven Medical, we perform laser hair removal on virtually every body area: face (upper lip, chin, sideburns), underarms, arms, legs, bikini line, Brazilian, back, chest, and abdomen. Treatment times range from 10 minutes for the upper lip to 45 minutes for full legs.</p>
 
 <h2>How Many Sessions Do You Need?</h2>
-<p>Most patients at our Beirut clinic achieve 80-90% permanent hair reduction after 6-8 sessions, spaced 4-6 weeks apart. The exact number depends on your hair color, skin type, hormonal factors, and the treatment area. Touch-up sessions may be needed once or twice a year.</p>
+<p>Most patients at our clinic achieve 80-90% permanent hair reduction after 6-8 sessions, spaced 4-6 weeks apart. The exact number depends on your hair color, skin type, hormonal factors, and the treatment area. Touch-up sessions may be needed once or twice a year.</p>
 
 <h2>Aftercare Tips</h2>
 <p>After your laser hair removal session, keep the treated area cool and protected. Apply aloe vera or a soothing moisturizer, avoid hot showers and saunas for 24-48 hours, and wear SPF 50 sunscreen daily. You may notice the treated hairs shedding naturally over the next 1-2 weeks.</p>
 
 <h2>Book Your Laser Hair Removal at Haven Medical</h2>
-<p>Ready to say goodbye to razors and waxing? Book a consultation at Haven Medical in Beirut. Our board-certified specialists will create a personalized treatment plan for smooth, hair-free skin.</p>`,
+<p>Ready to say goodbye to razors and waxing? Book a consultation at Haven Medical. Our board-certified specialists will create a personalized treatment plan for smooth, hair-free skin.</p>`,
     category: "Aesthetic Medicine",
     image: "/images/blog/laser-guide.webp",
     author: "Dr. Sarah Mitchell",
@@ -65,9 +65,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "skincare-routine-for-glowing-skin",
     title: "Build Your Perfect Medical-Grade Skincare Routine",
-    excerpt: "Discover how to layer medical-grade products for maximum results, with expert tips from our dermatology team in Beirut.",
+    excerpt: "Discover how to layer medical-grade products for maximum results, with expert tips from our dermatology team.",
     content: `<h2>Why Medical-Grade Skincare Matters</h2>
-<p>Over-the-counter skincare products can only penetrate the outermost layer of your skin. Medical-grade products, available through clinics like Haven Medical in Beirut, contain higher concentrations of active ingredients that reach deeper skin layers where real transformation happens.</p>
+<p>Over-the-counter skincare products can only penetrate the outermost layer of your skin. Medical-grade products, available through clinics like Haven Medical, contain higher concentrations of active ingredients that reach deeper skin layers where real transformation happens.</p>
 
 <h2>The Essential Morning Routine</h2>
 <p>A solid morning routine protects your skin from environmental damage throughout the day:</p>
@@ -76,7 +76,7 @@ export const blogPosts: BlogPost[] = [
 <li><strong>Vitamin C Serum</strong> — A potent antioxidant (15-20% L-ascorbic acid) that brightens, protects against UV damage, and stimulates collagen</li>
 <li><strong>Hyaluronic Acid</strong> — Attracts and holds moisture, plumping your skin and reducing fine lines</li>
 <li><strong>Moisturizer</strong> — Seal in all active ingredients with a lightweight, non-comedogenic moisturizer</li>
-<li><strong>SPF 50 Sunscreen</strong> — The single most important anti-aging product. In Beirut's sunny climate, this is non-negotiable. Reapply every 2 hours when outdoors</li>
+<li><strong>SPF 50 Sunscreen</strong> — The single most important anti-aging product. In Lebanon's sunny climate, this is non-negotiable. Reapply every 2 hours when outdoors</li>
 </ol>
 
 <h2>The Evening Routine</h2>
@@ -93,7 +93,7 @@ export const blogPosts: BlogPost[] = [
 <p>Our dermatologists at Haven Medical see these errors frequently: over-exfoliating (leads to barrier damage), mixing too many actives at once (retinol + AHA = irritation), skipping sunscreen indoors, and switching products too frequently before giving them time to work (allow 6-12 weeks).</p>
 
 <h2>When to See a Dermatologist</h2>
-<p>If you have persistent acne, melasma, rosacea, or concerns about aging, a consultation with our dermatology team at Haven Medical in Beirut can help you build a prescription-grade routine tailored to your specific skin needs.</p>`,
+<p>If you have persistent acne, melasma, rosacea, or concerns about aging, a consultation with our dermatology team at Haven Medical can help you build a prescription-grade routine tailored to your specific skin needs.</p>`,
     category: "Skin Care",
     image: "/images/blog/skincare-routine.webp",
     author: "Dr. Layla Haddad",
@@ -102,10 +102,10 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: "botox-myths-debunked",
-    title: "5 Common Botox Myths Debunked by Our Beirut Specialists",
+    title: "5 Common Botox Myths Debunked by Our Specialists",
     excerpt: "Separating fact from fiction about Botox treatments in Lebanon — learn the truth from experienced practitioners at Haven Medical.",
     content: `<h2>Myth 1: Botox Will Make You Look Frozen</h2>
-<p>This is the number one concern patients at Haven Medical in Beirut share during consultations. The truth? When administered by a skilled practitioner, Botox delivers natural-looking results. The "frozen" look comes from over-injection. Our specialists use precise micro-dosing techniques to soften wrinkles while preserving your natural facial expressions.</p>
+<p>This is the number one concern patients at Haven Medical share during consultations. The truth? When administered by a skilled practitioner, Botox delivers natural-looking results. The "frozen" look comes from over-injection. Our specialists use precise micro-dosing techniques to soften wrinkles while preserving your natural facial expressions.</p>
 
 <h2>Myth 2: Botox Is Only for Wrinkles</h2>
 <p>While Botox is famous for treating frown lines, forehead lines, and crow's feet, it has many other applications. At Haven Medical, we also use Botox for:</p>
@@ -122,7 +122,7 @@ export const blogPosts: BlogPost[] = [
 <p>Botox (botulinum toxin type A) has been FDA-approved since 2002 and has one of the strongest safety profiles of any cosmetic treatment. Billions of doses have been administered worldwide. At Haven Medical, we use only authentic, properly stored products from certified manufacturers, and all treatments are performed by qualified medical professionals.</p>
 
 <h2>Myth 4: Once You Start, You Can't Stop</h2>
-<p>Botox is not addictive. If you stop treatments, your muscles will simply return to their pre-treatment state over 3-6 months. There is no "rebound" effect — your wrinkles won't become worse than before. Many of our Beirut patients choose to maintain treatments because they enjoy the results, not because they have to.</p>
+<p>Botox is not addictive. If you stop treatments, your muscles will simply return to their pre-treatment state over 3-6 months. There is no "rebound" effect — your wrinkles won't become worse than before. Many of our patients choose to maintain treatments because they enjoy the results, not because they have to.</p>
 
 <h2>Myth 5: Botox and Fillers Are the Same Thing</h2>
 <p>Botox relaxes muscles to prevent wrinkle formation (best for dynamic wrinkles caused by movement). Dermal fillers add volume — restoring lost facial volume, enhancing lips, and smoothing static wrinkles. At Haven Medical, we often combine both for a comprehensive facial rejuvenation approach.</p>
@@ -138,12 +138,12 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "importance-of-lymphatic-drainage",
     title: "Why Lymphatic Drainage Should Be Part of Your Wellness Routine",
-    excerpt: "Explore the science behind lymphatic drainage massage and why it's essential for post-surgery recovery and overall well-being at Haven Medical Beirut.",
+    excerpt: "Explore the science behind lymphatic drainage massage and why it's essential for post-surgery recovery and overall well-being at Haven Medical.",
     content: `<h2>What Is the Lymphatic System?</h2>
 <p>Your lymphatic system is a network of tissues, organs, and vessels that work together to maintain fluid balance, remove waste products, and support your immune system. Unlike your blood circulation (which has the heart as a pump), the lymphatic system relies on muscle movement and manual stimulation to flow properly.</p>
 
 <h2>How Does Lymphatic Drainage Massage Work?</h2>
-<p>Manual lymphatic drainage (MLD) uses gentle, rhythmic, pumping movements to stimulate lymph flow throughout the body. At Haven Medical in Beirut, our trained therapists follow specific anatomical pathways to guide fluid toward lymph nodes where it can be processed and eliminated. The technique is incredibly gentle — pressure is lighter than a typical massage.</p>
+<p>Manual lymphatic drainage (MLD) uses gentle, rhythmic, pumping movements to stimulate lymph flow throughout the body. At Haven Medical, our trained therapists follow specific anatomical pathways to guide fluid toward lymph nodes where it can be processed and eliminated. The technique is incredibly gentle — pressure is lighter than a typical massage.</p>
 
 <h2>Benefits of Regular Lymphatic Drainage</h2>
 <ul>
@@ -162,7 +162,7 @@ export const blogPosts: BlogPost[] = [
 <p>A typical session at Haven Medical lasts 60-90 minutes. You'll lie comfortably while our therapist performs gentle, wave-like movements across your body, focusing on areas with lymph node clusters (neck, armpits, abdomen, groin). Most patients describe the experience as deeply relaxing — many fall asleep. You may notice increased urination afterward as your body flushes excess fluid.</p>
 
 <h2>How Often Should You Book?</h2>
-<p>For general wellness: once every 2-4 weeks. For post-surgical recovery: 2-3 times per week initially, tapering to weekly. For chronic conditions like lymphedema: as recommended by your physician. Book your lymphatic drainage session at Haven Medical in Beirut today.</p>`,
+<p>For general wellness: once every 2-4 weeks. For post-surgical recovery: 2-3 times per week initially, tapering to weekly. For chronic conditions like lymphedema: as recommended by your physician. Book your lymphatic drainage session at Haven Medical today.</p>`,
     category: "Wellness",
     image: "/images/blog/lymphatic-drainage.webp",
     author: "Marie Khalil",
@@ -172,9 +172,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "nutrition-for-healthy-skin",
     title: "Foods That Transform Your Skin: A Nutritionist's Guide",
-    excerpt: "What you eat directly impacts your skin health. Our Beirut-based nutritionist shares the top foods for a radiant, youthful complexion.",
+    excerpt: "What you eat directly impacts your skin health. Our nutritionist shares the top foods for a radiant, youthful complexion.",
     content: `<h2>The Skin-Nutrition Connection</h2>
-<p>Your skin is the largest organ in your body, and like every organ, it requires proper nutrition to function optimally. At Haven Medical in Beirut, our nutritionist works alongside our dermatologists to create holistic treatment plans that address skin health from the inside out.</p>
+<p>Your skin is the largest organ in your body, and like every organ, it requires proper nutrition to function optimally. At Haven Medical, our nutritionist works alongside our dermatologists to create holistic treatment plans that address skin health from the inside out.</p>
 
 <h2>Top 10 Foods for Glowing Skin</h2>
 
@@ -212,7 +212,7 @@ export const blogPosts: BlogPost[] = [
 <p>Excess sugar (causes glycation, which breaks down collagen), processed foods (trigger inflammation), excessive alcohol (dehydrates skin), and high-glycemic foods (can worsen acne) should be minimized for optimal skin health.</p>
 
 <h2>Schedule a Nutrition Consultation</h2>
-<p>Want a personalized nutrition plan that targets your skin concerns? Book a consultation with our nutritionist at Haven Medical in Beirut. We also offer comprehensive body composition analysis to track your progress.</p>`,
+<p>Want a personalized nutrition plan that targets your skin concerns? Book a consultation with our nutritionist at Haven Medical. We also offer comprehensive body composition analysis to track your progress.</p>`,
     category: "Nutrition",
     image: "/images/blog/nutrition-skin.webp",
     author: "Dr. Nadia Farhat",
@@ -222,9 +222,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "post-rhinoplasty-care-guide",
     title: "Essential Post-Rhinoplasty Care: Your Complete Recovery Roadmap",
-    excerpt: "A comprehensive guide to rhinoplasty recovery in Beirut — tips for the first week, month-by-month timeline, and achieving the best results at Haven Medical.",
+    excerpt: "A comprehensive guide to rhinoplasty recovery in Lebanon — tips for the first week, month-by-month timeline, and achieving the best results at Haven Medical.",
     content: `<h2>The First 24 Hours After Rhinoplasty</h2>
-<p>Right after your rhinoplasty at Haven Medical in Beirut, you will have a nasal splint and possibly internal packing. You will need someone to drive you home and stay with you. Keep your head elevated at a 30-45 degree angle (even while sleeping), apply cold compresses around (not on) the nose to minimize swelling, and take your prescribed medications on schedule.</p>
+<p>Right after your rhinoplasty at Haven Medical, you will have a nasal splint and possibly internal packing. You will need someone to drive you home and stay with you. Keep your head elevated at a 30-45 degree angle (even while sleeping), apply cold compresses around (not on) the nose to minimize swelling, and take your prescribed medications on schedule.</p>
 
 <h2>Week 1: The Critical Recovery Phase</h2>
 <p>The first week is when you will experience the most swelling and bruising. Here is what to expect and do:</p>
@@ -258,7 +258,7 @@ export const blogPosts: BlogPost[] = [
 <p>Contact Haven Medical immediately if you experience: heavy bleeding that does not stop, sudden increase in pain not relieved by medication, high fever (over 38.5°C), difficulty breathing through both nostrils, or any signs of infection (increasing redness, warmth, pus).</p>
 
 <h2>Follow-Up Schedule at Haven Medical</h2>
-<p>We schedule follow-up appointments at 1 week (splint removal), 2 weeks, 1 month, 3 months, 6 months, and 1 year after your rhinoplasty. Each visit allows your surgeon to monitor your healing and address any concerns. Book your rhinoplasty consultation at Haven Medical in Beirut.</p>`,
+<p>We schedule follow-up appointments at 1 week (splint removal), 2 weeks, 1 month, 3 months, 6 months, and 1 year after your rhinoplasty. Each visit allows your surgeon to monitor your healing and address any concerns. Book your rhinoplasty consultation at Haven Medical.</p>`,
     category: "Post-Treatment Care",
     image: "/images/blog/rhinoplasty-care.webp",
     author: "Dr. Georges Khoury",

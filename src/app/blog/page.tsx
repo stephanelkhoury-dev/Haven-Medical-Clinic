@@ -10,11 +10,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Blog — Expert Aesthetic & Medical Insights",
   description:
-    "Expert articles on Botox, rhinoplasty aftercare, laser hair removal, skincare routines, nutrition, and wellness from Haven Medical specialists in Beirut, Lebanon.",
+    "Expert articles on Botox, rhinoplasty aftercare, laser hair removal, skincare routines, nutrition, and wellness from Haven Medical specialists in Lebanon.",
   alternates: { canonical: "https://www.haven-beautyclinic.com/blog" },
   openGraph: {
     title: "Haven Medical Blog — Aesthetic & Medical Insights",
-    description: "Expert articles on aesthetic medicine, skincare, wellness, and post-treatment care from our Beirut-based specialists.",
+    description: "Expert articles on aesthetic medicine, skincare, wellness, and post-treatment care from our specialists.",
     url: "https://www.haven-beautyclinic.com/blog",
   },
 };

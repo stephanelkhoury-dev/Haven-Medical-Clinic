@@ -9,13 +9,13 @@ import type { Metadata } from "next";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "About Us — Board-Certified Specialists in Beirut",
+  title: "About Us — Board-Certified Specialists in Lebanon",
   description:
-    "Meet Haven Medical's board-certified plastic surgeons, dermatologists, and aesthetic specialists in Beirut, Lebanon. 15+ years of experience, 5,000+ satisfied patients.",
+    "Meet Haven Medical's board-certified plastic surgeons, dermatologists, and aesthetic specialists in Qornet Chehwan, Lebanon. 15+ years of experience, 5,000+ satisfied patients.",
   alternates: { canonical: "https://www.haven-beautyclinic.com/about" },
   openGraph: {
     title: "About Haven Medical — Our Story & Specialists",
-    description: "Board-certified plastic surgeons, dermatologists, and aesthetic specialists in Beirut with 15+ years of experience.",
+    description: "Board-certified plastic surgeons, dermatologists, and aesthetic specialists in Lebanon with 15+ years of experience.",
     url: "https://www.haven-beautyclinic.com/about",
   },
 };

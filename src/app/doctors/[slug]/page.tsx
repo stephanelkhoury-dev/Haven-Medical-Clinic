@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!doctor) return { title: "Doctor Not Found" };
   return {
     title: `${doctor.name} — ${doctor.title} | Haven Medical`,
-    description: doctor.bio || `${doctor.name}, ${doctor.title} specializing in ${doctor.specialty} at Haven Medical Clinic, Beirut.`,
+    description: doctor.bio || `${doctor.name}, ${doctor.title} specializing in ${doctor.specialty} at Haven Medical Clinic, Qornet Chehwan.`,
     alternates: { canonical: `https://www.haven-beautyclinic.com/doctors/${doctor.slug}` },
     openGraph: {
       title: `${doctor.name} — ${doctor.title}`,

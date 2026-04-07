@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.haven-beautyclinic.com/gift-voucher" },
   openGraph: {
     title: "Haven Medical Gift Vouchers — Give the Gift of Beauty",
-    description: "Gift vouchers for aesthetic treatments and wellness services at Haven Medical Beirut.",
+    description: "Gift vouchers for aesthetic treatments and wellness services at Haven Medical.",
     url: "https://www.haven-beautyclinic.com/gift-voucher",
   },
 };

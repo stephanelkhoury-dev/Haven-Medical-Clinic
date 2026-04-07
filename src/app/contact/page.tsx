@@ -280,8 +280,17 @@ export default function ContactPage() {
             </h2>
             <div className="section-divider mx-auto" />
           </ScrollReveal>
-          <div className="aspect-[16/7] rounded-2xl bg-white border border-border-light flex items-center justify-center text-dark-light">
-            Google Maps Embed — Replace with actual iframe
+          <div className="aspect-[16/7] rounded-2xl overflow-hidden border border-border-light">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3310.847698654806!2d35.62631527656603!3d33.919319173207285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151f3f13b579a419%3A0x7759e15a0a6f1741!2sHaven%20Medical%20And%20Beauty%20Clinic!5e0!3m2!1sen!2slb!4v1775566655923!5m2!1sen!2slb"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Haven Medical And Beauty Clinic location on Google Maps"
+            />
           </div>
         </div>
       </section>

@@ -24,10 +24,10 @@ const serviceCategories: Record<string, { label: string; description: string }> 
 export const metadata: Metadata = {
   title: "All Services — Aesthetic, Surgical & Wellness Treatments",
   description:
-    "Explore 17+ treatments at Haven Medical Beirut: Botox, fillers, rhinoplasty, laser hair removal, face lifting, skin boosters, physiotherapy, nutritionist, and more. Board-certified specialists.",
+    "Explore 17+ treatments at Haven Medical: Botox, fillers, rhinoplasty, laser hair removal, face lifting, skin boosters, physiotherapy, nutritionist, and more. Board-certified specialists.",
   alternates: { canonical: "https://www.haven-beautyclinic.com/services" },
   openGraph: {
-    title: "Haven Medical Services — Aesthetic & Medical Treatments in Beirut",
+    title: "Haven Medical Services — Aesthetic & Medical Treatments in Lebanon",
     description: "Botox, fillers, rhinoplasty, laser hair removal, face lifting, physiotherapy, and 10+ more treatments by certified specialists.",
     url: "https://www.haven-beautyclinic.com/services",
   },

@@ -18,7 +18,7 @@ export function getOrganizationSchema() {
     address: {
       "@type": "PostalAddress",
       streetAddress: clinicInfo.address,
-      addressLocality: "Beirut",
+      addressLocality: "Qornet Chehwan",
       addressCountry: "LB",
     },
     openingHoursSpecification: [
@@ -158,7 +158,7 @@ export function getLocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": "MedicalBusiness",
     name: clinicInfo.name,
-    description: "Premium medical and aesthetic clinic in Beirut, Lebanon offering Botox, fillers, rhinoplasty, laser hair removal, physiotherapy, and wellness services.",
+    description: "Premium medical and aesthetic clinic in Qornet Chehwan, Lebanon offering Botox, fillers, rhinoplasty, laser hair removal, physiotherapy, and wellness services.",
     url: BASE,
     telephone: clinicInfo.phone,
     email: clinicInfo.email,
@@ -170,14 +170,14 @@ export function getLocalBusinessSchema() {
     address: {
       "@type": "PostalAddress",
       streetAddress: clinicInfo.address,
-      addressLocality: "Beirut",
-      addressRegion: "Beirut",
+      addressLocality: "Qornet Chehwan",
+      addressRegion: "Metn",
       addressCountry: "LB",
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: "33.8938",
-      longitude: "35.5018",
+      latitude: "33.9193",
+      longitude: "35.6263",
     },
     openingHoursSpecification: [
       { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:00", closes: "19:00" },
@@ -192,6 +192,7 @@ export function getLocalBusinessSchema() {
     },
     hasMap: clinicInfo.mapUrl,
     areaServed: [
+      { "@type": "City", name: "Qornet Chehwan" },
       { "@type": "City", name: "Beirut" },
       { "@type": "Country", name: "Lebanon" },
     ],
@@ -211,7 +212,7 @@ export function getServiceListSchema(servicesList: { title: string; slug: string
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Haven Medical Services",
-    description: "All aesthetic, surgical, medical, and wellness services offered at Haven Medical Clinic in Beirut.",
+    description: "All aesthetic, surgical, medical, and wellness services offered at Haven Medical Clinic in Qornet Chehwan, Lebanon.",
     numberOfItems: servicesList.length,
     itemListElement: servicesList.map((s, i) => ({
       "@type": "ListItem",
@@ -229,7 +230,7 @@ export function getBlogListSchema(posts: { title: string; slug: string }[]) {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Haven Medical Blog",
-    description: "Expert insights on aesthetic medicine, skincare, wellness, and medical advice from Haven Medical specialists in Beirut.",
+    description: "Expert insights on aesthetic medicine, skincare, wellness, and medical advice from Haven Medical specialists in Lebanon.",
     url: `${BASE}/blog`,
     mainEntity: {
       "@type": "ItemList",
@@ -250,7 +251,7 @@ export function getAboutPageSchema() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     name: "About Haven Medical Clinic",
-    description: "Learn about Haven Medical Clinic in Beirut — our medical philosophy, board-certified specialists, and commitment to patient care.",
+    description: "Learn about Haven Medical Clinic in Qornet Chehwan — our medical philosophy, board-certified specialists, and commitment to patient care.",
     url: `${BASE}/about`,
     mainEntity: {
       "@type": "MedicalOrganization",

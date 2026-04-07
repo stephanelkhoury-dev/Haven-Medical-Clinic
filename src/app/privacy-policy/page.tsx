@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
             <p>
               Haven Medical (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website at{" "}
               <Link href="/" className="text-primary hover:underline">haven-beautyclinic.com</Link>{" "}
-              or visit our clinic in Beirut, Lebanon.
+              or visit our clinic in Qornet Chehwan, Lebanon.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-none space-y-1 mt-2">
               <li><strong>Email:</strong> <a href="mailto:havenmedicalcliniclb@gmail.com" className="text-primary hover:underline">havenmedicalcliniclb@gmail.com</a></li>
               <li><strong>Phone:</strong> <a href="tel:+96171888930" className="text-primary hover:underline">+961 71 888 930</a></li>
-              <li><strong>Address:</strong> Beirut, Lebanon</li>
+              <li><strong>Address:</strong> Bayada, Qornet Chehwan, Lebanon</li>
             </ul>
           </div>
         </div>

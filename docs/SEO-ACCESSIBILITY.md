@@ -11,10 +11,10 @@ Root metadata is defined in `src/app/layout.tsx` and inherited by all pages:
 | Field | Value |
 |-------|-------|
 | `metadataBase` | `https://www.haven-beautyclinic.com` |
-| `title.default` | Haven Medical \| Premium Medical & Aesthetic Clinic in Beirut |
+| `title.default` | Haven Medical \| Premium Medical & Aesthetic Clinic in Lebanon |
 | `title.template` | `%s \| Haven Medical` |
 | `description` | Premium aesthetic treatments, surgical procedures, and wellness services |
-| `keywords` | 10 keywords (medical clinic Beirut, aesthetic treatments, etc.) |
+| `keywords` | 30 keywords (medical clinic Lebanon, aesthetic treatments, etc.) |
 | `authors` | Haven Medical |
 | `robots` | index, follow, max-image-preview: large |
 | `formatDetection` | telephone: true, email: true, address: true |
@@ -27,7 +27,7 @@ Root metadata is defined in `src/app/layout.tsx` and inherited by all pages:
 | `locale` | en_US |
 | `siteName` | Haven Medical |
 | `image` | `/og-image.webp` (1200×630) |
-| Image alt | Haven Medical Clinic — Premium medical and aesthetic clinic in Beirut |
+| Image alt | Haven Medical Clinic — Premium medical and aesthetic clinic in Lebanon |
 
 ### Twitter Card
 
@@ -72,7 +72,7 @@ Every page sets `alternates.canonical` via the metadata API.
   "url": "https://www.haven-beautyclinic.com",
   "telephone": "+961 XX XXX XXX",
   "email": "info@haven-beautyclinic.com",
-  "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
+  "address": { "@type": "PostalAddress", "addressLocality": "Qornet Chehwan", "addressCountry": "LB" },
   "openingHoursSpecification": [ "Mon-Fri 09:00-18:00", "Sat 09:00-14:00" ],
   "medicalSpecialty": ["Dermatology", "Plastic Surgery", "Otolaryngology", "Physical Therapy"],
   "priceRange": "$$$"

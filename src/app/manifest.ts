@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Haven Medical — Premium Medical & Aesthetic Clinic",
     short_name: "Haven Medical",
     description:
-      "Premium aesthetic treatments, surgical procedures, and wellness services in Beirut, Lebanon.",
+      "Premium aesthetic treatments, surgical procedures, and wellness services in Qornet Chehwan, Lebanon.",
     start_url: "/",
     display: "standalone",
     background_color: "#FAFBFA",

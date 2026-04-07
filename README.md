@@ -1,6 +1,6 @@
 # Haven Medical Clinic
 
-> **Premium Medical & Aesthetic Clinic Website — Beirut, Lebanon**  
+> **Premium Medical & Aesthetic Clinic Website — Qornet Chehwan, Lebanon**  
 > Built with Next.js 16 · Tailwind CSS 4 · Neon PostgreSQL · TypeScript
 
 **Live:** https://haven-beautyclinic.com  
@@ -225,4 +225,4 @@ Full documentation in the `docs/` folder:
 
 ## License
 
-Private project — Haven Medical Clinic, Beirut, Lebanon.
+Private project — Haven Medical Clinic, Qornet Chehwan, Lebanon.

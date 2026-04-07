@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Book an Appointment — Haven Medical Beirut",
+  title: "Book an Appointment — Haven Medical",
   description:
-    "Book your aesthetic or medical appointment at Haven Medical Beirut. Choose Botox, rhinoplasty, laser hair removal, or any treatment — confirmed via WhatsApp.",
+    "Book your aesthetic or medical appointment at Haven Medical. Choose Botox, rhinoplasty, laser hair removal, or any treatment — confirmed via WhatsApp.",
   alternates: { canonical: "https://www.haven-beautyclinic.com/appointment" },
   openGraph: {
     title: "Book an Appointment at Haven Medical",
-    description: "Schedule your aesthetic or medical treatment consultation at Haven Medical, Beirut.",
+    description: "Schedule your aesthetic or medical treatment consultation at Haven Medical, Qornet Chehwan.",
     url: "https://www.haven-beautyclinic.com/appointment",
   },
 };

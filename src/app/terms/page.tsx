@@ -35,7 +35,7 @@ export default function TermsPage() {
           <div>
             <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-dark mb-3">2. Services</h2>
             <p>
-              Haven Medical provides aesthetic, surgical, medical, and wellness services at our clinic in Beirut, Lebanon. All treatments are performed by qualified, licensed medical professionals.
+              Haven Medical provides aesthetic, surgical, medical, and wellness services at our clinic in Qornet Chehwan, Lebanon. All treatments are performed by qualified, licensed medical professionals.
             </p>
             <p className="mt-2">
               The information provided on our website is for general informational purposes only and does not constitute medical advice. Always consult directly with our specialists for personalized medical guidance.
@@ -136,7 +136,7 @@ export default function TermsPage() {
           <div>
             <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-dark mb-3">13. Governing Law</h2>
             <p>
-              These Terms &amp; Conditions are governed by and construed in accordance with the laws of the Republic of Lebanon. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts of Beirut, Lebanon.
+              These Terms &amp; Conditions are governed by and construed in accordance with the laws of the Republic of Lebanon. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts of Lebanon.
             </p>
           </div>
 
@@ -153,7 +153,7 @@ export default function TermsPage() {
             <ul className="list-none space-y-1 mt-2">
               <li><strong>Email:</strong> <a href="mailto:havenmedicalcliniclb@gmail.com" className="text-primary hover:underline">havenmedicalcliniclb@gmail.com</a></li>
               <li><strong>Phone:</strong> <a href="tel:+96171888930" className="text-primary hover:underline">+961 71 888 930</a></li>
-              <li><strong>Address:</strong> Beirut, Lebanon</li>
+              <li><strong>Address:</strong> Bayada, Qornet Chehwan, Lebanon</li>
             </ul>
           </div>
         </div>
