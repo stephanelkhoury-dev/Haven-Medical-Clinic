@@ -106,12 +106,12 @@ export default async function ServicesPage() {
                         href={`/services/${service.slug}`}
                         className="group block bg-background rounded-xl border border-border-light overflow-hidden card-hover h-full"
                       >
-                        <div className="aspect-[16/10] relative bg-gradient-to-br from-secondary-light to-secondary overflow-hidden">
+                        <div className="aspect-[16/10] relative bg-muted overflow-hidden">
                           <Image
                             src={service.heroImage}
                             alt={service.title}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="object-contain group-hover:scale-105 transition-transform duration-500"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         </div>
