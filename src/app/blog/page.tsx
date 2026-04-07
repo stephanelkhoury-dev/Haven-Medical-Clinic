@@ -41,8 +41,16 @@ async function getBlogPosts() {
   }
 }
 
-export default async function BlogPage() {
-  const blogPosts = await getBlogPosts();
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const allPosts = await getBlogPosts();
+  const blogPosts = category
+    ? allPosts.filter((p) => p.category === category)
+    : allPosts;
   const blogListSchema = getBlogListSchema(blogPosts.map((p) => ({ title: p.title as string, slug: p.slug as string })));
   const breadcrumb = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -71,16 +79,28 @@ export default async function BlogPage() {
       <section className="py-8 bg-white border-b border-border-light">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap gap-2 justify-center">
-            <span className="px-4 py-1.5 rounded-full text-sm font-medium bg-primary text-white">
+            <Link
+              href="/blog"
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                !category
+                  ? "bg-primary text-white"
+                  : "border border-border bg-muted text-dark-light hover:bg-primary hover:text-white hover:border-primary"
+              }`}
+            >
               All
-            </span>
+            </Link>
             {blogCategories.map((cat) => (
-              <span
+              <Link
                 key={cat}
-                className="px-4 py-1.5 rounded-full text-sm font-medium border border-border bg-muted text-dark-light hover:bg-primary hover:text-white hover:border-primary transition-all cursor-pointer"
+                href={`/blog?category=${encodeURIComponent(cat)}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  category === cat
+                    ? "bg-primary text-white"
+                    : "border border-border bg-muted text-dark-light hover:bg-primary hover:text-white hover:border-primary"
+                }`}
               >
                 {cat}
-              </span>
+              </Link>
             ))}
           </div>
         </div>
