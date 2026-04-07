@@ -123,13 +123,13 @@ export default async function BlogPostPage({
       {/* Featured Image */}
       <section className="bg-white">
         <div className="max-w-4xl mx-auto px-6 -mt-8">
-          <div className="aspect-[16/9] rounded-2xl bg-gradient-to-br from-secondary-light to-secondary overflow-hidden shadow-lg relative">
+          <div className="aspect-[16/9] rounded-2xl bg-muted overflow-hidden shadow-lg relative">
             {post.image && (
               <Image
                 src={post.image}
                 alt={post.title}
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 768px) 100vw, 896px"
                 priority
               />
@@ -168,7 +168,17 @@ export default async function BlogPostPage({
                 href={`/blog/${p.slug}`}
                 className="group block bg-white rounded-xl overflow-hidden border border-border-light card-hover"
               >
-                <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary" />
+                <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+                  {p.image && (
+                    <Image
+                      src={p.image}
+                      alt={p.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  )}
+                </div>
                 <div className="p-5">
                   <span className="text-xs text-primary font-medium">{p.category}</span>
                   <h3 className="font-semibold text-dark mt-1 group-hover:text-primary transition-colors">

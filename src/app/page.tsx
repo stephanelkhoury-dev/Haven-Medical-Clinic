@@ -508,13 +508,13 @@ export default async function HomePage() {
             {latestPosts.map((post) => (
               <article key={post.slug}>
                 <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-xl overflow-hidden border border-border-light card-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
-                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                  <div className="aspect-[16/10] bg-muted relative overflow-hidden">
                     {post.image && (
                       <Image
                         src={post.image}
                         alt={post.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-contain group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     )}

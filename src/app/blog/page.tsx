@@ -116,13 +116,13 @@ export default async function BlogPage({
                   href={`/blog/${post.slug}`}
                   className="group block bg-background rounded-xl overflow-hidden border border-border-light card-hover"
                 >
-                  <div className="aspect-[16/10] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                  <div className="aspect-[16/10] bg-muted relative overflow-hidden">
                     {post.image && (
                       <Image
                         src={post.image as string}
                         alt={post.title as string}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-contain group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     )}
