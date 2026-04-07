@@ -1,6 +1,6 @@
 # Components
 
-All shared components live in `src/components/`. Each is documented below with its props, usage, and file location.
+All shared components live in `src/components/`. There are **10 components** in total.
 
 ---
 
@@ -201,3 +201,57 @@ Floating action button (bottom-right) linking to WhatsApp.
 - SVG WhatsApp icon (not lucide — custom SVG)
 - `aria-label="Chat with Haven Medical on WhatsApp"`
 - Opens `wa.me` link with pre-filled message
+
+---
+
+## LayoutShell
+
+**File:** `src/components/LayoutShell.tsx`  
+**Type:** Client Component (`"use client"`)
+
+Conditional layout wrapper that routes between admin and public layouts based on the current path.
+
+### Behavior
+
+- Uses `usePathname()` from `next/navigation`
+- **Admin routes** (`/admin/*`): Renders children only — no header, footer, or scroll progress
+- **Public routes**: Renders full public layout:
+  1. `<ScrollProgress />`
+  2. `<Header />`
+  3. `<main id="main-content">{children}</main>`
+  4. `<Footer />`
+  5. `<WhatsAppFAB />`
+
+### Usage
+
+```tsx
+// In layout.tsx
+<LayoutShell>{children}</LayoutShell>
+```
+
+---
+
+## SocialFeed
+
+**File:** `src/components/SocialFeed.tsx`  
+**Type:** Client Component (`"use client"`)
+
+Instagram grid + Facebook page embed, dynamically imported on the homepage with `ssr: false`.
+
+### Sub-Components
+
+| Component | Description |
+|-----------|-------------|
+| `InstagramGrid` | Fetches posts from `/api/instagram`, displays 6 posts in grid with hover overlays. Falls back to placeholder CTA. |
+| `FacebookEmbed` | Embeds Facebook Page Plugin via iframe |
+
+### Layout
+
+- Instagram: 7/12 columns — 2×3 (mobile) / 3×3 (desktop) grid
+- Facebook: 5/12 columns — iframe embed
+
+### Features
+
+- "Follow on Instagram" + "Follow on Facebook" CTA buttons
+- Hover overlay on Instagram posts with like/comment counts
+- Error fallback UI when API fails

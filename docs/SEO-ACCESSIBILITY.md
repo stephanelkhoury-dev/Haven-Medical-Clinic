@@ -10,7 +10,7 @@ Root metadata is defined in `src/app/layout.tsx` and inherited by all pages:
 
 | Field | Value |
 |-------|-------|
-| `metadataBase` | `https://www.havenmedical.com` |
+| `metadataBase` | `https://www.haven-beautyclinic.com` |
 | `title.default` | Haven Medical \| Premium Medical & Aesthetic Clinic in Beirut |
 | `title.template` | `%s \| Haven Medical` |
 | `description` | Premium aesthetic treatments, surgical procedures, and wellness services |
@@ -26,7 +26,7 @@ Root metadata is defined in `src/app/layout.tsx` and inherited by all pages:
 | `type` | website |
 | `locale` | en_US |
 | `siteName` | Haven Medical |
-| `image` | `/og-image.jpg` (1200×630) |
+| `image` | `/og-image.webp` (1200×630) |
 | Image alt | Haven Medical Clinic — Premium medical and aesthetic clinic in Beirut |
 
 ### Twitter Card
@@ -34,7 +34,7 @@ Root metadata is defined in `src/app/layout.tsx` and inherited by all pages:
 | Property | Value |
 |----------|-------|
 | `card` | summary_large_image |
-| `image` | `/og-image.jpg` |
+| `image` | `/og-image.webp` |
 
 ### Canonical URLs
 
@@ -46,24 +46,32 @@ Every page sets `alternates.canonical` via the metadata API.
 
 **File:** `src/lib/schema.ts`
 
-6 schema generators, injected as `<script type="application/ld+json">`:
+10 schema generators, injected as `<script type="application/ld+json">`:
 
 | Function | Schema Type | Used On |
 |----------|------------|---------|
 | `getOrganizationSchema()` | `MedicalClinic` | Root layout (every page) |
-| `getBreadcrumbSchema(items)` | `BreadcrumbList` | Homepage, service pages, blog pages |
+| `getWebSiteSchema()` | `WebSite` (with SearchAction) | Root layout (every page) |
+| `getBreadcrumbSchema(items)` | `BreadcrumbList` | Homepage, service pages, blog pages, doctor pages |
 | `getServiceSchema(service)` | `MedicalProcedure` | `/services/[slug]` |
 | `getFAQSchema(faqs)` | `FAQPage` | Homepage, service pages |
-| `getArticleSchema(post)` | `Article` | `/blog/[slug]` |
+| `getArticleSchema(post)` | `MedicalWebPage` | `/blog/[slug]` |
+| `getLocalBusinessSchema()` | `MedicalBusiness` | About page (geo, aggregateRating, areaServed) |
+| `getServiceListSchema(services)` | `ItemList` | Services listing page |
+| `getBlogListSchema(posts)` | `CollectionPage` → `ItemList` | Blog listing page |
+| `getAboutPageSchema()` | `AboutPage` → `MedicalOrganization` | About page |
+
+**Doctor profile pages** inject an inline `Physician` schema directly (name, jobTitle, medicalSpecialty, worksFor).
 
 #### Organization Schema Details
 
 ```json
 {
   "@type": "MedicalClinic",
-  "name": "Haven Medical",
+  "name": "Haven Beauty Clinic",
+  "url": "https://www.haven-beautyclinic.com",
   "telephone": "+961 XX XXX XXX",
-  "email": "info@havenmedical.com",
+  "email": "info@haven-beautyclinic.com",
   "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
   "openingHoursSpecification": [ "Mon-Fri 09:00-18:00", "Sat 09:00-14:00" ],
   "medicalSpecialty": ["Dermatology", "Plastic Surgery", "Otolaryngology", "Physical Therapy"],
@@ -77,16 +85,16 @@ Every page sets `alternates.canonical` via the metadata API.
 
 **File:** `src/app/sitemap.ts`
 
-Auto-generated `sitemap.xml` with all public URLs:
+**Dynamic** sitemap that queries the Neon Postgres database for service and blog slugs:
 
-| URL Pattern | Count | Priority | Change Freq |
-|------------|-------|----------|-------------|
-| `/` | 1 | 1.0 | weekly |
-| `/about`, `/services`, etc. | 7 | 0.8 | monthly |
-| `/services/[slug]` | 17 | 0.7 | monthly |
-| `/blog/[slug]` | 6 | 0.6 | monthly |
+| URL Pattern | Source | Priority | Change Freq |
+|------------|--------|----------|-------------|
+| `/` | Static | 1.0 | weekly |
+| `/about`, `/services`, `/blog`, etc. | Static (8 pages) | 0.8 | monthly |
+| `/services/[slug]` | DB: `admin_services` table | 0.8 | monthly |
+| `/blog/[slug]` | DB: `blog_posts` table | 0.6 | monthly |
 
-**Total:** ~34 URLs
+Falls back to empty arrays if database is unavailable.
 
 ---
 
@@ -99,7 +107,18 @@ User-Agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Sitemap: https://www.havenmedical.com/sitemap.xml
+Disallow: /_next/
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-Agent: Googlebot-Image
+Allow: /images/
+
+Sitemap: https://www.haven-beautyclinic.com/sitemap.xml
+Host: https://www.haven-beautyclinic.com
 ```
 
 ---
@@ -173,8 +192,10 @@ All buttons and links have `focus-visible:ring-2 focus-visible:ring-accent` Tail
 All animations are disabled when `prefers-reduced-motion: reduce`:
 
 1. **CSS:** All `animation-duration` and `transition-duration` set to `0.01ms`
-2. **GSAP hooks:** Check `window.matchMedia("(prefers-reduced-motion: reduce)")` and bail out
-3. **Scroll behavior:** Falls back to `auto` from `smooth`
+2. **IntersectionObserver hooks:** Show content immediately without transition
+3. **GSAP Counter:** Checks `window.matchMedia("(prefers-reduced-motion: reduce)")` and bails out
+4. **Scroll behavior:** Falls back to `auto` from `smooth`
+5. **ScrollReveal component:** Shows content immediately
 
 ### Semantic HTML Elements Used
 

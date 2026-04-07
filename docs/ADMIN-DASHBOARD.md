@@ -1,6 +1,6 @@
 # Admin Dashboard
 
-The admin dashboard is a client-side panel protected by session-based authentication. All data is currently **mock data** (no backend API).
+The admin dashboard is a client-side CMS panel protected by session-based authentication. All data is stored in **Neon Postgres** and managed via REST API endpoints.
 
 ---
 
@@ -37,16 +37,16 @@ The admin layout acts as a login gate:
 
 **File:** `src/app/admin/page.tsx`
 
-Overview cards with key metrics:
+Overview cards with key metrics loaded from the database:
 
-| Metric | Mock Value |
-|--------|-----------|
-| Total Appointments | 156 |
-| Active Subscribers | 245 |
-| Newsletter Sent | 12 |
-| Active Memberships | 89 |
-| Revenue This Month | $12,450 |
-| Website Visitors | 3,421 |
+| Metric | Source |
+|--------|--------|
+| Total Appointments | `appointments` table |
+| Active Subscribers | `subscribers` table |
+| Newsletter Sent | `campaigns` table |
+| Active Memberships | `member_subscriptions` table |
+| Revenue This Month | `member_subscriptions` table |
+| Website Visitors | Mock data |
 
 Plus a recent appointments table and recent subscriber list.
 
@@ -54,70 +54,101 @@ Plus a recent appointments table and recent subscriber list.
 
 ### Appointments `/admin/appointments`
 
-**File:** `src/app/admin/appointments/page.tsx`
+**File:** `src/app/admin/appointments/page.tsx`  
+**API:** `GET/POST /api/admin/appointments`, `PUT/DELETE /api/admin/appointments/[id]`
 
 Table of appointment requests with:
 - Status badges (pending, confirmed, completed, cancelled)
 - Service, date, time
 - Patient name, phone, email
 - Notes field
-
----
-
-### Newsletter `/admin/newsletter`
-
-**File:** `src/app/admin/newsletter/page.tsx`
-
-Campaign management:
-- List of campaigns with status (draft, scheduled, sent)
-- Open rate and click rate metrics
-- "Create Campaign" button (UI only)
-
----
-
-### Subscribers `/admin/subscribers`
-
-**File:** `src/app/admin/subscribers/page.tsx`
-
-Subscriber list with:
-- Email, name, subscription date
-- Status (active, unsubscribed)
-- Source (footer, popup, blog, appointment, manual)
-- Export functionality (UI only)
-
----
-
-### Subscriptions `/admin/subscriptions`
-
-**File:** `src/app/admin/subscriptions/page.tsx`
-
-Two sections:
-1. **Plans** — 3 subscription tiers
-2. **Active Members** — Member subscription list
-
-#### Subscription Plans
-
-| Plan | Price | Interval | Popular |
-|------|-------|----------|---------|
-| Essential Care | $49/mo | Monthly | No |
-| Premium Wellness | $129/mo | Monthly | Yes |
-| Elite Experience | $299/mo | Monthly | No |
+- Create, edit, update status, delete actions
 
 ---
 
 ### Services `/admin/services`
 
-**File:** `src/app/admin/services/page.tsx`
+**File:** `src/app/admin/services/page.tsx`  
+**API:** `GET/POST /api/admin/services`, `PUT/DELETE /api/admin/services/[slug]`
 
-Service management table showing all 20 services with category tags and edit/delete buttons (UI only).
+Service management with full CRUD. Each service has title, slug, category, description, image, and detailed content fields.
 
 ---
 
-### Blog `/admin/blog`
+### Doctors `/admin/doctors`
 
-**File:** `src/app/admin/blog/page.tsx`
+**File:** `src/app/admin/doctors/page.tsx`  
+**API:** `GET/POST /api/admin/doctors`, `PUT/DELETE /api/admin/doctors/[id]`
 
-Blog post management with draft/published status, edit and delete actions (UI only).
+Doctor management with a **5-tab modal form**:
+
+| Tab | Fields |
+|-----|--------|
+| **Basic Info** | Name, title, specialty, short bio, sort order, profile image upload |
+| **Biography** | Full biography (textarea), experience years, languages |
+| **Credentials** | Education entries (institution, degree, year) + Certification entries (name, issuer, year) — add/remove dynamically |
+| **Gallery** | Upload multiple gallery images, remove individual images |
+| **Social** | Instagram URL, Facebook URL, LinkedIn URL |
+
+Features:
+- Image upload via FormData to `/api/admin/upload`
+- Gallery image upload with `target=gallery` parameter
+- Auto-slug generation from doctor name
+- Inline SVG social icons (lucide-react lacks brand icons)
+
+---
+
+### Testimonials `/admin/testimonials`
+
+**File:** `src/app/admin/testimonials/page.tsx`  
+**API:** `GET/POST /api/admin/testimonials`, `PUT/DELETE /api/admin/testimonials/[id]`
+
+Testimonial management with author name, rating (1-5 stars), text content, and visibility toggle.
+
+---
+
+### Blog Posts `/admin/blog`
+
+**File:** `src/app/admin/blog/page.tsx`  
+**API:** `GET/POST /api/admin/blog`, `PUT/DELETE /api/admin/blog/[slug]`
+
+Blog post CRUD with rich content editing, category selection, featured image upload, author, read time, and draft/published status.
+
+---
+
+### Newsletter `/admin/newsletter`
+
+**File:** `src/app/admin/newsletter/page.tsx`  
+**API:** `GET/POST /api/admin/campaigns`, `PUT/DELETE /api/admin/campaigns/[id]`
+
+Campaign management:
+- List of campaigns with status (draft, scheduled, sent)
+- Open rate and click rate metrics
+- Create and manage email campaigns
+
+---
+
+### Subscribers `/admin/subscribers`
+
+**File:** `src/app/admin/subscribers/page.tsx`  
+**API:** `GET/POST /api/admin/subscribers`
+
+Subscriber list with:
+- Email, name, subscription date
+- Status (active, unsubscribed)
+- Source tracking
+- Export functionality
+
+---
+
+### Subscriptions `/admin/subscriptions`
+
+**File:** `src/app/admin/subscriptions/page.tsx`  
+**API:** `GET/POST /api/admin/plans`, `GET/POST /api/admin/members`
+
+Two sections:
+1. **Plans** — Subscription tiers with pricing
+2. **Active Members** — Member subscription list with status tracking
 
 ---
 
@@ -139,7 +170,7 @@ Blog post management with draft/published status, edit and delete actions (UI on
 
 ## Data Types
 
-All types defined in `src/data/admin.ts`:
+Types defined in `src/data/admin.ts` and used across admin pages:
 
 ```typescript
 interface Subscriber {
@@ -175,42 +206,46 @@ interface AppointmentRequest {
   notes?: string;
 }
 
-interface SubscriptionPlan {
-  id: string;
+interface Doctor {
+  id: number;
   name: string;
-  price: number;
-  interval: "monthly" | "quarterly" | "yearly";
-  features: string[];
-  popular?: boolean;
-  description: string;
-}
-
-interface MemberSubscription {
-  id: string;
-  memberId: string;
-  memberName: string;
-  memberEmail: string;
-  planId: string;
-  planName: string;
-  status: "active" | "paused" | "cancelled" | "expired";
-  startDate: string;
-  nextBilling: string;
-  amount: number;
+  title: string;
+  specialty: string;
+  image: string;
+  bio: string;
+  sortOrder: number;
+  slug: string;
+  fullBio: string;
+  education: { institution: string; degree: string; year: string }[];
+  languages: string;
+  experienceYears: number;
+  certifications: { name: string; issuer: string; year: string }[];
+  gallery: string[];
+  socialLinks: { instagram?: string; facebook?: string; linkedin?: string };
 }
 ```
 
+See [DATABASE-API.md](DATABASE-API.md) for the full database schema with all 11 tables.
+
 ---
 
-## Mock Data Summary
+## Database Tables
 
-| Collection | Count | Source |
-|-----------|-------|--------|
-| `mockSubscribers` | 8 subscribers | `src/data/admin.ts` |
-| `mockCampaigns` | 4 campaigns | `src/data/admin.ts` |
-| `mockAppointments` | 6 appointments | `src/data/admin.ts` |
-| `subscriptionPlans` | 3 plans | `src/data/admin.ts` |
-| `mockMemberSubscriptions` | 5 members | `src/data/admin.ts` |
-| `dashboardStats` | 6 metrics | `src/data/admin.ts` |
+All admin data is stored in Neon Postgres. See [DATABASE-API.md](DATABASE-API.md) for complete schema.
+
+| Table | Admin Page | Records |
+|-------|-----------|---------|
+| `appointments` | Appointments | Appointment requests |
+| `admin_services` | Services | Clinic services |
+| `doctors` | Doctors | Doctor profiles |
+| `testimonials` | Testimonials | Client reviews |
+| `blog_posts` | Blog | Blog articles |
+| `campaigns` | Newsletter | Email campaigns |
+| `subscribers` | Subscribers | Newsletter subscribers |
+| `subscription_plans` | Subscriptions | Membership plans |
+| `member_subscriptions` | Subscriptions | Active members |
+| `media` | (used by all) | Uploaded images (BYTEA) |
+| `settings` | Settings | Clinic configuration |
 
 ---
 
@@ -220,9 +255,11 @@ interface MemberSubscription {
 |------|-------|-------|
 | LayoutDashboard | Dashboard | `/admin` |
 | Calendar | Appointments | `/admin/appointments` |
+| Stethoscope | Services | `/admin/services` |
+| UserCheck | Doctors | `/admin/doctors` |
+| MessageSquareQuote | Testimonials | `/admin/testimonials` |
+| FileText | Blog Posts | `/admin/blog` |
 | Mail | Newsletter | `/admin/newsletter` |
 | Users | Subscribers | `/admin/subscribers` |
 | CreditCard | Subscriptions | `/admin/subscriptions` |
-| Sparkles | Services | `/admin/services` |
-| FileText | Blog | `/admin/blog` |
 | Settings | Settings | `/admin/settings` |

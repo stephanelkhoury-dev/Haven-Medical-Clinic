@@ -1,32 +1,43 @@
 # Pages & Routes
 
-The website has **45 statically generated pages** across public-facing and admin sections.
+The website has **15 public pages**, **10 admin pages**, and **22+ API endpoints**, all powered by Neon Postgres with ISR caching.
 
 ---
 
 ## Route Map
 
 ```
-/                          → Homepage (animated, GSAP)
-/about                     → About Us
-/services                  → Service listing (4 categories)
-/services/[slug]           → Individual service page (×20)
-/blog                      → Blog listing
-/blog/[slug]               → Blog post page (×6)
+Public Pages
+/                          → Homepage (animated, ISR)
+/about                     → About Us (ISR)
+/services                  → Service listing (ISR)
+/services/[slug]           → Individual service page (ISR, dynamic)
+/blog                      → Blog listing (ISR)
+/blog/[slug]               → Blog post page (ISR, dynamic)
+/doctors/[slug]            → Doctor profile page (ISR, dynamic)
 /gift-voucher              → Gift voucher page
 /membership                → Membership plans (3 tiers)
 /appointment               → Book appointment (WhatsApp CTA)
 /contact                   → Contact page (map, form)
+/privacy-policy            → Privacy Policy (static)
+/terms                     → Terms & Conditions (static)
+/not-found                 → Custom 404 page
+
+Admin Pages
 /admin                     → Admin dashboard
 /admin/appointments        → Manage appointments
+/admin/services            → Service CRUD
+/admin/doctors             → Doctor CRUD (5-tab modal)
+/admin/testimonials        → Testimonial management
+/admin/blog                → Blog post CRUD
 /admin/newsletter          → Newsletter campaigns
 /admin/subscribers         → Subscriber management
 /admin/subscriptions       → Subscription plans & members
-/admin/services            → Service management
-/admin/blog                → Blog management
 /admin/settings            → Settings (5 tabs)
-/sitemap.xml               → Auto-generated sitemap
-/robots.txt                → Auto-generated robots
+
+Auto-Generated
+/sitemap.xml               → Dynamic sitemap (queries DB)
+/robots.txt                → robots.txt
 /manifest.webmanifest      → PWA manifest
 ```
 
@@ -38,19 +49,25 @@ The website has **45 statically generated pages** across public-facing and admin
 
 **Files:** `src/app/page.tsx` (server) + `src/app/home-client.tsx` (client)
 
-The homepage is split into a server component (metadata, JSON-LD) and a client component (GSAP animations).
+The homepage is split into a server component (metadata, JSON-LD, DB queries) and a client component (CSS animations + IntersectionObserver).
+
+**Data sources:** Doctors, services, blog posts, and testimonials all loaded from Neon Postgres.
 
 **Sections:**
-1. **Hero** — Animated headline, subtitle, CTA buttons, floating cards
-2. **Stats Bar** — Animated counters (10+ years, 500+ patients, 17 treatments, 4 doctors)
-3. **Featured Services** — 6 service cards from data
+1. **Hero** — CSS animated headline, subtitle, CTA buttons, floating cards
+2. **Stats Bar** — GSAP-powered animated counters (10+ years, 500+ patients, 17 treatments, 4 doctors)
+3. **Featured Services** — 6 service cards from DB
 4. **About Preview** — Brief about section with USP grid
-5. **Testimonials** — Client reviews
-6. **Gift Voucher CTA** — Promotional banner
-7. **Blog Preview** — Latest 3 blog posts
-8. **CTA / Contact Section** — WhatsApp button + mini map
+5. **Doctors** — Doctor cards linking to `/doctors/[slug]` profiles
+6. **Testimonials** — Client reviews from DB
+7. **Gift Voucher CTA** — Promotional banner
+8. **Blog Preview** — Latest 3 blog posts from DB
+9. **Social Feed** — Instagram grid + Facebook embed (dynamically imported, ssr: false)
+10. **CTA / Contact Section** — WhatsApp button + mini map
 
-**SEO:** Organization schema (JSON-LD), FAQ schema, BreadcrumbList
+**Animations:** Pure CSS (`animate-fade-in-up`, stagger classes) + IntersectionObserver hooks (`useRevealOnScroll`, `useStaggerOnScroll`). GSAP only for Counter component (deferred via `requestIdleCallback`).
+
+**SEO:** Organization schema, WebSite schema, FAQ schema, BreadcrumbList
 
 ---
 
@@ -58,9 +75,9 @@ The homepage is split into a server component (metadata, JSON-LD) and a client c
 
 **File:** `src/app/about/page.tsx`
 
-Full about page with clinic story, mission, values, doctor profiles grid.
+Full about page with clinic story, mission, values, and doctor profiles grid. Doctor cards link to individual `/doctors/[slug]` profile pages.
 
-**Data sources:** `doctors[]` and `clinicInfo` from `src/data/clinic.ts`
+**Data sources:** Doctors loaded from Neon Postgres with `slug` field for linking.
 
 ---
 
@@ -156,17 +173,41 @@ Individual blog post with full content, author, date, read time, related posts.
 
 | Page | File | Description |
 |------|------|-------------|
+| Doctor Profile | `src/app/doctors/[slug]/page.tsx` | Individual doctor page with bio, education, certifications, gallery, social links |
 | Gift Voucher | `src/app/gift-voucher/page.tsx` | Gift voucher promotion with WhatsApp CTA |
 | Membership | `src/app/membership/page.tsx` | 3 subscription plans (Essential, Premium, Elite) |
 | Appointment | `src/app/appointment/page.tsx` | Booking page with WhatsApp integration |
 | Contact | `src/app/contact/page.tsx` | Contact info, hours, map placeholder, form |
+| Privacy Policy | `src/app/privacy-policy/page.tsx` | GDPR-compliant privacy policy |
+| Terms | `src/app/terms/page.tsx` | Terms & conditions |
 | 404 | `src/app/not-found.tsx` | Custom 404 with animated design |
+
+---
+
+### Doctor Profile `/doctors/[slug]`
+
+**File:** `src/app/doctors/[slug]/page.tsx`
+
+Individual doctor profile page with full professional details. Data loaded from Neon Postgres `doctors` table.
+
+**Sections:**
+1. **Hero** — Two-column: doctor photo (3:4 aspect) + info card (specialty, name, title, experience years, languages, short bio, social links, "Book Appointment" CTA)
+2. **Full Biography** — Multi-paragraph rendering
+3. **Education & Credentials** — Two-column grid with education cards (institution, degree, year) + certification cards
+4. **Photo Gallery** — Responsive image grid from doctor's gallery
+5. **CTA** — Gradient section with "Book Appointment" + "View All Specialists"
+
+**SEO:** BreadcrumbList + Physician schema (name, jobTitle, medicalSpecialty, worksFor)
+
+**Social Links:** Instagram, Facebook, LinkedIn with inline SVG icons (lucide-react doesn't have brand icons)
 
 ---
 
 ## Data Layer
 
-### Service Interface
+### Service Data
+
+Services are defined in `src/data/services.ts` with `generateStaticParams()` for static generation, and also managed dynamically from the `admin_services` DB table.
 
 ```typescript
 interface Service {
@@ -189,11 +230,6 @@ interface Service {
 }
 ```
 
-**Helper functions:**
-- `getServiceBySlug(slug)` — Find service by URL slug
-- `getServicesByCategory(category)` — Filter by category
-- `getRelatedServices(slugs)` — Get array of related services
-
 ### Blog Post Interface
 
 ```typescript
@@ -210,23 +246,46 @@ interface BlogPost {
 }
 ```
 
+### Doctor Profile Interface (DB-driven)
+
+```typescript
+interface DoctorProfile {
+  id: number;
+  name: string;
+  title: string;
+  specialty: string;
+  image: string;
+  bio: string;
+  slug: string;
+  fullBio: string;
+  education: { institution: string; degree: string; year: string }[];
+  languages: string;
+  experienceYears: number;
+  certifications: { name: string; issuer: string; year: string }[];
+  gallery: string[];
+  socialLinks: {
+    instagram?: string;
+    facebook?: string;
+    linkedin?: string;
+  };
+}
+```
+
 ### Clinic Data
 
 ```typescript
 // src/data/clinic.ts exports:
-doctors: Doctor[]           // 4 doctors with name, title, specialty, image, bio
-testimonials: Testimonial[] // 5 client reviews, all 5-star
 clinicInfo: {               // Contact details, hours, social links
   name, tagline, phone, whatsapp, email,
   address, mapUrl, hours, social
 }
 ```
 
-### Doctor Profiles
+### Static Data Files
 
-| Name | Title | Specialty |
-|------|-------|-----------|
-| Dr. Georges Khoury | Medical Director | Plastic & Reconstructive Surgery |
-| Dr. Layla Haddad | Dermatologist | Dermatology & Aesthetic Medicine |
-| Dr. Marc Antoine | Aesthetic Physician | Injectable Treatments & Facial Aesthetics |
-| Dr. Nadia Farhat | Nutritionist | Clinical Nutrition & Dietetics |
+| File | Content |
+|------|---------|
+| `src/data/services.ts` | 20 services with full detail + helper functions |
+| `src/data/blog.ts` | Blog post type definitions |
+| `src/data/clinic.ts` | Clinic contact info, testimonial types |
+| `src/data/admin.ts` | Admin types + mock dashboard metrics |

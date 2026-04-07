@@ -20,7 +20,7 @@ Derived from the **Haven Logo** (`Haven Logo.svg`):
 | `background` | `#FAFBFA` | `bg-background` | Page backgrounds |
 | `foreground` | `#3b3b3b` | `text-foreground` | Body text |
 | `dark` | `#3b3b3b` | `text-dark`, `bg-dark` | Dark UI / footer |
-| `dark-light` | `#616161` | `text-dark-light` | Muted body text |
+| `dark-light` | `#4a4a4a` | `text-dark-light` | Muted body text |
 | `muted` | `#F2F4F3` | `bg-muted` | Section backgrounds |
 | `muted-dark` | `#E4E8E6` | `bg-muted-dark` | Darker section backgrounds |
 | `white` | `#FFFFFF` | `text-white`, `bg-white` | White |

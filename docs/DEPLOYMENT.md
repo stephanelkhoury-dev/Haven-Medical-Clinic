@@ -6,7 +6,8 @@
 
 | Environment | URL |
 |-------------|-----|
-| **Production** | https://haven-medical-clinic.vercel.app |
+| **Production** | https://haven-beautyclinic.com |
+| **Vercel** | https://haven-medical-clinic.vercel.app |
 | **GitHub** | https://github.com/stephanelkhoury-dev/Haven-Medical-Clinic |
 | **Vercel Dashboard** | https://vercel.com/stephanelkhourys-projects/haven-medical-clinic |
 
@@ -24,6 +25,7 @@
 | Output Directory | `.next` |
 | Node.js Version | 18.x (Vercel default) |
 | Team/Scope | `stephanelkhourys-projects` |
+| Custom Domain | `haven-beautyclinic.com` |
 
 ### Deploy Commands
 
@@ -40,16 +42,36 @@ npx vercel --prod
 
 ### Environment Variables
 
-No environment variables are currently required. The site is fully static with mock data.
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `DATABASE_URL` | **Yes** | Neon Postgres connection string |
+| `NEXT_PUBLIC_SITE_URL` | No | Production URL for metadata (defaults to haven-beautyclinic.com) |
 
-For future backend integration, you may need:
+The `DATABASE_URL` must be set in both local `.env.local` and Vercel project settings.
 
-| Variable | Purpose |
-|----------|---------|
-| `NEXT_PUBLIC_SITE_URL` | Production URL for metadata |
-| `DATABASE_URL` | Database connection (if adding backend) |
-| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | Newsletter email sending |
-| `WHATSAPP_NUMBER` | WhatsApp business number |
+---
+
+## Database (Neon Postgres)
+
+| Setting | Value |
+|---------|-------|
+| Provider | Neon (neon.tech) |
+| Plan | Free tier |
+| Database | `neondb` |
+| Driver | `@neondatabase/serverless` |
+| Connection | HTTP-based (serverless, no pooler needed) |
+| Auto-suspend | After 5 minutes idle (free tier) |
+
+### Database Seeding
+
+To initialize or reset the database schema and seed data:
+
+```bash
+# POST request to seed endpoint
+curl -X POST https://haven-beautyclinic.com/api/admin/seed
+```
+
+This creates all 11 tables and inserts default data. See [DATABASE-API.md](DATABASE-API.md) for full schema.
 
 ---
 
@@ -78,61 +100,81 @@ git push origin main
 
 ### Auto-Deploy
 
-To enable automatic deployments on every push:
+Vercel is configured to auto-deploy on every push to `main`:
 
-1. Go to Vercel Dashboard → Project Settings → Git
-2. Connect Git Repository: `stephanelkhoury-dev/Haven-Medical-Clinic`
-3. Set production branch to `main`
-4. Every push to `main` will auto-deploy
+1. Push to `main` branch
+2. Vercel detects the push via GitHub integration
+3. Builds the project (`next build`)
+4. Deploys to production if on `main`
 
-> **Note:** If the GitHub integration fails to connect, use `npx vercel --prod` after each push.
+> **Fallback:** If auto-deploy fails, use `npx vercel --prod` manually.
+
+---
+
+## Rendering & Caching
+
+### ISR Strategy
+
+All public pages use **Incremental Static Regeneration** with a 60-second revalidation window:
+
+```typescript
+export const revalidate = 60; // Re-generate page every 60 seconds
+```
+
+This means:
+- First request after 60s triggers a background regeneration
+- Users always see cached content (never a loading state)
+- Content updates appear within ~60 seconds of a DB change
+- No full rebuild needed for content changes
+
+### Image Caching
+
+Images served from `/api/images/[id]` include aggressive caching:
+
+```
+Cache-Control: public, max-age=31536000, immutable
+```
+
+Static images in `/public/images/` also get 1-year cache via `next.config.ts` headers.
 
 ---
 
 ## Build Output
 
-The production build generates **45 static pages**:
+The production build generates ISR pages with serverless API functions:
 
 ```
 Route (app)
-├ ○ /                        (Static)
-├ ○ /about                   (Static)
-├ ○ /admin                   (Static)
-├ ○ /admin/appointments      (Static)
-├ ○ /admin/blog              (Static)
-├ ○ /admin/newsletter        (Static)
-├ ○ /admin/services          (Static)
-├ ○ /admin/settings          (Static)
-├ ○ /admin/subscribers       (Static)
-├ ○ /admin/subscriptions     (Static)
-├ ○ /appointment             (Static)
-├ ○ /blog                    (Static)
-├ ● /blog/[slug]             (SSG × 6)
-├ ○ /contact                 (Static)
+├ ○ /                        (ISR: 60s)
+├ ○ /about                   (ISR: 60s)
+├ ○ /admin                   (Client-side)
+├ ○ /admin/appointments      (Client-side)
+├ ○ /admin/blog              (Client-side)
+├ ○ /admin/doctors           (Client-side)
+├ ○ /admin/newsletter        (Client-side)
+├ ○ /admin/services          (Client-side)
+├ ○ /admin/settings          (Client-side)
+├ ○ /admin/subscribers       (Client-side)
+├ ○ /admin/subscriptions     (Client-side)
+├ ○ /admin/testimonials      (Client-side)
+├ ○ /appointment             (ISR: 60s)
+├ ○ /blog                    (ISR: 60s)
+├ ● /blog/[slug]             (ISR: 60s, dynamic)
+├ ○ /contact                 (ISR: 60s)
+├ ● /doctors/[slug]          (ISR: 60s, dynamic)
 ├ ○ /gift-voucher            (Static)
 ├ ○ /manifest.webmanifest    (Static)
 ├ ○ /membership              (Static)
+├ ○ /privacy-policy          (Static)
 ├ ○ /robots.txt              (Static)
-├ ○ /services                (Static)
-├ ● /services/[slug]         (SSG × 17)
-└ ○ /sitemap.xml             (Static)
+├ ○ /services                (ISR: 60s)
+├ ● /services/[slug]         (ISR: 60s, dynamic)
+├ ○ /sitemap.xml             (Dynamic)
+├ ○ /terms                   (Static)
+├ ƒ /api/admin/*             (Serverless functions)
+├ ƒ /api/images/[id]         (Serverless function)
+└ ƒ /api/instagram           (Serverless function)
 ```
-
----
-
-## Custom Domain
-
-To add a custom domain (e.g., `www.havenmedical.com`):
-
-1. Go to Vercel Dashboard → Project → Settings → Domains
-2. Add your domain
-3. Configure DNS records as instructed by Vercel:
-   - A record: `76.76.21.21`
-   - CNAME for www: `cname.vercel-dns.com`
-4. Update `metadataBase` in `src/app/layout.tsx` to match the new domain
-5. Update `BASE` in `src/lib/schema.ts`
-6. Update sitemap host in `src/app/sitemap.ts`
-7. Rebuild and deploy
 
 ---
 
@@ -140,29 +182,19 @@ To add a custom domain (e.g., `www.havenmedical.com`):
 
 | Optimization | Implementation |
 |-------------|---------------|
-| Static Generation | All 45 pages pre-rendered at build time |
+| ISR Caching | All public pages cached with 60s revalidation |
 | Font preloading | Inter + Playfair loaded with `preload: true`, `display: "swap"` |
-| Dynamic imports | GSAP ScrollTrigger loaded via `import()` on client only |
-| Image optimization | Next.js `<Image>` not used (placeholder SVGs); use `next/image` for production |
+| GSAP deferred | Loaded via `requestIdleCallback`, only for Counter |
+| CSS animations | Scroll reveals use CSS + IntersectionObserver (zero JS overhead) |
+| Image optimization | Next.js `<Image>` with WebP/AVIF, `minimumCacheTTL: 31536000` |
 | CSS purging | Tailwind 4 automatically tree-shakes unused styles |
 | Bundle splitting | Next.js automatic code splitting per route |
+| Package optimization | `optimizePackageImports: ["lucide-react"]` |
+| Security headers | HSTS, CSP, X-Frame-Options, COOP, etc. |
+| Image caching | 1-year cache on `/api/images/[id]` and `/public/images/` |
 
 ---
 
-## Pre-Production Checklist
+## Security Headers
 
-- [ ] Replace placeholder images with real photos
-- [ ] Update `clinicInfo` in `src/data/clinic.ts` with real phone, email, address
-- [ ] Update WhatsApp number in `src/data/clinic.ts`
-- [ ] Update social media URLs
-- [ ] Set `metadataBase` to production domain
-- [ ] Create real OG image (1200×630)
-- [ ] Create real PWA icons (192×192, 512×512)
-- [ ] Add real blog post content (currently using excerpts)
-- [ ] Connect backend API for admin features (replace mock data)
-- [ ] Set up SMTP for newsletter sending
-- [ ] Add Google Analytics / tracking
-- [ ] Configure custom domain on Vercel
-- [ ] Change admin password from `Haven2024!`
-- [ ] Test on real mobile devices
-- [ ] Run Lighthouse audit
+All routes receive 8 security headers via `next.config.ts`. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full list.
