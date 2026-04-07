@@ -9,6 +9,34 @@ export async function POST() {
   try {
     const sql = getDb();
 
+    // ── Auth tables ────────────────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id TEXT PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'front_desk',
+        active BOOLEAN DEFAULT true,
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_sessions (
+        token TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES admin_users(id),
+        expires_at TEXT NOT NULL
+      )
+    `;
+
+    // Seed default admin user
+    const existingAdmin = await sql`SELECT COUNT(*) as count FROM admin_users`;
+    if (Number(existingAdmin[0].count) === 0) {
+      await sql`INSERT INTO admin_users (id, username, password_hash, name, role, active, created_at)
+        VALUES ('admin-001', 'admin', 'Haven2024!', 'Admin', 'admin', true, ${new Date().toISOString()})`;
+    }
+
     // Create tables
     await sql`
       CREATE TABLE IF NOT EXISTS appointments (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent, createContext, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -23,42 +23,105 @@ import {
   UserCheck,
   MessageSquareQuote,
   Calculator,
+  Shield,
+  type LucideIcon,
 } from "lucide-react";
 
-// Admin credentials
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "Haven2024!";
-const AUTH_KEY = "haven_admin_auth";
+// ── Types ─────────────────────────────────────────────────────────────
+interface User {
+  id: string;
+  username: string;
+  name: string;
+  role: "admin" | "finance" | "editor" | "front_desk";
+}
 
-const sidebarLinks = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Appointments", href: "/admin/appointments", icon: Calendar },
-  { label: "Services", href: "/admin/services", icon: Stethoscope },
-  { label: "Doctors", href: "/admin/doctors", icon: UserCheck },
-  { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
-  { label: "Blog Posts", href: "/admin/blog", icon: FileText },
-  { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
-  { label: "Subscribers", href: "/admin/subscribers", icon: Users },
-  { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
-  { label: "Accounting", href: "/admin/accounting", icon: Calculator },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+interface AuthState {
+  user: User | null;
+  token: string | null;
+}
+
+const AuthContext = createContext<AuthState>({ user: null, token: null });
+export function useAuth() { return useContext(AuthContext); }
+
+const AUTH_STORAGE_KEY = "haven_auth";
+
+// ── Role-based navigation ─────────────────────────────────────────────
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  roles: string[];
+}
+
+const ALL_ROLES = ["admin", "finance", "editor", "front_desk"];
+
+const sidebarLinks: NavItem[] = [
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard, roles: ALL_ROLES },
+  { label: "Appointments", href: "/admin/appointments", icon: Calendar, roles: ["admin", "front_desk"] },
+  { label: "Services", href: "/admin/services", icon: Stethoscope, roles: ["admin", "editor"] },
+  { label: "Doctors", href: "/admin/doctors", icon: UserCheck, roles: ["admin", "editor"] },
+  { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote, roles: ["admin", "editor"] },
+  { label: "Blog Posts", href: "/admin/blog", icon: FileText, roles: ["admin", "editor"] },
+  { label: "Newsletter", href: "/admin/newsletter", icon: Mail, roles: ["admin", "front_desk"] },
+  { label: "Subscribers", href: "/admin/subscribers", icon: Users, roles: ["admin", "front_desk"] },
+  { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard, roles: ["admin", "finance"] },
+  { label: "Accounting", href: "/admin/accounting", icon: Calculator, roles: ["admin", "finance"] },
+  { label: "Users", href: "/admin/users", icon: Shield, roles: ["admin"] },
+  { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
 ];
 
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Admin",
+  finance: "Finance",
+  editor: "Editor",
+  front_desk: "Front Desk",
+};
+
+const ROLE_COLORS: Record<string, string> = {
+  admin: "bg-red-500/20 text-red-400",
+  finance: "bg-green-500/20 text-green-400",
+  editor: "bg-blue-500/20 text-blue-400",
+  front_desk: "bg-amber-500/20 text-amber-400",
+};
+
+// ── Login Screen ──────────────────────────────────────────────────────
+function LoginScreen({ onLogin }: { onLogin: (user: User, token: string) => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(AUTH_KEY, "true");
-      onLogin();
-    } else {
-      setError("Invalid username or password.");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+        token: data.token,
+        user: data.user,
+      }));
+
+      onLogin(data.user, data.token);
+    } catch {
+      setError("Unable to connect. Please try again.");
     }
+    setLoading(false);
   };
 
   return (
@@ -71,69 +134,41 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
           <h1 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">
             Haven<span className="text-accent">Admin</span>
           </h1>
-          <p className="text-sm text-white/50 mt-1">
-            Sign in to access the dashboard
-          </p>
+          <p className="text-sm text-white/50 mt-1">Sign in to access the dashboard</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1.5">
-              Username
-            </label>
+            <label className="block text-xs font-medium text-white/60 mb-1.5">Username</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-              required
-              autoComplete="username"
+              type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username" required autoComplete="username"
               className="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1.5">
-              Password
-            </label>
+            <label className="block text-xs font-medium text-white/60 mb-1.5">Password</label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                required
-                autoComplete="current-password"
+                type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password" required autoComplete="current-password"
                 className="w-full px-4 py-2.5 pr-10 rounded-lg bg-white/10 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+              <button type="button" onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70">
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
           {error && (
-            <p className="text-xs text-red-400 bg-red-400/10 rounded-lg px-3 py-2">
-              {error}
-            </p>
+            <p className="text-xs text-red-400 bg-red-400/10 rounded-lg px-3 py-2">{error}</p>
           )}
 
-          <button
-            type="submit"
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors"
-          >
+          <button type="submit" disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50">
             <Lock className="w-4 h-4" />
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
@@ -145,25 +180,53 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// ── Admin Layout ──────────────────────────────────────────────────────
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [auth, setAuth] = useState<AuthState>({ user: null, token: null });
   const [checking, setChecking] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
-    const auth = sessionStorage.getItem(AUTH_KEY);
-    setAuthenticated(auth === "true");
-    setChecking(false);
+    const stored = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    if (!stored) { setChecking(false); return; }
+
+    try {
+      const parsed = JSON.parse(stored);
+      fetch("/api/admin/auth", {
+        headers: { "x-auth-token": parsed.token },
+      }).then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setAuth({ user: data.user, token: parsed.token });
+        } else {
+          sessionStorage.removeItem(AUTH_STORAGE_KEY);
+        }
+        setChecking(false);
+      }).catch(() => {
+        setChecking(false);
+      });
+    } catch {
+      sessionStorage.removeItem(AUTH_STORAGE_KEY);
+      setChecking(false);
+    }
   }, []);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem(AUTH_KEY);
-    setAuthenticated(false);
+  const handleLogin = (user: User, token: string) => {
+    setAuth({ user, token });
+  };
+
+  const handleLogout = async () => {
+    if (auth.token) {
+      try {
+        await fetch("/api/admin/auth", {
+          method: "DELETE",
+          headers: { "x-auth-token": auth.token },
+        });
+      } catch { /* ignore */ }
+    }
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    setAuth({ user: null, token: null });
   };
 
   if (checking) {
@@ -174,123 +237,109 @@ export default function AdminLayout({
     );
   }
 
-  if (!authenticated) {
-    return <LoginScreen onLogin={() => setAuthenticated(true)} />;
+  if (!auth.user) {
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
+  const visibleLinks = sidebarLinks.filter((link) => link.roles.includes(auth.user!.role));
+
+  const initials = auth.user.name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar overlay for mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <AuthContext.Provider value={auth}>
+      <div className="min-h-screen bg-gray-50 flex">
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        )}
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark text-white transform transition-transform lg:relative lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex items-center justify-between px-6 h-16 border-b border-white/10">
-          <Link href="/admin" className="flex items-center gap-2">
-            <Heart className="w-6 h-6 text-accent" />
-            <span className="font-[family-name:var(--font-heading)] text-lg font-bold">
-              Haven<span className="text-accent">Admin</span>
-            </span>
-          </Link>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-white/60 hover:text-white"
-            aria-label="Close sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <nav className="px-3 py-4 space-y-1">
-          {sidebarLinks.map((link) => {
-            const isActive =
-              link.href === "/admin"
-                ? pathname === "/admin"
-                : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary text-white"
-                    : "text-white/60 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <link.icon className="w-5 h-5" />
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 space-y-1">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            Back to Website
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400/70 hover:bg-red-500/10 hover:text-red-400 transition-colors w-full"
-          >
-            <Lock className="w-5 h-5" />
-            Sign Out
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-600 hover:text-gray-900"
-              aria-label="Open sidebar"
-            >
-              <Menu className="w-6 h-6" />
+        <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark text-white transform transition-transform lg:relative lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="flex items-center justify-between px-6 h-16 border-b border-white/10">
+            <Link href="/admin" className="flex items-center gap-2">
+              <Heart className="w-6 h-6 text-accent" />
+              <span className="font-[family-name:var(--font-heading)] text-lg font-bold">
+                Haven<span className="text-accent">Admin</span>
+              </span>
+            </Link>
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white/60 hover:text-white" aria-label="Close sidebar">
+              <X className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-1 text-sm text-gray-500">
-              <Link href="/admin" className="hover:text-primary">
-                Admin
-              </Link>
-              {pathname !== "/admin" && (
-                <>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                  <span className="text-gray-900 capitalize">
-                    {pathname.split("/").pop()?.replace(/-/g, " ")}
-                  </span>
-                </>
-              )}
-            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-xs font-bold text-primary">HM</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700 hidden sm:block">
-              Admin
-            </span>
-          </div>
-        </header>
 
-        {/* Content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+          <nav className="px-3 py-4 space-y-1">
+            {visibleLinks.map((link) => {
+              const isActive = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href);
+              return (
+                <Link key={link.href} href={link.href} onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? "bg-primary text-white" : "text-white/60 hover:bg-white/5 hover:text-white"}`}>
+                  <link.icon className="w-5 h-5" />
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 space-y-1">
+            <div className="px-3 py-2 mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold text-accent">{initials}</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white text-sm font-medium truncate">{auth.user.name}</p>
+                  <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full ${ROLE_COLORS[auth.user.role]}`}>
+                    {ROLE_LABELS[auth.user.role]}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <Link href="/"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors">
+              <LogOut className="w-5 h-5" />
+              Back to Website
+            </Link>
+            <button onClick={handleLogout}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400/70 hover:bg-red-500/10 hover:text-red-400 transition-colors w-full">
+              <Lock className="w-5 h-5" />
+              Sign Out
+            </button>
+          </div>
+        </aside>
+
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
+            <div className="flex items-center gap-4">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600 hover:text-gray-900" aria-label="Open sidebar">
+                <Menu className="w-6 h-6" />
+              </button>
+              <div className="hidden sm:flex items-center gap-1 text-sm text-gray-500">
+                <Link href="/admin" className="hover:text-primary">Admin</Link>
+                {pathname !== "/admin" && (
+                  <>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                    <span className="text-gray-900 capitalize">{pathname.split("/").pop()?.replace(/-/g, " ")}</span>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[auth.user.role]}`}>
+                {ROLE_LABELS[auth.user.role]}
+              </span>
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-xs font-bold text-primary">{initials}</span>
+              </div>
+              <span className="text-sm font-medium text-gray-700 hidden sm:block">{auth.user.name}</span>
+            </div>
+          </header>
+
+          <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        </div>
       </div>
-    </div>
+    </AuthContext.Provider>
   );
 }
