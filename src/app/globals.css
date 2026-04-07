@@ -180,6 +180,13 @@ body {
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   z-index: -1;
 }
+/* Disable pulse on Safari — causes rendering glitch */
+@supports (-webkit-touch-callout: none) {
+  .whatsapp-pulse::before {
+    animation: none;
+    display: none;
+  }
+}
 
 /* ── Smooth image reveal ─────────────────────────────────── */
 .img-reveal {
