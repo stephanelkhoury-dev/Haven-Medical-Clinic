@@ -41,3 +41,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+public/images/Pictures Clinic Space/.DS_Store

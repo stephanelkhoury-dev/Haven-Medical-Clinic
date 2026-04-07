@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -153,6 +153,47 @@ function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
   return <span ref={ref} aria-label={`${value}${suffix}`}>0</span>;
 }
 
+// ── Hero slideshow with crossfade ─────────────────────────────────────
+const clinicImages = [
+  { src: "/images/Pictures Clinic Space/entrance-haven.webp", alt: "Haven Medical & Beauty Clinic entrance" },
+  { src: "/images/Pictures Clinic Space/welcome-desk.webp", alt: "Haven Medical reception desk" },
+  { src: "/images/Pictures Clinic Space/medical-room.webp", alt: "Haven Medical treatment room" },
+  { src: "/images/Pictures Clinic Space/room-laser-1.webp", alt: "Haven Medical laser treatment room" },
+  { src: "/images/Pictures Clinic Space/room-3.webp", alt: "Haven Medical consultation room" },
+  { src: "/images/Pictures Clinic Space/nutritionist-desk.webp", alt: "Haven Medical consultation office" },
+  { src: "/images/Pictures Clinic Space/room-laser-2.webp", alt: "Haven Medical aesthetic treatment room" },
+];
+
+function HeroSlideshow() {
+  const [current, setCurrent] = useState(0);
+
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % clinicImages.length);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(next, 4000);
+    return () => clearInterval(id);
+  }, [next]);
+
+  return (
+    <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary animate-fade-in stagger-2">
+      {clinicImages.map((img, i) => (
+        <Image
+          key={img.src}
+          src={img.src}
+          alt={img.alt}
+          fill
+          className="object-cover transition-opacity duration-1000 ease-in-out"
+          style={{ opacity: i === current ? 1 : 0 }}
+          sizes="(max-width: 1024px) 0vw, 50vw"
+          priority={i === 0}
+        />
+      ))}
+    </div>
+  );
+}
+
 // ── Hero component with pure CSS animations (no GSAP) ────────────────
 function HeroSection() {
   return (
@@ -196,16 +237,7 @@ function HeroSection() {
           </div>
         </div>
         <div className="hidden lg:block relative" aria-hidden="true">
-          <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-secondary-light to-secondary animate-fade-in stagger-2">
-            <Image
-              src="/og-image.webp"
-              alt="Haven Medical & Beauty Clinic"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 0vw, 50vw"
-              priority
-            />
-          </div>
+          <HeroSlideshow />
 
           {/* Floating cards */}
           <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3 animate-gentle-bob animate-fade-in stagger-5">
