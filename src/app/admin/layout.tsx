@@ -22,6 +22,7 @@ import {
   EyeOff,
   UserCheck,
   MessageSquareQuote,
+  Calculator,
 } from "lucide-react";
 
 // Admin credentials
@@ -39,6 +40,7 @@ const sidebarLinks = [
   { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { label: "Subscribers", href: "/admin/subscribers", icon: Users },
   { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
+  { label: "Accounting", href: "/admin/accounting", icon: Calculator },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

@@ -182,6 +182,100 @@ export async function POST() {
       )
     `;
 
+    // ── Accounting tables ──────────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_employees (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT '',
+        specialty TEXT NOT NULL DEFAULT '',
+        split_rules JSONB NOT NULL DEFAULT '[]',
+        sort_order INTEGER DEFAULT 0,
+        active BOOLEAN DEFAULT true,
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_entries (
+        id TEXT PRIMARY KEY,
+        employee_id TEXT NOT NULL REFERENCES acc_employees(id),
+        date TEXT NOT NULL,
+        service_type TEXT NOT NULL DEFAULT '',
+        description TEXT DEFAULT '',
+        amount REAL NOT NULL DEFAULT 0,
+        discount REAL NOT NULL DEFAULT 0,
+        employee_share REAL NOT NULL DEFAULT 0,
+        clinic_share REAL NOT NULL DEFAULT 0,
+        period TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_expenses (
+        id TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        amount REAL NOT NULL DEFAULT 0,
+        category TEXT NOT NULL DEFAULT 'general',
+        period TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_products (
+        id TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        product_type TEXT NOT NULL DEFAULT 'facial',
+        description TEXT DEFAULT '',
+        amount REAL NOT NULL DEFAULT 0,
+        operator_name TEXT NOT NULL DEFAULT '',
+        operator_share REAL NOT NULL DEFAULT 0,
+        clinic_share REAL NOT NULL DEFAULT 0,
+        period TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    // Seed accounting employees
+    const existingAccEmployees = await sql`SELECT COUNT(*) as count FROM acc_employees`;
+    if (Number(existingAccEmployees[0].count) === 0) {
+      await sql`INSERT INTO acc_employees (id, name, role, specialty, split_rules, sort_order, active, created_at) VALUES
+        ('emp-nacouzi', 'Dr. Nacouzi', 'doctor', 'Medical Aesthetic', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 0, clinicPercent: 100, label: "All Services" }
+        ])}, 1, true, ${new Date().toISOString()}),
+        ('emp-carol', 'Dr. Carol', 'doctor', 'Gynecology', ${JSON.stringify([
+          { serviceType: "chirurgie", employeePercent: 70, clinicPercent: 30, label: "Chirurgie" },
+          { serviceType: "consultation", employeePercent: 80, clinicPercent: 20, label: "Consultation" }
+        ])}, 2, true, ${new Date().toISOString()}),
+        ('emp-rachelle', 'Rachelle', 'operator', 'Aesthetics', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 70, clinicPercent: 30, label: "All Services" }
+        ])}, 3, true, ${new Date().toISOString()}),
+        ('emp-rewa', 'Rewa', 'operator', 'Laser Hair Removal', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 0, clinicPercent: 100, label: "All Services" }
+        ])}, 4, true, ${new Date().toISOString()}),
+        ('emp-roula', 'Roula', 'operator', 'Skin Therapy', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 70, clinicPercent: 30, label: "All Services" }
+        ])}, 5, true, ${new Date().toISOString()}),
+        ('emp-nour', 'Nour', 'operator', 'Laser & Nutrition', ${JSON.stringify([
+          { serviceType: "laser", employeePercent: 0, clinicPercent: 100, label: "Laser" },
+          { serviceType: "nutrition", employeePercent: 50, clinicPercent: 50, label: "Nutrition" }
+        ])}, 6, true, ${new Date().toISOString()}),
+        ('emp-bahia', 'Dr. Bahia', 'doctor', 'Physiotherapy & Laser', ${JSON.stringify([
+          { serviceType: "physiotherapy", employeePercent: 40, clinicPercent: 60, label: "Physiotherapy" },
+          { serviceType: "laser", employeePercent: 30, clinicPercent: 70, label: "Laser" }
+        ])}, 7, true, ${new Date().toISOString()}),
+        ('emp-ghinwa', 'Ghinwa', 'operator', 'Medical Pedicure', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 30, clinicPercent: 70, label: "All Services" }
+        ])}, 8, true, ${new Date().toISOString()}),
+        ('emp-hayat', 'Hayat', 'operator', 'Epilation Electrique', ${JSON.stringify([
+          { serviceType: "all", employeePercent: 70, clinicPercent: 30, label: "All Services" }
+        ])}, 9, true, ${new Date().toISOString()})
+      `;
+    }
+
     // Seed appointments
     const existingAppointments = await sql`SELECT COUNT(*) as count FROM appointments`;
     if (Number(existingAppointments[0].count) === 0) {
