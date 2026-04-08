@@ -142,29 +142,29 @@ export default function EntriesPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-accent text-white px-4 py-2 rounded-lg shadow-lg text-sm">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 bg-primary text-white px-4 py-2 rounded-lg shadow-lg text-sm">{toast}</div>
       )}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/admin/accounting" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5 text-white/60" />
+          <Link href="/admin/accounting" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-white">
               {selectedEmployee ? selectedEmployee.name : "All Entries"}
             </h1>
-            <p className="text-white/60 text-sm">
+            <p className="text-gray-600 text-sm">
               {selectedEmployee ? selectedEmployee.specialty : "Revenue entries & split calculations"}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1 bg-card border border-white/10 rounded-xl px-2 py-1">
-            <button onClick={() => shiftPeriod(-1)} className="p-1.5 hover:bg-white/10 rounded-lg"><ChevronLeft className="w-4 h-4 text-white/60" /></button>
-            <span className="text-white font-medium text-sm min-w-[130px] text-center">{periodLabel(period)}</span>
-            <button onClick={() => shiftPeriod(1)} className="p-1.5 hover:bg-white/10 rounded-lg"><ChevronRight className="w-4 h-4 text-white/60" /></button>
+          <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl px-2 py-1">
+            <button onClick={() => shiftPeriod(-1)} className="p-1.5 hover:bg-gray-100 rounded-lg"><ChevronLeft className="w-4 h-4 text-gray-600" /></button>
+            <span className="text-gray-900 font-medium text-sm min-w-[130px] text-center">{periodLabel(period)}</span>
+            <button onClick={() => shiftPeriod(1)} className="p-1.5 hover:bg-gray-100 rounded-lg"><ChevronRight className="w-4 h-4 text-gray-600" /></button>
           </div>
           <button
             onClick={() => {
@@ -180,7 +180,7 @@ export default function EntriesPage() {
               setIsNew(true);
               setPreviewSplit(null);
             }}
-            className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-xl text-sm"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm"
           >
             <Plus className="w-4 h-4" />
             Add Entry
@@ -190,10 +190,10 @@ export default function EntriesPage() {
 
       {/* Filter Bar */}
       <div className="flex items-center gap-3 flex-wrap">
-        <Filter className="w-4 h-4 text-white/40" />
+        <Filter className="w-4 h-4 text-gray-400" />
         <button
           onClick={() => setEmployeeFilter("")}
-          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!employeeFilter ? 'bg-accent text-white' : 'bg-white/5 text-white/60 hover:text-white'}`}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!employeeFilter ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:text-white'}`}
         >
           All
         </button>
@@ -201,7 +201,7 @@ export default function EntriesPage() {
           <button
             key={emp.id}
             onClick={() => setEmployeeFilter(emp.id)}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${employeeFilter === emp.id ? 'bg-accent text-white' : 'bg-white/5 text-white/60 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${employeeFilter === emp.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:text-white'}`}
           >
             {emp.name}
           </button>
@@ -210,70 +210,70 @@ export default function EntriesPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Total Amount</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Amount</p>
           <p className="text-xl font-bold text-white">{formatUSD(totalAmount)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Discounts</p>
-          <p className="text-xl font-bold text-red-400">{formatUSD(totalDiscount)}</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Discounts</p>
+          <p className="text-xl font-bold text-red-500">{formatUSD(totalDiscount)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Employee Share</p>
-          <p className="text-xl font-bold text-blue-400">{formatUSD(totalEmpShare)}</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Employee Share</p>
+          <p className="text-xl font-bold text-blue-600">{formatUSD(totalEmpShare)}</p>
         </div>
-        <div className="bg-card border border-white/10 rounded-xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Clinic Share</p>
-          <p className="text-xl font-bold text-green-400">{formatUSD(totalClinicShare)}</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Clinic Share</p>
+          <p className="text-xl font-bold text-green-600">{formatUSD(totalClinicShare)}</p>
         </div>
       </div>
 
       {/* Entries Table */}
       {loading ? (
-        <div className="flex items-center justify-center h-32"><Loader2 className="w-6 h-6 animate-spin text-accent" /></div>
+        <div className="flex items-center justify-center h-32"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
       ) : entries.length === 0 ? (
-        <div className="text-center py-16 text-white/40">
+        <div className="text-center py-16 text-gray-400">
           No entries for {selectedEmployee ? selectedEmployee.name + " in " : ""}{periodLabel(period)}
         </div>
       ) : (
-        <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Date</th>
-                  {!employeeFilter && <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Employee</th>}
-                  <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Service</th>
-                  <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Description</th>
-                  <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3">Amount</th>
-                  <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3">Discount</th>
-                  <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3">Employee</th>
-                  <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3">Clinic</th>
-                  <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3"></th>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Date</th>
+                  {!employeeFilter && <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Employee</th>}
+                  <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Service</th>
+                  <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Description</th>
+                  <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Amount</th>
+                  <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Discount</th>
+                  <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Employee</th>
+                  <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Clinic</th>
+                  <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5">
-                    <td className="px-5 py-3 text-white/70 text-sm">{entry.date}</td>
-                    {!employeeFilter && <td className="px-5 py-3 text-white text-sm font-medium">{entry.employeeName}</td>}
+                  <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="px-5 py-3 text-gray-700 text-sm">{entry.date}</td>
+                    {!employeeFilter && <td className="px-5 py-3 text-gray-900 text-sm font-medium">{entry.employeeName}</td>}
                     <td className="px-5 py-3">
-                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
                         {entry.serviceType || "general"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-white/80 text-sm">{entry.description}</td>
-                    <td className="px-5 py-3 text-right text-white font-medium text-sm">{formatUSD(entry.amount)}</td>
-                    <td className="px-5 py-3 text-right text-red-400/70 text-sm">{entry.discount > 0 ? `-${formatUSD(entry.discount)}` : "—"}</td>
-                    <td className="px-5 py-3 text-right text-blue-400 text-sm">{formatUSD(entry.employeeShare)}</td>
-                    <td className="px-5 py-3 text-right text-green-400 text-sm">{formatUSD(entry.clinicShare)}</td>
+                    <td className="px-5 py-3 text-gray-800 text-sm">{entry.description}</td>
+                    <td className="px-5 py-3 text-right text-gray-900 font-medium text-sm">{formatUSD(entry.amount)}</td>
+                    <td className="px-5 py-3 text-right text-red-500/70 text-sm">{entry.discount > 0 ? `-${formatUSD(entry.discount)}` : "—"}</td>
+                    <td className="px-5 py-3 text-right text-blue-600 text-sm">{formatUSD(entry.employeeShare)}</td>
+                    <td className="px-5 py-3 text-right text-green-600 text-sm">{formatUSD(entry.clinicShare)}</td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex items-center gap-1 justify-end">
-                        <button onClick={() => { setEditing(entry); setIsNew(false); setPreviewSplit(null); }} className="p-1.5 hover:bg-white/10 rounded-lg">
-                          <Save className="w-3.5 h-3.5 text-white/40" />
+                        <button onClick={() => { setEditing(entry); setIsNew(false); setPreviewSplit(null); }} className="p-1.5 hover:bg-gray-100 rounded-lg">
+                          <Save className="w-3.5 h-3.5 text-gray-400" />
                         </button>
                         <button onClick={() => setDeleteConfirm(entry.id)} className="p-1.5 hover:bg-red-500/10 rounded-lg">
-                          <Trash2 className="w-3.5 h-3.5 text-red-400/40" />
+                          <Trash2 className="w-3.5 h-3.5 text-red-500/40" />
                         </button>
                       </div>
                     </td>
@@ -281,12 +281,12 @@ export default function EntriesPage() {
                 ))}
               </tbody>
               <tfoot>
-                <tr className="bg-white/5">
-                  <td colSpan={employeeFilter ? 3 : 4} className="px-5 py-3 text-white font-semibold text-sm">TOTAL</td>
-                  <td className="px-5 py-3 text-right text-white font-bold text-sm">{formatUSD(totalAmount)}</td>
-                  <td className="px-5 py-3 text-right text-red-400 font-bold text-sm">{totalDiscount > 0 ? `-${formatUSD(totalDiscount)}` : "—"}</td>
-                  <td className="px-5 py-3 text-right text-blue-400 font-bold text-sm">{formatUSD(totalEmpShare)}</td>
-                  <td className="px-5 py-3 text-right text-green-400 font-bold text-sm">{formatUSD(totalClinicShare)}</td>
+                <tr className="bg-gray-50">
+                  <td colSpan={employeeFilter ? 3 : 4} className="px-5 py-3 text-gray-900 font-semibold text-sm">TOTAL</td>
+                  <td className="px-5 py-3 text-right text-gray-900 font-bold text-sm">{formatUSD(totalAmount)}</td>
+                  <td className="px-5 py-3 text-right text-red-500 font-bold text-sm">{totalDiscount > 0 ? `-${formatUSD(totalDiscount)}` : "—"}</td>
+                  <td className="px-5 py-3 text-right text-blue-600 font-bold text-sm">{formatUSD(totalEmpShare)}</td>
+                  <td className="px-5 py-3 text-right text-green-600 font-bold text-sm">{formatUSD(totalClinicShare)}</td>
                   <td></td>
                 </tr>
               </tfoot>
@@ -297,12 +297,12 @@ export default function EntriesPage() {
 
       {/* Delete Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-white/10 rounded-xl p-6 max-w-sm w-full">
-            <h3 className="text-white font-semibold mb-2">Delete Entry?</h3>
-            <p className="text-white/60 text-sm mb-4">This cannot be undone.</p>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-sm w-full">
+            <h3 className="text-gray-900 font-semibold mb-2">Delete Entry?</h3>
+            <p className="text-gray-600 text-sm mb-4">This cannot be undone.</p>
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-white/60 hover:text-white text-sm">Cancel</button>
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm">Cancel</button>
               <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm">Delete</button>
             </div>
           </div>
@@ -311,18 +311,18 @@ export default function EntriesPage() {
 
       {/* Edit/Add Modal */}
       {editing && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-white/10 rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">{isNew ? "Add Entry" : "Edit Entry"}</h3>
-              <button onClick={() => { setEditing(null); setIsNew(false); setPreviewSplit(null); }} className="p-1 hover:bg-white/10 rounded-lg">
-                <X className="w-5 h-5 text-white/60" />
+              <h3 className="text-gray-900 font-semibold">{isNew ? "Add Entry" : "Edit Entry"}</h3>
+              <button onClick={() => { setEditing(null); setIsNew(false); setPreviewSplit(null); }} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
             <div className="space-y-4">
               {/* Employee */}
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Employee</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Employee</label>
                 <select
                   value={editing.employeeId || ""}
                   onChange={(e) => {
@@ -332,7 +332,7 @@ export default function EntriesPage() {
                       calculatePreview(empId, "", Number(editing.amount), Number(editing.discount) || 0);
                     }
                   }}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent"
                 >
                   <option value="">Select employee</option>
                   {employees.map((emp) => (
@@ -347,7 +347,7 @@ export default function EntriesPage() {
                 if (!emp || emp.splitRules.length <= 1) return null;
                 return (
                   <div>
-                    <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Service Type</label>
+                    <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Service Type</label>
                     <select
                       value={editing.serviceType || ""}
                       onChange={(e) => {
@@ -355,7 +355,7 @@ export default function EntriesPage() {
                         setEditing({ ...editing, serviceType: st });
                         calculatePreview(editing.employeeId!, st, Number(editing.amount) || 0, Number(editing.discount) || 0);
                       }}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent"
                     >
                       <option value="">Select service type</option>
                       {emp.splitRules.map((rule) => (
@@ -369,20 +369,20 @@ export default function EntriesPage() {
               })()}
 
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Date</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Date</label>
                 <input type="date" value={editing.date || ""} onChange={(e) => setEditing({ ...editing, date: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent" />
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Description</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Description</label>
                 <input type="text" value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent" />
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Amount ($)</label>
+                  <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Amount ($)</label>
                   <input type="number" min={0} step={0.01} value={editing.amount || ""}
                     onChange={(e) => {
                       const amt = Number(e.target.value);
@@ -391,10 +391,10 @@ export default function EntriesPage() {
                         calculatePreview(editing.employeeId, editing.serviceType || "", amt, Number(editing.discount) || 0);
                       }
                     }}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent" />
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent" />
                 </div>
                 <div>
-                  <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Discount ($)</label>
+                  <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Discount ($)</label>
                   <input type="number" min={0} step={0.01} value={editing.discount || ""}
                     onChange={(e) => {
                       const disc = Number(e.target.value);
@@ -403,30 +403,30 @@ export default function EntriesPage() {
                         calculatePreview(editing.employeeId, editing.serviceType || "", Number(editing.amount) || 0, disc);
                       }
                     }}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent" />
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent" />
                 </div>
               </div>
 
               {/* Split Preview */}
               {previewSplit && (
-                <div className="bg-white/5 rounded-lg p-3 text-sm">
-                  <p className="text-white/40 text-xs uppercase mb-2">Split Preview</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-sm">
+                  <p className="text-gray-400 text-xs uppercase mb-2">Split Preview</p>
                   <div className="flex justify-between">
-                    <span className="text-white/60">Employee gets:</span>
-                    <span className="text-blue-400 font-medium">{formatUSD(previewSplit.employee)}</span>
+                    <span className="text-gray-600">Employee gets:</span>
+                    <span className="text-blue-600 font-medium">{formatUSD(previewSplit.employee)}</span>
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-white/60">Clinic gets:</span>
-                    <span className="text-green-400 font-medium">{formatUSD(previewSplit.clinic)}</span>
+                    <span className="text-gray-600">Clinic gets:</span>
+                    <span className="text-green-600 font-medium">{formatUSD(previewSplit.clinic)}</span>
                   </div>
                 </div>
               )}
             </div>
 
             <div className="flex gap-2 justify-end mt-6">
-              <button onClick={() => { setEditing(null); setIsNew(false); setPreviewSplit(null); }} className="px-4 py-2 text-white/60 hover:text-white text-sm">Cancel</button>
+              <button onClick={() => { setEditing(null); setIsNew(false); setPreviewSplit(null); }} className="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm">Cancel</button>
               <button onClick={handleSave} disabled={!editing.employeeId || !editing.amount}
-                className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                 <Save className="w-4 h-4" />
                 {isNew ? "Add" : "Save"}
               </button>
