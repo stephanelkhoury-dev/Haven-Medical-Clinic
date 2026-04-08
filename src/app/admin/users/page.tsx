@@ -21,10 +21,10 @@ const roles = [
 ];
 
 const ROLE_COLORS: Record<string, string> = {
-  admin: "bg-red-500/20 text-red-400",
-  finance: "bg-green-500/20 text-green-400",
-  editor: "bg-blue-500/20 text-blue-400",
-  front_desk: "bg-amber-500/20 text-amber-400",
+  admin: "bg-red-100 text-red-700",
+  finance: "bg-green-100 text-green-700",
+  editor: "bg-blue-100 text-blue-700",
+  front_desk: "bg-amber-100 text-amber-700",
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -118,8 +118,8 @@ export default function UsersPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <Shield className="w-12 h-12 text-white/20 mx-auto mb-3" />
-          <p className="text-white/60">Admin access required</p>
+          <Shield className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500">Admin access required</p>
         </div>
       </div>
     );
@@ -128,7 +128,7 @@ export default function UsersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -136,14 +136,14 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-accent text-white px-4 py-2 rounded-lg shadow-lg text-sm">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 bg-primary text-white px-4 py-2 rounded-lg shadow-lg text-sm">{toast}</div>
       )}
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">User Management</h1>
-          <p className="text-white/60 text-sm mt-1">Create accounts and assign roles</p>
+          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+          <p className="text-gray-500 text-sm mt-1">Create accounts and assign roles</p>
         </div>
         <button
           onClick={() => {
@@ -151,7 +151,7 @@ export default function UsersPage() {
             setIsNew(true);
             setShowPassword(false);
           }}
-          className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-xl text-sm transition-colors"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-sm transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add User
@@ -161,67 +161,67 @@ export default function UsersPage() {
       {/* Role Legend */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {roles.map((r) => (
-          <div key={r.value} className="bg-card border border-white/10 rounded-xl p-4">
+          <div key={r.value} className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">
               <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[r.value]}`}>
                 {r.label}
               </span>
             </div>
-            <p className="text-white/50 text-xs mt-1">{r.desc}</p>
+            <p className="text-gray-500 text-xs mt-1">{r.desc}</p>
           </div>
         ))}
       </div>
 
       {/* Users Table */}
-      <div className="bg-card border border-white/10 rounded-xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">User</th>
-              <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Username</th>
-              <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Role</th>
-              <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Status</th>
-              <th className="text-left text-white/60 text-xs uppercase tracking-wider px-5 py-3">Created</th>
-              <th className="text-right text-white/60 text-xs uppercase tracking-wider px-5 py-3"></th>
+            <tr className="border-b border-gray-200 bg-gray-50">
+              <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">User</th>
+              <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Username</th>
+              <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Role</th>
+              <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Status</th>
+              <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Created</th>
+              <th className="text-right text-gray-600 text-xs uppercase tracking-wider px-5 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className={`border-b border-white/5 hover:bg-white/5 ${!u.active ? 'opacity-50' : ''}`}>
+              <tr key={u.id} className={`border-b border-gray-100 hover:bg-gray-50 ${!u.active ? 'opacity-50' : ''}`}>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-accent">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-primary">
                         {u.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
                       </span>
                     </div>
-                    <span className="text-white font-medium text-sm">{u.name}</span>
+                    <span className="text-gray-900 font-medium text-sm">{u.name}</span>
                   </div>
                 </td>
-                <td className="px-5 py-3 text-white/60 text-sm">{u.username}</td>
+                <td className="px-5 py-3 text-gray-600 text-sm">{u.username}</td>
                 <td className="px-5 py-3">
                   <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[u.role]}`}>
                     {ROLE_LABELS[u.role] || u.role}
                   </span>
                 </td>
                 <td className="px-5 py-3">
-                  <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${u.active ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-white/40'}`}>
+                  <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${u.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                     {u.active ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="px-5 py-3 text-white/40 text-sm">
+                <td className="px-5 py-3 text-gray-400 text-sm">
                   {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
                 </td>
                 <td className="px-5 py-3 text-right">
                   <div className="flex items-center gap-1 justify-end">
                     <button onClick={() => { setEditing({ ...u, password: "" }); setIsNew(false); setShowPassword(false); }}
-                      className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
-                      <Pencil className="w-3.5 h-3.5 text-white/40" />
+                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                      <Pencil className="w-3.5 h-3.5 text-gray-400" />
                     </button>
                     {u.id !== currentUser?.id && (
                       <button onClick={() => setDeleteConfirm(u.id)}
-                        className="p-1.5 hover:bg-red-500/10 rounded-lg transition-colors">
-                        <Trash2 className="w-3.5 h-3.5 text-red-400/40" />
+                        className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
                       </button>
                     )}
                   </div>
@@ -234,13 +234,13 @@ export default function UsersPage() {
 
       {/* Delete Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-white/10 rounded-xl p-6 max-w-sm w-full">
-            <h3 className="text-white font-semibold mb-2">Delete User?</h3>
-            <p className="text-white/60 text-sm mb-4">This will remove their account and end all active sessions. This cannot be undone.</p>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-gray-900 font-semibold mb-2">Delete User?</h3>
+            <p className="text-gray-500 text-sm mb-4">This will remove their account and end all active sessions. This cannot be undone.</p>
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-white/60 hover:text-white text-sm">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm">Delete</button>
             </div>
           </div>
         </div>
@@ -248,32 +248,32 @@ export default function UsersPage() {
 
       {/* Edit/Create Modal */}
       {editing && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-white/10 rounded-xl p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-md w-full shadow-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">{isNew ? "Create User" : "Edit User"}</h3>
-              <button onClick={() => { setEditing(null); setIsNew(false); }} className="p-1 hover:bg-white/10 rounded-lg">
-                <X className="w-5 h-5 text-white/60" />
+              <h3 className="text-gray-900 font-semibold">{isNew ? "Create User" : "Edit User"}</h3>
+              <button onClick={() => { setEditing(null); setIsNew(false); }} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Full Name</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Full Name</label>
                 <input type="text" value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder="e.g. Dr. Nacouzi"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
               </div>
 
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">Username</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Username</label>
                 <input type="text" value={editing.username || ""} onChange={(e) => setEditing({ ...editing, username: e.target.value })}
                   placeholder="e.g. nacouzi" disabled={!isNew}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent disabled:opacity-50" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:bg-gray-50 disabled:opacity-50" />
               </div>
 
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-1 block">
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">
                   {isNew ? "Password" : "New Password (leave blank to keep current)"}
                 </label>
                 <div className="relative">
@@ -281,25 +281,25 @@ export default function UsersPage() {
                     onChange={(e) => setEditing({ ...editing, password: e.target.value })}
                     placeholder={isNew ? "Enter password" : "Leave blank to keep current"}
                     required={isNew}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 pr-10 text-white text-sm focus:outline-none focus:border-accent" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="text-white/60 text-xs uppercase tracking-wider mb-2 block">Role</label>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-2 block">Role</label>
                 <div className="grid grid-cols-2 gap-2">
                   {roles.map((r) => (
                     <button key={r.value} type="button"
                       onClick={() => setEditing({ ...editing, role: r.value })}
-                      className={`text-left p-3 rounded-lg border transition-colors ${editing.role === r.value ? 'border-accent bg-accent/10' : 'border-white/10 bg-white/5 hover:border-white/20'}`}>
+                      className={`text-left p-3 rounded-lg border transition-colors ${editing.role === r.value ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
                       <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full ${ROLE_COLORS[r.value]}`}>
                         {r.label}
                       </span>
-                      <p className="text-white/40 text-[10px] mt-1.5 leading-tight">{r.desc}</p>
+                      <p className="text-gray-400 text-[10px] mt-1.5 leading-tight">{r.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -307,21 +307,21 @@ export default function UsersPage() {
 
               {!isNew && (
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
                     <input type="checkbox" checked={editing.active !== false}
                       onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                      className="accent-accent" />
+                      className="accent-primary" />
                     Active
                   </label>
-                  <span className="text-white/30 text-xs">— Inactive users cannot log in</span>
+                  <span className="text-gray-400 text-xs">— Inactive users cannot log in</span>
                 </div>
               )}
             </div>
 
             <div className="flex gap-2 justify-end mt-6">
-              <button onClick={() => { setEditing(null); setIsNew(false); }} className="px-4 py-2 text-white/60 hover:text-white text-sm">Cancel</button>
+              <button onClick={() => { setEditing(null); setIsNew(false); }} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm">Cancel</button>
               <button onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg text-sm transition-colors">
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm transition-colors">
                 <Save className="w-4 h-4" />
                 {isNew ? "Create User" : "Save Changes"}
               </button>
