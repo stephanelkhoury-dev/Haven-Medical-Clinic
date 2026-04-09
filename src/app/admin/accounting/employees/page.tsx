@@ -171,7 +171,7 @@ export default function EmployeesPage() {
                   <span className="text-gray-600">{rule.label || rule.serviceType}</span>
                   <span className="text-gray-800">
                     <span className="text-blue-600">{rule.employeePercent}%</span>
-                    <span className="text-white/30 mx-1">/</span>
+                    <span className="text-gray-400 mx-1">/</span>
                     <span className="text-green-600">{rule.clinicPercent}%</span>
                   </span>
                 </div>
