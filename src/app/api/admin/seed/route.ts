@@ -270,6 +270,34 @@ export async function POST() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_recurring (
+        id TEXT PRIMARY KEY,
+        description TEXT NOT NULL,
+        amount REAL NOT NULL DEFAULT 0,
+        category TEXT NOT NULL DEFAULT 'general',
+        frequency TEXT NOT NULL DEFAULT 'monthly',
+        day_of_month INTEGER DEFAULT 1,
+        active BOOLEAN DEFAULT true,
+        last_generated TEXT DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS acc_payroll (
+        id TEXT PRIMARY KEY,
+        employee_id TEXT NOT NULL REFERENCES acc_employees(id),
+        period TEXT NOT NULL,
+        gross_amount REAL NOT NULL DEFAULT 0,
+        paid_amount REAL NOT NULL DEFAULT 0,
+        paid_date TEXT DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'pending',
+        notes TEXT DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
     // Seed accounting employees
     const existingAccEmployees = await sql`SELECT COUNT(*) as count FROM acc_employees`;
     if (Number(existingAccEmployees[0].count) === 0) {

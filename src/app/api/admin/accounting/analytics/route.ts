@@ -6,13 +6,28 @@ export async function GET(request: NextRequest) {
     const sql = getDb();
     const { searchParams } = new URL(request.url);
     const months = parseInt(searchParams.get("months") || "6", 10);
-
-    // Generate last N months
-    const periods: string[] = [];
+    const startDate = searchParams.get("start"); // YYYY-MM format
+    const endDate = searchParams.get("end");     // YYYY-MM format
     const now = new Date();
-    for (let i = months - 1; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      periods.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+
+    // Generate periods either from start/end or last N months
+    const periods: string[] = [];
+    if (startDate && endDate) {
+      // Custom date range
+      const [sy, sm] = startDate.split("-").map(Number);
+      const [ey, em] = endDate.split("-").map(Number);
+      let current = new Date(sy, sm - 1, 1);
+      const end = new Date(ey, em - 1, 1);
+      while (current <= end) {
+        periods.push(`${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}`);
+        current.setMonth(current.getMonth() + 1);
+      }
+    } else {
+      // Last N months
+      for (let i = months - 1; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        periods.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+      }
     }
 
     // Monthly revenue trends

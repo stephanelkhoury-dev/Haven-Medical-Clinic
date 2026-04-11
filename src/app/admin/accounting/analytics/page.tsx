@@ -117,15 +117,29 @@ export default function AccountingAnalytics() {
   const [loading, setLoading] = useState(true);
   const [months, setMonths] = useState(6);
   const [exporting, setExporting] = useState(false);
+  const [useCustomRange, setUseCustomRange] = useState(false);
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 5);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
 
   const loadAnalytics = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/accounting/analytics?months=${months}`);
+      let url = `/api/admin/accounting/analytics?months=${months}`;
+      if (useCustomRange) {
+        url = `/api/admin/accounting/analytics?start=${startDate}&end=${endDate}`;
+      }
+      const res = await fetch(url);
       if (res.ok) setAnalytics(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
-  }, [months]);
+  }, [months, useCustomRange, startDate, endDate]);
 
   const downloadExcel = async (auditOnly: boolean) => {
     setExporting(true);
@@ -188,7 +202,44 @@ export default function AccountingAnalytics() {
             <p className="text-gray-500 text-sm">Revenue trends, performance metrics & insights</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => downloadExcel(false)}
+            disabled={exporting}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            Full Report
+          </button>
+          <button
+            onClick={() => downloadExcel(true)}
+            disabled={exporting}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+          >
+            <Download className="w-4 h-4" />
+            Audit Only
+          </button>
+        </div>
+      </div>
+
+      {/* Date Range Controls */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setUseCustomRange(false)}
+            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!useCustomRange ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          >
+            Quick
+          </button>
+          <button
+            onClick={() => setUseCustomRange(true)}
+            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${useCustomRange ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          >
+            Custom Range
+          </button>
+        </div>
+
+        {!useCustomRange ? (
           <div className="flex items-center gap-2">
             <span className="text-gray-500 text-sm">Show:</span>
             <select
@@ -196,30 +247,29 @@ export default function AccountingAnalytics() {
               onChange={(e) => setMonths(Number(e.target.value))}
               className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
-              <option value={3}>3 months</option>
-              <option value={6}>6 months</option>
-              <option value={12}>12 months</option>
+              <option value={3}>Last 3 months</option>
+              <option value={6}>Last 6 months</option>
+              <option value={12}>Last 12 months</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => downloadExcel(false)}
-              disabled={exporting}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
-            >
-              <FileSpreadsheet className="w-4 h-4" />
-              Full Report
-            </button>
-            <button
-              onClick={() => downloadExcel(true)}
-              disabled={exporting}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
-            >
-              <Download className="w-4 h-4" />
-              Audit Only
-            </button>
+        ) : (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-gray-500 text-sm">From:</span>
+            <input
+              type="month"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <span className="text-gray-500 text-sm">To:</span>
+            <input
+              type="month"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
           </div>
-        </div>
+        )}
       </div>
 
       {/* KPI Cards */}
