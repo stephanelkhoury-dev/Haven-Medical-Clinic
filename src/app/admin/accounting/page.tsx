@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   Loader2,
+  BarChart3,
 } from "lucide-react";
 
 interface EmployeeSummary {
@@ -118,7 +119,7 @@ export default function AccountingDashboard() {
       </div>
 
       {/* Quick Nav */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <Link href={`/admin/accounting/entries?period=${period}`}
           className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <Receipt className="w-5 h-5 text-primary mb-2" />
@@ -142,6 +143,12 @@ export default function AccountingDashboard() {
           <ShoppingBag className="w-5 h-5 text-primary mb-2" />
           <p className="text-gray-900 font-medium text-sm">Products</p>
           <p className="text-gray-400 text-xs">Sales tracking</p>
+        </Link>
+        <Link href="/admin/accounting/analytics"
+          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <BarChart3 className="w-5 h-5 text-violet-500 mb-2" />
+          <p className="text-gray-900 font-medium text-sm">Analytics</p>
+          <p className="text-gray-400 text-xs">Charts & trends</p>
         </Link>
       </div>
 
