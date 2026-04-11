@@ -14,6 +14,8 @@ import {
   Loader2,
   ArrowUpRight,
   ArrowDownRight,
+  FileSpreadsheet,
+  Download,
 } from "lucide-react";
 import {
   BarChart,
@@ -114,6 +116,7 @@ export default function AccountingAnalytics() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [months, setMonths] = useState(6);
+  const [exporting, setExporting] = useState(false);
 
   const loadAnalytics = useCallback(async () => {
     setLoading(true);
@@ -123,6 +126,26 @@ export default function AccountingAnalytics() {
     } catch { /* ignore */ }
     setLoading(false);
   }, [months]);
+
+  const downloadExcel = async (auditOnly: boolean) => {
+    setExporting(true);
+    try {
+      const period = analytics?.currentPeriod || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+      const res = await fetch(`/api/admin/accounting/export?period=${period}&audit_only=${auditOnly}`);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `haven-accounting-${period}${auditOnly ? "-audit" : ""}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch { /* ignore */ }
+    setExporting(false);
+  };
 
   useEffect(() => { loadAnalytics(); }, [loadAnalytics]);
 
@@ -165,17 +188,37 @@ export default function AccountingAnalytics() {
             <p className="text-gray-500 text-sm">Revenue trends, performance metrics & insights</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500 text-sm">Show:</span>
-          <select
-            value={months}
-            onChange={(e) => setMonths(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value={3}>3 months</option>
-            <option value={6}>6 months</option>
-            <option value={12}>12 months</option>
-          </select>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500 text-sm">Show:</span>
+            <select
+              value={months}
+              onChange={(e) => setMonths(Number(e.target.value))}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value={3}>3 months</option>
+              <option value={6}>6 months</option>
+              <option value={12}>12 months</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => downloadExcel(false)}
+              disabled={exporting}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              Full Report
+            </button>
+            <button
+              onClick={() => downloadExcel(true)}
+              disabled={exporting}
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              Audit Only
+            </button>
+          </div>
         </div>
       </div>
 

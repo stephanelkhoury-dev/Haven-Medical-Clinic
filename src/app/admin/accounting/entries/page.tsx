@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2, Filter } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2, Filter, CheckSquare, Square } from "lucide-react";
 
 interface SplitRule {
   serviceType: string;
@@ -32,6 +32,7 @@ interface Entry {
   employeeShare: number;
   clinicShare: number;
   period: string;
+  inAudit: boolean;
 }
 
 function formatUSD(n: number) {
@@ -133,6 +134,40 @@ export default function EntriesPage() {
     }
   };
 
+  const toggleAudit = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_entries", id, inAudit: !currentStatus }),
+      });
+      if (res.ok) {
+        setEntries(entries.map(e => e.id === id ? { ...e, inAudit: !currentStatus } : e));
+        showToast(`Entry ${!currentStatus ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
+  const toggleAllAudit = async (inAudit: boolean) => {
+    const ids = entries.map(e => e.id);
+    if (ids.length === 0) return;
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_entries", ids, inAudit }),
+      });
+      if (res.ok) {
+        setEntries(entries.map(e => ({ ...e, inAudit })));
+        showToast(`All entries ${inAudit ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
   const selectedEmployee = employees.find((e) => e.id === employeeFilter);
   const totalAmount = entries.reduce((s, e) => s + Number(e.amount), 0);
   const totalDiscount = entries.reduce((s, e) => s + Number(e.discount), 0);
@@ -152,7 +187,7 @@ export default function EntriesPage() {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-gray-900">
               {selectedEmployee ? selectedEmployee.name : "All Entries"}
             </h1>
             <p className="text-gray-600 text-sm">
@@ -193,7 +228,7 @@ export default function EntriesPage() {
         <Filter className="w-4 h-4 text-gray-400" />
         <button
           onClick={() => setEmployeeFilter("")}
-          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!employeeFilter ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:text-white'}`}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!employeeFilter ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
         >
           All
         </button>
@@ -201,7 +236,7 @@ export default function EntriesPage() {
           <button
             key={emp.id}
             onClick={() => setEmployeeFilter(emp.id)}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${employeeFilter === emp.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${employeeFilter === emp.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
           >
             {emp.name}
           </button>
@@ -212,7 +247,7 @@ export default function EntriesPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Amount</p>
-          <p className="text-xl font-bold text-white">{formatUSD(totalAmount)}</p>
+          <p className="text-xl font-bold text-gray-900">{formatUSD(totalAmount)}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Discounts</p>
@@ -241,6 +276,15 @@ export default function EntriesPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
+                  <th className="text-center text-gray-600 text-xs uppercase tracking-wider px-3 py-3">
+                    <button
+                      onClick={() => toggleAllAudit(!entries.every(e => e.inAudit))}
+                      title={entries.every(e => e.inAudit) ? "Remove all from audit" : "Add all to audit"}
+                      className="hover:bg-gray-100 p-1 rounded"
+                    >
+                      {entries.every(e => e.inAudit) ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                    </button>
+                  </th>
                   <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Date</th>
                   {!employeeFilter && <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Employee</th>}
                   <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Service</th>
@@ -254,7 +298,16 @@ export default function EntriesPage() {
               </thead>
               <tbody>
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={entry.id} className={`border-b border-gray-100 hover:bg-gray-50 ${!entry.inAudit ? 'opacity-50' : ''}`}>
+                    <td className="px-3 py-3 text-center">
+                      <button
+                        onClick={() => toggleAudit(entry.id, entry.inAudit)}
+                        title={entry.inAudit ? "Remove from audit" : "Add to audit"}
+                        className="hover:bg-gray-100 p-1 rounded"
+                      >
+                        {entry.inAudit ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                      </button>
+                    </td>
                     <td className="px-5 py-3 text-gray-700 text-sm">{entry.date}</td>
                     {!employeeFilter && <td className="px-5 py-3 text-gray-900 text-sm font-medium">{entry.employeeName}</td>}
                     <td className="px-5 py-3">
@@ -282,6 +335,7 @@ export default function EntriesPage() {
               </tbody>
               <tfoot>
                 <tr className="bg-gray-50">
+                  <td></td>
                   <td colSpan={employeeFilter ? 3 : 4} className="px-5 py-3 text-gray-900 font-semibold text-sm">TOTAL</td>
                   <td className="px-5 py-3 text-right text-gray-900 font-bold text-sm">{formatUSD(totalAmount)}</td>
                   <td className="px-5 py-3 text-right text-red-500 font-bold text-sm">{totalDiscount > 0 ? `-${formatUSD(totalDiscount)}` : "—"}</td>

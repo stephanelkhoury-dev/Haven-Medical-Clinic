@@ -236,6 +236,7 @@ export async function POST() {
         employee_share REAL NOT NULL DEFAULT 0,
         clinic_share REAL NOT NULL DEFAULT 0,
         period TEXT NOT NULL DEFAULT '',
+        in_audit BOOLEAN DEFAULT true,
         created_at TEXT NOT NULL DEFAULT ''
       )
     `;
@@ -248,6 +249,7 @@ export async function POST() {
         amount REAL NOT NULL DEFAULT 0,
         category TEXT NOT NULL DEFAULT 'general',
         period TEXT NOT NULL DEFAULT '',
+        in_audit BOOLEAN DEFAULT true,
         created_at TEXT NOT NULL DEFAULT ''
       )
     `;
@@ -263,6 +265,7 @@ export async function POST() {
         operator_share REAL NOT NULL DEFAULT 0,
         clinic_share REAL NOT NULL DEFAULT 0,
         period TEXT NOT NULL DEFAULT '',
+        in_audit BOOLEAN DEFAULT true,
         created_at TEXT NOT NULL DEFAULT ''
       )
     `;

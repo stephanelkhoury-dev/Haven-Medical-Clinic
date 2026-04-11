@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
       category: r.category,
       period: r.period,
       createdAt: r.created_at,
+      inAudit: r.in_audit !== false,
     }));
     return NextResponse.json(expenses);
   } catch (error: unknown) {

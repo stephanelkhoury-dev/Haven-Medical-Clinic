@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2, CheckSquare, Square } from "lucide-react";
 
 interface Expense {
   id: string;
@@ -12,6 +12,7 @@ interface Expense {
   amount: number;
   category: string;
   period: string;
+  inAudit: boolean;
 }
 
 const categories = ["general", "rent", "utilities", "supplies", "salary", "maintenance", "marketing", "other"];
@@ -91,6 +92,40 @@ export default function ExpensesPage() {
     }
   };
 
+  const toggleAudit = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_expenses", id, inAudit: !currentStatus }),
+      });
+      if (res.ok) {
+        setExpenses(expenses.map(e => e.id === id ? { ...e, inAudit: !currentStatus } : e));
+        showToast(`Expense ${!currentStatus ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
+  const toggleAllAudit = async (inAudit: boolean) => {
+    const ids = expenses.map(e => e.id);
+    if (ids.length === 0) return;
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_expenses", ids, inAudit }),
+      });
+      if (res.ok) {
+        setExpenses(expenses.map(e => ({ ...e, inAudit })));
+        showToast(`All expenses ${inAudit ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
   const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
 
   return (
@@ -106,7 +141,7 @@ export default function ExpensesPage() {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Expenses</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
             <p className="text-gray-600 text-sm">Track clinic costs & overheads</p>
           </div>
         </div>
@@ -146,6 +181,15 @@ export default function ExpensesPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
+                <th className="text-center text-gray-600 text-xs uppercase tracking-wider px-3 py-3">
+                  <button
+                    onClick={() => toggleAllAudit(!expenses.every(e => e.inAudit))}
+                    title={expenses.every(e => e.inAudit) ? "Remove all from audit" : "Add all to audit"}
+                    className="hover:bg-gray-100 p-1 rounded"
+                  >
+                    {expenses.every(e => e.inAudit) ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Date</th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Description</th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Category</th>
@@ -155,7 +199,16 @@ export default function ExpensesPage() {
             </thead>
             <tbody>
               {expenses.map((exp) => (
-                <tr key={exp.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={exp.id} className={`border-b border-gray-100 hover:bg-gray-50 ${!exp.inAudit ? 'opacity-50' : ''}`}>
+                  <td className="px-3 py-3 text-center">
+                    <button
+                      onClick={() => toggleAudit(exp.id, exp.inAudit)}
+                      title={exp.inAudit ? "Remove from audit" : "Add to audit"}
+                      className="hover:bg-gray-100 p-1 rounded"
+                    >
+                      {exp.inAudit ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-gray-700 text-sm">{exp.date}</td>
                   <td className="px-5 py-3 text-gray-900 text-sm">{exp.description}</td>
                   <td className="px-5 py-3">
@@ -177,6 +230,7 @@ export default function ExpensesPage() {
             </tbody>
             <tfoot>
               <tr className="bg-gray-50">
+                <td></td>
                 <td colSpan={3} className="px-5 py-3 text-gray-900 font-semibold text-sm">TOTAL</td>
                 <td className="px-5 py-3 text-right text-red-500 font-bold text-sm">{formatUSD(total)}</td>
                 <td></td>

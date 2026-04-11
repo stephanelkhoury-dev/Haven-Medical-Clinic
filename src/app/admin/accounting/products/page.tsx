@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, Save, ChevronLeft, ChevronRight, Loader2, CheckSquare, Square } from "lucide-react";
 
 interface Product {
   id: string;
@@ -15,6 +15,7 @@ interface Product {
   operatorShare: number;
   clinicShare: number;
   period: string;
+  inAudit: boolean;
 }
 
 function formatUSD(n: number) {
@@ -90,6 +91,40 @@ export default function ProductsPage() {
     }
   };
 
+  const toggleAudit = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_products", id, inAudit: !currentStatus }),
+      });
+      if (res.ok) {
+        setProducts(products.map(p => p.id === id ? { ...p, inAudit: !currentStatus } : p));
+        showToast(`Product ${!currentStatus ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
+  const toggleAllAudit = async (inAudit: boolean) => {
+    const ids = products.map(p => p.id);
+    if (ids.length === 0) return;
+    try {
+      const res = await fetch("/api/admin/accounting/audit", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "acc_products", ids, inAudit }),
+      });
+      if (res.ok) {
+        setProducts(products.map(p => ({ ...p, inAudit })));
+        showToast(`All products ${inAudit ? "added to" : "removed from"} audit`);
+      }
+    } catch {
+      showToast("Failed to update audit status");
+    }
+  };
+
   const facialProducts = products.filter((p) => p.productType === "facial");
   const nailProducts = products.filter((p) => p.productType === "nail");
   const facialTotal = facialProducts.reduce((s, p) => s + Number(p.amount), 0);
@@ -110,7 +145,7 @@ export default function ProductsPage() {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Products</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 text-sm">Facial (Roula 90%) & Nail (Ghinwa 10%) product sales</p>
           </div>
         </div>
@@ -138,11 +173,11 @@ export default function ProductsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Facial Total</p>
-          <p className="text-xl font-bold text-white">{formatUSD(facialTotal)}</p>
+          <p className="text-xl font-bold text-gray-900">{formatUSD(facialTotal)}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Nail Total</p>
-          <p className="text-xl font-bold text-white">{formatUSD(nailTotal)}</p>
+          <p className="text-xl font-bold text-gray-900">{formatUSD(nailTotal)}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Operator Share</p>
@@ -164,6 +199,15 @@ export default function ProductsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
+                <th className="text-center text-gray-600 text-xs uppercase tracking-wider px-3 py-3">
+                  <button
+                    onClick={() => toggleAllAudit(!products.every(p => p.inAudit))}
+                    title={products.every(p => p.inAudit) ? "Remove all from audit" : "Add all to audit"}
+                    className="hover:bg-gray-100 p-1 rounded"
+                  >
+                    {products.every(p => p.inAudit) ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Date</th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Type</th>
                 <th className="text-left text-gray-600 text-xs uppercase tracking-wider px-5 py-3">Description</th>
@@ -176,7 +220,16 @@ export default function ProductsPage() {
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={p.id} className={`border-b border-gray-100 hover:bg-gray-50 ${!p.inAudit ? 'opacity-50' : ''}`}>
+                  <td className="px-3 py-3 text-center">
+                    <button
+                      onClick={() => toggleAudit(p.id, p.inAudit)}
+                      title={p.inAudit ? "Remove from audit" : "Add to audit"}
+                      className="hover:bg-gray-100 p-1 rounded"
+                    >
+                      {p.inAudit ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-gray-400" />}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-gray-700 text-sm">{p.date}</td>
                   <td className="px-5 py-3">
                     <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${p.productType === 'facial' ? 'bg-pink-500/20 text-pink-400' : 'bg-purple-500/20 text-purple-400'}`}>

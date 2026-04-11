@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
       clinicShare: r.clinic_share,
       period: r.period,
       createdAt: r.created_at,
+      inAudit: r.in_audit !== false,
     }));
     return NextResponse.json(products);
   } catch (error: unknown) {
