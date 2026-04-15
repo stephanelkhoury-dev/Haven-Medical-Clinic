@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { sendAppointmentConfirmation } from "@/lib/email";
 
 export async function GET() {
   try {
@@ -35,6 +36,14 @@ export async function POST(request: NextRequest) {
     const id = crypto.randomUUID();
     await sql`INSERT INTO appointments (id, name, phone, email, service, date, time, status, created_at, notes, client_id)
       VALUES (${id}, ${body.name}, ${body.phone || ""}, ${body.email || ""}, ${body.service}, ${body.date || ""}, ${body.time || ""}, ${body.status || "pending"}, ${body.createdAt || new Date().toISOString().split("T")[0]}, ${body.notes || ""}, ${body.clientId || ""})`;
+
+    // Send confirmation email if email provided and status is confirmed
+    if (body.email && (body.status === "confirmed")) {
+      sendAppointmentConfirmation(body.email, body.name, {
+        service: body.service, date: body.date || "", time: body.time || "",
+      }).catch(() => {});
+    }
+
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

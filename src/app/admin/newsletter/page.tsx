@@ -64,28 +64,59 @@ export default function AdminNewsletter() {
       return;
     }
     const now = new Date().toISOString().split("T")[0];
-    const updated: NewsletterCampaign = sendNow
-      ? { ...editing, status: "sent", sentAt: now, recipients: 245, openRate: 0, clickRate: 0 }
-      : { ...editing };
 
     try {
-      if (isNew) {
-        const res = await fetch("/api/admin/campaigns", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updated),
-        });
-        const created = await res.json();
-        setCampaigns((prev) => [{ ...updated, id: created.id }, ...prev]);
-        showToast(sendNow ? "Campaign sent!" : "Campaign saved as draft");
+      if (sendNow) {
+        // Save first, then send via the send API
+        let campaignId = editing.id;
+        if (isNew) {
+          const res = await fetch("/api/admin/campaigns", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...editing, content }),
+          });
+          const created = await res.json();
+          campaignId = created.id;
+        } else {
+          await fetch(`/api/admin/campaigns/${editing.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...editing, content }),
+          });
+        }
+
+        // Actually send emails to all subscribers
+        showToast("Sending emails...");
+        const sendRes = await fetch(`/api/admin/campaigns/${campaignId}/send`, { method: "POST" });
+        const sendData = await sendRes.json();
+        if (sendRes.ok) {
+          const updated = { ...editing, id: campaignId, status: "sent" as const, sentAt: now, recipients: sendData.sent || 0, openRate: 0, clickRate: 0 };
+          setCampaigns((prev) => isNew ? [updated, ...prev] : prev.map((c) => (c.id === campaignId ? updated : c)));
+          showToast(`Campaign sent to ${sendData.sent} subscribers!`);
+        } else {
+          showToast(sendData.error || "Failed to send");
+        }
       } else {
-        await fetch(`/api/admin/campaigns/${editing.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updated),
-        });
-        setCampaigns((prev) => prev.map((c) => (c.id === editing.id ? updated : c)));
-        showToast(sendNow ? "Campaign sent!" : "Campaign updated");
+        // Save as draft
+        const updated = { ...editing };
+        if (isNew) {
+          const res = await fetch("/api/admin/campaigns", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...updated, content }),
+          });
+          const created = await res.json();
+          setCampaigns((prev) => [{ ...updated, id: created.id }, ...prev]);
+          showToast("Campaign saved as draft");
+        } else {
+          await fetch(`/api/admin/campaigns/${editing.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...updated, content }),
+          });
+          setCampaigns((prev) => prev.map((c) => (c.id === editing.id ? updated : c)));
+          showToast("Campaign updated");
+        }
       }
     } catch {
       showToast("Failed to save campaign");

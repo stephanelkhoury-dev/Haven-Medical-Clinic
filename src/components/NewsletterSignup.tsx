@@ -11,15 +11,25 @@ export default function NewsletterSignup({
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setStatus("loading");
-    // Simulate API call
-    setTimeout(() => {
-      setStatus("success");
-      setEmail("");
-    }, 1000);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: variant === "footer" ? "footer" : "inline" }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("idle");
+      }
+    } catch {
+      setStatus("idle");
+    }
   };
 
   if (status === "success") {

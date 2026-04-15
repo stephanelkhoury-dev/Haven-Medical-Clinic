@@ -15,6 +15,7 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -22,10 +23,18 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // In production, this would send to an API endpoint
-    setSubmitted(true);
+    setSending(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) setSubmitted(true);
+    } catch { /* fail silently */ }
+    setSending(false);
   }
 
   return (
@@ -257,10 +266,11 @@ export default function ContactPage() {
 
                       <button
                         type="submit"
-                        className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white px-7 py-3.5 rounded-full font-medium hover:bg-primary-dark transition-colors"
+                        disabled={sending}
+                        className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white px-7 py-3.5 rounded-full font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
                       >
                         <Send className="w-5 h-5" />
-                        Send Message
+                        {sending ? "Sending..." : "Send Message"}
                       </button>
                     </form>
                   )}
