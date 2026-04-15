@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useAuth } from "../layout";
 import {
   DollarSign,
   Users,
@@ -63,6 +64,8 @@ function periodLabel(p: string) {
 }
 
 export default function AccountingDashboard() {
+  const { user } = useAuth();
+  const isFrontDesk = user?.role === "front_desk";
   const [period, setPeriod] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -128,49 +131,56 @@ export default function AccountingDashboard() {
           <p className="text-gray-900 font-medium text-sm">Entries</p>
           <p className="text-gray-400 text-xs">Add & manage</p>
         </Link>
-        <Link href={`/admin/accounting/employees`}
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <Users className="w-5 h-5 text-primary mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Employees</p>
-          <p className="text-gray-400 text-xs">Staff & splits</p>
-        </Link>
+        {!isFrontDesk && (
+          <Link href={`/admin/accounting/employees`}
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+            <Users className="w-5 h-5 text-primary mb-2" />
+            <p className="text-gray-900 font-medium text-sm">Employees</p>
+            <p className="text-gray-400 text-xs">Staff & splits</p>
+          </Link>
+        )}
         <Link href={`/admin/accounting/expenses?period=${period}`}
           className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <TrendingDown className="w-5 h-5 text-red-500 mb-2" />
           <p className="text-gray-900 font-medium text-sm">Expenses</p>
           <p className="text-gray-400 text-xs">Track costs</p>
         </Link>
-        <Link href={`/admin/accounting/products?period=${period}`}
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <ShoppingBag className="w-5 h-5 text-primary mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Products</p>
-          <p className="text-gray-400 text-xs">Sales tracking</p>
-        </Link>
+        {!isFrontDesk && (
+          <Link href={`/admin/accounting/products?period=${period}`}
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+            <ShoppingBag className="w-5 h-5 text-primary mb-2" />
+            <p className="text-gray-900 font-medium text-sm">Products</p>
+            <p className="text-gray-400 text-xs">Sales tracking</p>
+          </Link>
+        )}
       </div>
 
-      {/* Secondary Nav */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <Link href="/admin/accounting/recurring"
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <RefreshCw className="w-5 h-5 text-orange-500 mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Recurring</p>
-          <p className="text-gray-400 text-xs">Auto expenses</p>
-        </Link>
-        <Link href={`/admin/accounting/payroll?period=${period}`}
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <Wallet className="w-5 h-5 text-green-600 mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Payroll</p>
-          <p className="text-gray-400 text-xs">Employee payments</p>
-        </Link>
-        <Link href="/admin/accounting/analytics"
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <BarChart3 className="w-5 h-5 text-violet-500 mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Analytics</p>
-          <p className="text-gray-400 text-xs">Charts & export</p>
-        </Link>
-      </div>
+      {/* Secondary Nav — hidden for front_desk */}
+      {!isFrontDesk && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <Link href="/admin/accounting/recurring"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+            <RefreshCw className="w-5 h-5 text-orange-500 mb-2" />
+            <p className="text-gray-900 font-medium text-sm">Recurring</p>
+            <p className="text-gray-400 text-xs">Auto expenses</p>
+          </Link>
+          <Link href={`/admin/accounting/payroll?period=${period}`}
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+            <Wallet className="w-5 h-5 text-green-600 mb-2" />
+            <p className="text-gray-900 font-medium text-sm">Payroll</p>
+            <p className="text-gray-400 text-xs">Employee payments</p>
+          </Link>
+          <Link href="/admin/accounting/analytics"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+            <BarChart3 className="w-5 h-5 text-violet-500 mb-2" />
+            <p className="text-gray-900 font-medium text-sm">Analytics</p>
+            <p className="text-gray-400 text-xs">Charts & export</p>
+          </Link>
+        </div>
+      )}
 
-      {/* Summary Cards */}
+      {/* Summary Cards — hidden for front_desk */}
+      {!isFrontDesk && (<>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-3">
@@ -326,6 +336,7 @@ export default function AccountingDashboard() {
           <p className="text-3xl font-bold text-gray-900">{formatUSD(gt?.netClinicRevenue || 0)}</p>
         </div>
       </div>
+      </>)}
     </div>
   );
 }

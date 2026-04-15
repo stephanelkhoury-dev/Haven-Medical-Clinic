@@ -14,7 +14,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       date = ${body.date || ""},
       time = ${body.time || ""},
       status = ${body.status || "pending"},
-      notes = ${body.notes || ""}
+      notes = ${body.notes || ""},
+      client_id = ${body.clientId || ""}
       WHERE id = ${id}`;
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

@@ -5,6 +5,13 @@ import { Search, Calendar, Phone, Plus, X, Trash2 } from "lucide-react";
 import { type AppointmentRequest } from "@/data/admin";
 const statusOptions = ["all", "pending", "confirmed", "completed", "cancelled"] as const;
 
+interface ClientOption {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
 function createBlankAppointment(): AppointmentRequest {
   return {
     id: Date.now().toString(),
@@ -28,11 +35,16 @@ export default function AdminAppointments() {
   const [isNew, setIsNew] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [clients, setClients] = useState<ClientOption[]>([]);
 
   const loadData = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/appointments");
-      if (res.ok) setAppointments(await res.json());
+      const [aptsRes, clientsRes] = await Promise.all([
+        fetch("/api/admin/appointments"),
+        fetch("/api/admin/clients"),
+      ]);
+      if (aptsRes.ok) setAppointments(await aptsRes.json());
+      if (clientsRes.ok) setClients(await clientsRes.json());
     } catch { /* API unavailable */ }
   }, []);
 
@@ -149,6 +161,27 @@ export default function AdminAppointments() {
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                  <select
+                    value={editing.clientId || ""}
+                    onChange={(e) => {
+                      const cId = e.target.value;
+                      const client = clients.find((c) => c.id === cId);
+                      if (client) {
+                        setEditing({ ...editing, clientId: cId, name: client.name, email: client.email, phone: client.phone });
+                      } else {
+                        setEditing({ ...editing, clientId: "" });
+                      }
+                    }}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                  >
+                    <option value="">No client linked</option>
+                    {clients.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
+                    ))}
+                  </select>
+                </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Patient Name *</label>
                   <input type="text" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />

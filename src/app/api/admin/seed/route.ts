@@ -298,6 +298,41 @@ export async function POST() {
       )
     `;
 
+    // ── Clients table ──────────────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS clients (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        phone TEXT NOT NULL DEFAULT '',
+        date_of_birth TEXT DEFAULT '',
+        gender TEXT DEFAULT '',
+        address TEXT DEFAULT '',
+        notes TEXT DEFAULT '',
+        password_hash TEXT DEFAULT '',
+        setup_token TEXT DEFAULT '',
+        setup_token_expires TEXT DEFAULT '',
+        reset_token TEXT DEFAULT '',
+        reset_token_expires TEXT DEFAULT '',
+        active BOOLEAN DEFAULT true,
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    // Add client_id to appointments & acc_entries if not exist
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS client_id TEXT DEFAULT ''`;
+    await sql`ALTER TABLE acc_entries ADD COLUMN IF NOT EXISTS client_id TEXT DEFAULT ''`;
+    await sql`ALTER TABLE acc_entries ADD COLUMN IF NOT EXISTS client_name TEXT DEFAULT ''`;
+
+    // ── Client sessions table ──────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS client_sessions (
+        token TEXT PRIMARY KEY,
+        client_id TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+      )
+    `;
+
     // Seed accounting employees
     const existingAccEmployees = await sql`SELECT COUNT(*) as count FROM acc_employees`;
     if (Number(existingAccEmployees[0].count) === 0) {

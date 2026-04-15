@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   try {
     const sql = getDb();
-    const rows = await sql`SELECT * FROM appointments ORDER BY created_at DESC`;
+    const rows = await sql`SELECT a.*, c.name as client_name_ref FROM appointments a
+      LEFT JOIN clients c ON a.client_id = c.id
+      ORDER BY a.created_at DESC`;
     // Transform snake_case to camelCase
     const appointments = rows.map((r) => ({
       id: r.id,
@@ -17,6 +19,7 @@ export async function GET() {
       status: r.status,
       createdAt: r.created_at,
       notes: r.notes || "",
+      clientId: r.client_id || "",
     }));
     return NextResponse.json(appointments);
   } catch (error: unknown) {
@@ -30,8 +33,8 @@ export async function POST(request: NextRequest) {
     const sql = getDb();
     const body = await request.json();
     const id = crypto.randomUUID();
-    await sql`INSERT INTO appointments (id, name, phone, email, service, date, time, status, created_at, notes)
-      VALUES (${id}, ${body.name}, ${body.phone || ""}, ${body.email || ""}, ${body.service}, ${body.date || ""}, ${body.time || ""}, ${body.status || "pending"}, ${body.createdAt || new Date().toISOString().split("T")[0]}, ${body.notes || ""})`;
+    await sql`INSERT INTO appointments (id, name, phone, email, service, date, time, status, created_at, notes, client_id)
+      VALUES (${id}, ${body.name}, ${body.phone || ""}, ${body.email || ""}, ${body.service}, ${body.date || ""}, ${body.time || ""}, ${body.status || "pending"}, ${body.createdAt || new Date().toISOString().split("T")[0]}, ${body.notes || ""}, ${body.clientId || ""})`;
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

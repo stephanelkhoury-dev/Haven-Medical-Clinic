@@ -31,6 +31,7 @@ export interface AppointmentRequest {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   createdAt: string;
   notes?: string;
+  clientId?: string;
 }
 
 export interface SubscriptionPlan {

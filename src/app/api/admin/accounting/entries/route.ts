@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
       period: r.period,
       createdAt: r.created_at,
       inAudit: r.in_audit !== false,
+      clientId: r.client_id || "",
+      clientName: r.client_name || "",
     }));
     return NextResponse.json(entries);
   } catch (error: unknown) {
@@ -88,8 +90,8 @@ export async function POST(request: NextRequest) {
       clinicShare = Math.round((net - employeeShare) * 100) / 100;
     }
 
-    await sql`INSERT INTO acc_entries (id, employee_id, date, service_type, description, amount, discount, employee_share, clinic_share, period, created_at)
-      VALUES (${id}, ${body.employeeId}, ${date}, ${body.serviceType || ''}, ${body.description || ''}, ${amount}, ${discount}, ${employeeShare}, ${clinicShare}, ${period}, ${now})`;
+    await sql`INSERT INTO acc_entries (id, employee_id, date, service_type, description, amount, discount, employee_share, clinic_share, period, created_at, client_id, client_name)
+      VALUES (${id}, ${body.employeeId}, ${date}, ${body.serviceType || ''}, ${body.description || ''}, ${amount}, ${discount}, ${employeeShare}, ${clinicShare}, ${period}, ${now}, ${body.clientId || ''}, ${body.clientName || ''})`;
 
     return NextResponse.json({
       id,
@@ -103,6 +105,8 @@ export async function POST(request: NextRequest) {
       clinicShare,
       period,
       createdAt: now,
+      clientId: body.clientId || "",
+      clientName: body.clientName || "",
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

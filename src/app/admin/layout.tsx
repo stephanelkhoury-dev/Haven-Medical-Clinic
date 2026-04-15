@@ -24,6 +24,7 @@ import {
   MessageSquareQuote,
   Calculator,
   Shield,
+  UserPlus,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +59,7 @@ const ALL_ROLES = ["admin", "finance", "editor", "front_desk"];
 const sidebarLinks: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, roles: ALL_ROLES },
   { label: "Appointments", href: "/admin/appointments", icon: Calendar, roles: ["admin", "front_desk"] },
+  { label: "Clients", href: "/admin/clients", icon: UserPlus, roles: ["admin", "front_desk"] },
   { label: "Services", href: "/admin/services", icon: Stethoscope, roles: ["admin", "editor"] },
   { label: "Doctors", href: "/admin/doctors", icon: UserCheck, roles: ["admin", "editor"] },
   { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote, roles: ["admin", "editor"] },
@@ -65,7 +67,7 @@ const sidebarLinks: NavItem[] = [
   { label: "Newsletter", href: "/admin/newsletter", icon: Mail, roles: ["admin", "front_desk"] },
   { label: "Subscribers", href: "/admin/subscribers", icon: Users, roles: ["admin", "front_desk"] },
   { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard, roles: ["admin", "finance"] },
-  { label: "Accounting", href: "/admin/accounting", icon: Calculator, roles: ["admin", "finance"] },
+  { label: "Accounting", href: "/admin/accounting", icon: Calculator, roles: ["admin", "finance", "front_desk"] },
   { label: "Users", href: "/admin/users", icon: Shield, roles: ["admin"] },
   { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
 ];

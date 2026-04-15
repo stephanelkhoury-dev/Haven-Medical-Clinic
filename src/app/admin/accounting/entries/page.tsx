@@ -33,6 +33,13 @@ interface Entry {
   clinicShare: number;
   period: string;
   inAudit: boolean;
+  clientId: string;
+  clientName: string;
+}
+
+interface ClientOption {
+  id: string;
+  name: string;
 }
 
 function formatUSD(n: number) {
@@ -58,17 +65,23 @@ export default function EntriesPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [previewSplit, setPreviewSplit] = useState<{ employee: number; clinic: number } | null>(null);
+  const [clients, setClients] = useState<ClientOption[]>([]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const empParam = employeeFilter ? `&employee_id=${employeeFilter}` : "";
-      const [entriesRes, empRes] = await Promise.all([
+      const [entriesRes, empRes, clientsRes] = await Promise.all([
         fetch(`/api/admin/accounting/entries?period=${period}${empParam}`),
         fetch("/api/admin/accounting/employees"),
+        fetch("/api/admin/clients"),
       ]);
       if (entriesRes.ok) setEntries(await entriesRes.json());
       if (empRes.ok) setEmployees(await empRes.json());
+      if (clientsRes.ok) {
+        const allClients = await clientsRes.json();
+        setClients(allClients.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+      }
     } catch { /* ignore */ }
     setLoading(false);
   }, [period, employeeFilter]);
@@ -315,7 +328,12 @@ export default function EntriesPage() {
                         {entry.serviceType || "general"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-gray-800 text-sm">{entry.description}</td>
+                    <td className="px-5 py-3 text-gray-800 text-sm">
+                      {entry.description}
+                      {entry.clientName && (
+                        <span className="ml-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">{entry.clientName}</span>
+                      )}
+                    </td>
                     <td className="px-5 py-3 text-right text-gray-900 font-medium text-sm">{formatUSD(entry.amount)}</td>
                     <td className="px-5 py-3 text-right text-red-500/70 text-sm">{entry.discount > 0 ? `-${formatUSD(entry.discount)}` : "—"}</td>
                     <td className="px-5 py-3 text-right text-blue-600 text-sm">{formatUSD(entry.employeeShare)}</td>
@@ -426,6 +444,24 @@ export default function EntriesPage() {
                 <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Date</label>
                 <input type="date" value={editing.date || ""} onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent" />
+              </div>
+
+              <div>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Client</label>
+                <select
+                  value={editing.clientId || ""}
+                  onChange={(e) => {
+                    const cId = e.target.value;
+                    const cName = clients.find((c) => c.id === cId)?.name || "";
+                    setEditing({ ...editing, clientId: cId, clientName: cName });
+                  }}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-accent"
+                >
+                  <option value="">No client</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
