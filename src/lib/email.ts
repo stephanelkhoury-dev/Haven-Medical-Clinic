@@ -21,7 +21,7 @@ function getTransporter() {
 
 const FROM = process.env.SMTP_FROM || "Haven Medical <havenmedicalcliniclb@gmail.com>";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.haven-beautyclinic.com";
-const LOGO_URL = `${BASE_URL}/logo.png`;
+const LOGO_URL = `${BASE_URL}/images/email-logo.png`;
 const PHONE = "+961 71 888 930";
 const ADDRESS = "Beirut, Lebanon";
 
@@ -92,24 +92,12 @@ function emailWrapper(body: string, unsubscribeId?: string) {
       <!-- Email container -->
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
 
-        <!-- Teal accent bar -->
+        <!-- Logo banner -->
         <tr>
-          <td style="height:4px;background:linear-gradient(90deg,#1fbda6 0%,#17a892 50%,#14937f 100%);font-size:0;line-height:0;">&nbsp;</td>
-        </tr>
-
-        <!-- Logo header -->
-        <tr>
-          <td style="padding:36px 40px 20px;text-align:center;background:#ffffff;">
-            <a href="${BASE_URL}" target="_blank" style="text-decoration:none;">
-              <img src="${LOGO_URL}" alt="Haven Medical & Beauty Clinic" width="200" style="display:inline-block;max-width:200px;height:auto;border:0;"/>
+          <td style="text-align:center;background:#f0f8f7;padding:0;">
+            <a href="${BASE_URL}" target="_blank" style="text-decoration:none;display:block;">
+              <img src="${LOGO_URL}" alt="Haven Medical & Beauty Clinic" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"/>
             </a>
-          </td>
-        </tr>
-
-        <!-- Divider -->
-        <tr>
-          <td style="padding:0 40px;">
-            <div style="height:1px;background:linear-gradient(90deg,transparent 0%,#e8ecf1 20%,#e8ecf1 80%,transparent 100%);"></div>
           </td>
         </tr>
 
