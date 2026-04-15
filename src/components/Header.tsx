@@ -163,10 +163,10 @@ export default function Header() {
                     onMouseEnter={cancelClose}
                     onMouseLeave={closeMega}
                   >
-                    <div className="bg-white/95 backdrop-blur-xl border border-border-light rounded-2xl shadow-2xl shadow-dark/10 overflow-hidden animate-[fadeIn_0.2s_ease-out] min-w-[780px]">
+                    <div className="bg-white/95 backdrop-blur-xl border border-border-light rounded-2xl shadow-2xl shadow-dark/10 overflow-hidden animate-[fadeIn_0.2s_ease-out] min-w-195">
                       <div className="flex">
                         {/* Left: Category sidebar */}
-                        <div className="w-[240px] bg-gradient-to-b from-muted/80 to-muted/40 p-3 border-r border-border-light">
+                        <div className="w-60 bg-linear-to-b from-muted/80 to-muted/40 p-3 border-r border-border-light">
                           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-dark-light/50 px-3 py-2">Categories</p>
                           {servicesNav?.children?.map((group, idx) => {
                             const Icon = categoryIcons[group.group as keyof typeof categoryIcons] || Sparkles;
@@ -183,7 +183,7 @@ export default function Header() {
                                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200 ${
                                   activeGroup === idx ? "bg-primary/10" : "bg-dark-light/5"
                                 }`}>
-                                  <Icon className={`w-[18px] h-[18px] transition-colors duration-200 ${
+                                  <Icon className={`w-4.5 h-4.5 transition-colors duration-200 ${
                                     activeGroup === idx ? "text-primary" : "text-dark-light/60"
                                   }`} />
                                 </div>

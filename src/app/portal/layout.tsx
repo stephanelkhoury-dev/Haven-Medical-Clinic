@@ -84,13 +84,13 @@ function PortalLogin({ onLogin }: { onLogin: (client: ClientUser, token: string)
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Heart className="w-7 h-7 text-primary" />
           </div>
-          <h1 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-gray-900">
+          <h1 className="font-heading text-2xl font-bold text-gray-900">
             Patient Portal
           </h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -234,7 +234,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <Link href="/portal" className="flex items-center gap-2">
               <Heart className="w-6 h-6 text-primary" />
-              <span className="font-[family-name:var(--font-heading)] text-lg font-bold text-gray-900">
+              <span className="font-heading text-lg font-bold text-gray-900">
                 Haven<span className="text-primary">Portal</span>
               </span>
             </Link>

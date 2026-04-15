@@ -59,7 +59,7 @@ export default function PortalPage() {
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-6">
+      <div className="bg-linear-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-6">
         <h1 className="text-xl font-bold text-gray-900">
           Welcome back, {client?.name?.split(" ")[0]}
         </h1>

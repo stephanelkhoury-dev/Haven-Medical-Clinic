@@ -114,7 +114,7 @@ export default function AccountingDashboard() {
           <button onClick={() => shiftPeriod(-1)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-500" />
           </button>
-          <span className="text-gray-900 font-medium text-sm min-w-[140px] text-center">
+          <span className="text-gray-900 font-medium text-sm min-w-35 text-center">
             {periodLabel(period)}
           </span>
           <button onClick={() => shiftPeriod(1)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
@@ -327,7 +327,7 @@ export default function AccountingDashboard() {
       </div>
 
       {/* Net Revenue Banner */}
-      <div className="bg-gradient-to-r from-primary/10 to-emerald-100 border border-primary/20 rounded-xl p-6">
+      <div className="bg-linear-to-r from-primary/10 to-emerald-100 border border-primary/20 rounded-xl p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 text-sm uppercase tracking-wider">Net Clinic Revenue</p>

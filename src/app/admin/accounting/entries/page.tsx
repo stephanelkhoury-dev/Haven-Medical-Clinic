@@ -211,7 +211,7 @@ export default function EntriesPage() {
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl px-2 py-1">
             <button onClick={() => shiftPeriod(-1)} className="p-1.5 hover:bg-gray-100 rounded-lg"><ChevronLeft className="w-4 h-4 text-gray-600" /></button>
-            <span className="text-gray-900 font-medium text-sm min-w-[130px] text-center">{periodLabel(period)}</span>
+            <span className="text-gray-900 font-medium text-sm min-w-32.5 text-center">{periodLabel(period)}</span>
             <button onClick={() => shiftPeriod(1)} className="p-1.5 hover:bg-gray-100 rounded-lg"><ChevronRight className="w-4 h-4 text-gray-600" /></button>
           </div>
           <button

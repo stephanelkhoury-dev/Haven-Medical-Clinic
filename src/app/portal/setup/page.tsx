@@ -68,7 +68,7 @@ function SetupForm() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
         <div className="w-full max-w-sm text-center space-y-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-8 h-8 text-green-600" />
@@ -81,13 +81,13 @@ function SetupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-primary/5 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Heart className="w-7 h-7 text-primary" />
           </div>
-          <h1 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-gray-900">
+          <h1 className="font-heading text-2xl font-bold text-gray-900">
             Set Up Your Account
           </h1>
           <p className="text-sm text-gray-500 mt-1">Choose a password for your patient portal</p>

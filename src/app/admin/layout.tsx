@@ -127,13 +127,13 @@ function LoginScreen({ onLogin }: { onLogin: (user: User, token: string) => void
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark to-primary/30 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-linear-to-br from-dark via-dark to-primary/30 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Heart className="w-7 h-7 text-accent" />
           </div>
-          <h1 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">
+          <h1 className="font-heading text-2xl font-bold text-white">
             Haven<span className="text-accent">Admin</span>
           </h1>
           <p className="text-sm text-white/50 mt-1">Sign in to access the dashboard</p>
@@ -263,7 +263,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center justify-between px-6 h-16 border-b border-white/10">
             <Link href="/admin" className="flex items-center gap-2">
               <Heart className="w-6 h-6 text-accent" />
-              <span className="font-[family-name:var(--font-heading)] text-lg font-bold">
+              <span className="font-heading text-lg font-bold">
                 Haven<span className="text-accent">Admin</span>
               </span>
             </Link>

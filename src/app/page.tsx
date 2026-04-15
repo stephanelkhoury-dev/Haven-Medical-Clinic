@@ -203,7 +203,7 @@ export default async function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section
-        className="relative min-h-screen flex items-center bg-gradient-to-br from-muted via-background to-muted-dark overflow-hidden"
+        className="relative min-h-screen flex items-center bg-linear-to-br from-muted via-background to-muted-dark overflow-hidden"
         aria-label="Welcome to Haven Medical"
       >
         <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
@@ -216,7 +216,7 @@ export default async function HomePage() {
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               Welcome to Haven Medical
             </p>
-            <h1 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dark leading-[1.1] mb-6 animate-fade-in-up stagger-2">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dark leading-[1.1] mb-6 animate-fade-in-up stagger-2">
               Where Medical Excellence{" "}
               <span className="gradient-text">Meets Luxury Care</span>
             </h1>
@@ -281,7 +281,7 @@ export default async function HomePage() {
             { value: 4, suffix: "", label: "Specialist Doctors" },
           ].map((stat) => (
             <div key={stat.label} className="py-2">
-              <p className="text-3xl font-bold text-primary font-[family-name:var(--font-heading)]">
+              <p className="text-3xl font-bold text-primary font-heading">
                 <Counter value={stat.value} suffix={stat.suffix} />
               </p>
               <p className="text-xs text-dark-light mt-1 uppercase tracking-wider">{stat.label}</p>
@@ -295,7 +295,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal className="text-center mb-14">
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">Our Services</p>
-            <h2 id="services-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="services-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               Premium Treatments & Care
             </h2>
             <div className="section-divider mx-auto mb-4" role="presentation" />
@@ -350,7 +350,7 @@ export default async function HomePage() {
       <section className="py-20 lg:py-28 bg-muted" aria-labelledby="about-heading">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
-            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg relative bg-gradient-to-br from-secondary to-secondary-light">
+            <div className="aspect-4/3 rounded-2xl overflow-hidden shadow-lg relative bg-linear-to-br from-secondary to-secondary-light">
               <Image
                 src="/images/services/psychosexology.webp"
                 alt="Haven Medical clinic interior"
@@ -362,7 +362,7 @@ export default async function HomePage() {
           </ScrollReveal>
           <ScrollReveal>
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">About Haven Medical</p>
-            <h2 id="about-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="about-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               A Sanctuary of Medical Excellence
             </h2>
             <div className="section-divider mb-6" role="presentation" />
@@ -384,7 +384,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal className="text-center mb-14">
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">Why Choose Us</p>
-            <h2 id="why-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="why-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               The Haven Medical Difference
             </h2>
             <div className="section-divider mx-auto" role="presentation" />
@@ -414,7 +414,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal className="text-center mb-14">
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">Our Team</p>
-            <h2 id="doctors-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="doctors-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               Meet Our Specialists
             </h2>
             <div className="section-divider mx-auto" role="presentation" />
@@ -424,7 +424,7 @@ export default async function HomePage() {
             {doctors.map((doc) => (
               <article key={doc.name} className="bg-white rounded-xl overflow-hidden border border-border-light card-hover">
                 <Link href={doc.slug ? `/doctors/${doc.slug}` : "/about"} className="block">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-secondary-light to-secondary relative overflow-hidden">
+                  <div className="aspect-3/4 bg-linear-to-br from-secondary-light to-secondary relative overflow-hidden">
                     <Image
                       src={doc.image}
                       alt={doc.name}
@@ -446,12 +446,12 @@ export default async function HomePage() {
       </section>
 
       {/* ── Gift Voucher CTA ─────────────────────────────────── */}
-      <section className="py-20 lg:py-28 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden" aria-labelledby="gift-heading">
+      <section className="py-20 lg:py-28 bg-linear-to-r from-primary to-primary-dark text-white relative overflow-hidden" aria-labelledby="gift-heading">
         <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" aria-hidden="true" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/10 rounded-full blur-2xl" aria-hidden="true" />
         <ScrollReveal className="relative max-w-7xl mx-auto px-6 text-center">
           <p className="text-accent-light font-medium tracking-[0.2em] text-sm uppercase mb-3">The Perfect Gift</p>
-          <h2 id="gift-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold mb-4">
+          <h2 id="gift-heading" className="font-heading text-3xl lg:text-4xl font-bold mb-4">
             Give the Gift of Beauty & Wellness
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
@@ -468,7 +468,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal className="text-center mb-14">
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">Testimonials</p>
-            <h2 id="testimonials-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="testimonials-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               What Our Patients Say
             </h2>
             <div className="section-divider mx-auto" role="presentation" />
@@ -498,7 +498,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal className="text-center mb-14">
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">From Our Blog</p>
-            <h2 id="blog-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-4">
+            <h2 id="blog-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-4">
               Expert Insights & Advice
             </h2>
             <div className="section-divider mx-auto" role="presentation" />
@@ -508,7 +508,7 @@ export default async function HomePage() {
             {latestPosts.map((post) => (
               <article key={post.slug}>
                 <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-xl overflow-hidden border border-border-light card-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
-                  <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+                  <div className="aspect-16/10 bg-muted relative overflow-hidden">
                     {post.image && (
                       <Image
                         src={post.image}
@@ -549,7 +549,7 @@ export default async function HomePage() {
       <section className="py-20 lg:py-28 bg-dark text-white relative overflow-hidden" aria-labelledby="booking-heading">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" aria-hidden="true" />
         <ScrollReveal className="relative max-w-7xl mx-auto px-6 text-center">
-          <h2 id="booking-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold mb-4">
+          <h2 id="booking-heading" className="font-heading text-3xl lg:text-4xl font-bold mb-4">
             Ready to Begin Your Journey?
           </h2>
           <p className="text-white/70 max-w-2xl mx-auto mb-8">
@@ -579,7 +579,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
             <p className="text-primary font-medium tracking-[0.2em] text-sm uppercase mb-3">Visit Us</p>
-            <h2 id="contact-heading" className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-bold text-dark mb-6">
+            <h2 id="contact-heading" className="font-heading text-3xl lg:text-4xl font-bold text-dark mb-6">
               Find Haven Medical
             </h2>
             <address className="not-italic space-y-4 text-dark-light">
@@ -601,7 +601,7 @@ export default async function HomePage() {
             </Link>
           </ScrollReveal>
           <ScrollReveal>
-            <div className="aspect-[4/3] rounded-xl overflow-hidden border border-border-light">
+            <div className="aspect-4/3 rounded-xl overflow-hidden border border-border-light">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3310.847698654806!2d35.62631527656603!3d33.919319173207285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151f3f13b579a419%3A0x7759e15a0a6f1741!2sHaven%20Medical%20And%20Beauty%20Clinic!5e0!3m2!1sen!2slb!4v1775566655923!5m2!1sen!2slb"
                 width="100%"
