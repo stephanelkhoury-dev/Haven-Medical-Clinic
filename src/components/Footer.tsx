@@ -185,6 +185,21 @@ export default function Footer() {
             </Link>
           </div>
         </div>
+
+        {/* Credit */}
+        <div className="mt-4 text-center">
+          <p className="text-xs text-white/30">
+            Powered by{" "}
+            <a
+              href="https://www.instagram.com/multigraphic.lb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/50 hover:text-accent transition-colors"
+            >
+              Multigraphic.lb
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

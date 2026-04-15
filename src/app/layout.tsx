@@ -65,8 +65,8 @@ export const metadata: Metadata = {
     "best dermatologist Lebanon",
     "plastic surgery Lebanon",
   ],
-  authors: [{ name: "Haven Medical" }],
-  creator: "Haven Medical",
+  authors: [{ name: "Haven Medical" }, { name: "Multigraphic.lb", url: "https://www.instagram.com/multigraphic.lb" }],
+  creator: "Multigraphic.lb",
   publisher: "Haven Medical",
   formatDetection: { telephone: true, email: true, address: true },
   openGraph: {
