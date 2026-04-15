@@ -24,8 +24,12 @@ export async function POST(request: NextRequest) {
     await sql`INSERT INTO subscribers (id, email, name, subscribed_at, status, source)
       VALUES (${id}, ${email}, ${body.name || ""}, ${new Date().toISOString().split("T")[0]}, 'active', ${body.source || "website"})`;
 
-    // Send welcome email (non-blocking)
-    sendNewsletterWelcome(email, id).catch(() => {});
+    // Send welcome email
+    try {
+      await sendNewsletterWelcome(email, id);
+    } catch {
+      // Email sending failed but subscription was saved
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
