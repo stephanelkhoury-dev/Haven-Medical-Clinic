@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, ChevronDown, ChevronRight, Sparkles, Scissors, Stethoscope, Leaf, ArrowRight } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ChevronRight, Sparkles, Scissors, Stethoscope, Leaf, ArrowRight, User } from "lucide-react";
 import { clinicInfo } from "@/data/clinic";
 import Logo from "@/components/Logo";
 
@@ -272,12 +272,21 @@ export default function Header() {
         </div>
 
         {/* CTA */}
-        <Link
-          href="/appointment"
-          className="hidden lg:inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-dark transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
-          Book Appointment
-        </Link>
+        <div className="hidden lg:flex items-center gap-3">
+          <Link
+            href="/portal"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-dark-light hover:text-primary transition-colors"
+          >
+            <User className="w-4 h-4" />
+            Sign In
+          </Link>
+          <Link
+            href="/appointment"
+            className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-dark transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          >
+            Book Appointment
+          </Link>
+        </div>
 
         {/* Mobile toggle */}
         <button
@@ -356,6 +365,14 @@ export default function Header() {
                 </Link>
               )
             )}
+            <Link
+              href="/portal"
+              className="flex items-center justify-center gap-2 w-full text-center border border-gray-200 text-dark px-5 py-3 rounded-full text-sm font-medium"
+              onClick={() => setMobileOpen(false)}
+            >
+              <User className="w-4 h-4" />
+              Patient Portal
+            </Link>
             <Link
               href="/appointment"
               className="block w-full text-center bg-primary text-white px-5 py-3 rounded-full text-sm font-medium"
