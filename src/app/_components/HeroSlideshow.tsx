@@ -35,9 +35,9 @@ export default function HeroSlideshow() {
           fill
           className="object-cover transition-opacity duration-1000 ease-in-out"
           style={{ opacity: i === current ? 1 : 0 }}
-          sizes="(max-width: 1024px) 0vw, 50vw"
-          priority={i === 0}
-          loading={i === 0 ? "eager" : "lazy"}
+          sizes="50vw"
+          priority={i <= 1}
+          loading={i <= 1 ? "eager" : "lazy"}
         />
       ))}
     </div>
