@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { calendarEmailButtons } from "@/lib/calendar";
 
 // ── Transporter (lazy singleton) ─────────────────────────────────────
 let _transporter: nodemailer.Transporter | null = null;
@@ -242,7 +243,8 @@ export async function sendNewsletterWelcome(email: string, subscriberId: string)
 }
 
 // ── Appointment confirmation email ───────────────────────────────────
-export async function sendAppointmentConfirmation(email: string, name: string, details: { service: string; date: string; time: string }) {
+export async function sendAppointmentConfirmation(email: string, name: string, details: { service: string; date: string; time: string }, appointmentId?: string) {
+  const calendarBtns = appointmentId ? calendarEmailButtons(appointmentId, { id: appointmentId, name, ...details }) : "";
   const html = emailWrapper(`
     ${iconCircle("✅")}
     <h2 style="text-align:center;color:#16a34a;font-size:22px;font-weight:700;margin:0 0 8px;">Appointment Confirmed!</h2>
@@ -254,6 +256,8 @@ export async function sendAppointmentConfirmation(email: string, name: string, d
       { label: "Time", value: details.time },
       { label: "Location", value: "Haven Medical Clinic" },
     ])}
+
+    ${calendarBtns}
 
     <div style="background:#f0fdf4;border-radius:8px;padding:16px 20px;border-left:4px solid #16a34a;">
       <p style="color:#166534;font-size:13px;line-height:1.5;margin:0;">
@@ -269,7 +273,7 @@ export async function sendAppointmentConfirmation(email: string, name: string, d
 }
 
 // ── Appointment status update email ──────────────────────────────────
-export async function sendAppointmentStatusEmail(email: string, name: string, status: string, details: { service: string; date: string; time: string }) {
+export async function sendAppointmentStatusEmail(email: string, name: string, status: string, details: { service: string; date: string; time: string }, appointmentId?: string) {
   const statusConfig: Record<string, { title: string; message: string; color: string; bgColor: string; icon: string }> = {
     confirmed: {
       title: "Appointment Confirmed",
@@ -305,6 +309,7 @@ export async function sendAppointmentStatusEmail(email: string, name: string, st
       { label: "Time", value: details.time },
     ])}
 
+    ${status === "confirmed" && appointmentId ? calendarEmailButtons(appointmentId, { id: appointmentId, name, ...details }) : ""}
     ${status === "completed" ? ctaButton(`${BASE_URL}/appointment`, "Book Another Appointment") : ""}
     ${status === "cancelled" ? ctaButton(`${BASE_URL}/appointment`, "Reschedule Appointment", "#4a5568") : ""}
 
@@ -316,7 +321,7 @@ export async function sendAppointmentStatusEmail(email: string, name: string, st
 }
 
 // ── Appointment reminder email ───────────────────────────────────────
-export async function sendAppointmentReminder(email: string, name: string, details: { service: string; date: string; time: string }) {
+export async function sendAppointmentReminder(email: string, name: string, details: { service: string; date: string; time: string }, appointmentId?: string) {
   const html = emailWrapper(`
     ${iconCircle("🔔")}
     <h2 style="text-align:center;color:#1a1a2e;font-size:22px;font-weight:700;margin:0 0 8px;">Appointment Reminder</h2>
@@ -334,6 +339,8 @@ export async function sendAppointmentReminder(email: string, name: string, detai
         <strong>Reminder:</strong> Please arrive 10 minutes early. Don't forget to bring any relevant medical documents or prescriptions.
       </p>
     </div>
+
+    ${appointmentId ? calendarEmailButtons(appointmentId, { id: appointmentId, name, ...details }) : ""}
 
     <p style="color:#7c8694;font-size:13px;text-align:center;margin-top:24px;">
       Need to reschedule? Contact us at <a href="tel:${PHONE.replace(/\s/g, "")}" style="color:#1fbda6;text-decoration:none;">${PHONE}</a>

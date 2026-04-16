@@ -33,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (email && oldStatus !== newStatus && ["confirmed", "cancelled", "completed"].includes(newStatus)) {
       sendAppointmentStatusEmail(email, body.name, newStatus, {
         service: body.service, date: body.date || "", time: body.time || "",
-      }).catch(() => {});
+      }, id).catch(() => {});
     }
 
     const u = await getRequestUser(request);

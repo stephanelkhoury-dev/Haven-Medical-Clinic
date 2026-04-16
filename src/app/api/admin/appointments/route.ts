@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (body.email && (body.status === "confirmed")) {
       sendAppointmentConfirmation(body.email, body.name, {
         service: body.service, date: body.date || "", time: body.time || "",
-      }).catch(() => {});
+      }, id).catch(() => {});
     }
 
     // Log activity

@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
           service: apt.service,
           date: apt.date,
           time: apt.time || "",
-        });
+        }, apt.id);
         results.email = true;
       } catch {
         results.email = false;

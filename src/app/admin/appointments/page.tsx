@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Search, Calendar, Phone, Plus, X, Trash2, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Search, Calendar, CalendarPlus, Phone, Plus, X, Trash2, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { type AppointmentRequest } from "@/data/admin";
 const statusOptions = ["all", "pending", "confirmed", "completed", "cancelled"] as const;
 
@@ -418,6 +418,7 @@ export default function AdminAppointments() {
                             <button onClick={() => updateStatus(apt.id, "completed")} className="px-3 py-1 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">Complete</button>
                           )}
                           <button onClick={() => { setEditing(apt); setIsNew(false); }} className="px-3 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Edit</button>
+                          <a href={`/api/admin/appointments/${apt.id}/calendar`} download title="Add to Calendar" className="p-1.5 text-gray-400 hover:text-primary transition-colors"><CalendarPlus className="w-3.5 h-3.5" /></a>
                           <button onClick={() => setDeleteConfirm(apt.id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                         </div>
                       </td>
