@@ -27,6 +27,7 @@ import {
   UserPlus,
   Bell,
   ScrollText,
+  HardDriveDownload,
   type LucideIcon,
 } from "lucide-react";
 
@@ -72,6 +73,7 @@ const sidebarLinks: NavItem[] = [
   { label: "Accounting", href: "/admin/accounting", icon: Calculator, roles: ALL_ROLES },
   { label: "Users", href: "/admin/users", icon: Shield, roles: ["admin"] },
   { label: "Activity Logs", href: "/admin/logs", icon: ScrollText, roles: ["admin"] },
+  { label: "Backup", href: "/admin/backup", icon: HardDriveDownload, roles: ["admin"] },
   { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
 ];
 
