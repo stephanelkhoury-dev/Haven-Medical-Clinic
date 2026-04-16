@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Save, Bell, Globe, Palette, Lock, Mail } from "lucide-react";
+import { Save, Bell, Globe, Palette, Lock, Mail, CalendarDays, RefreshCw, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { clinicInfo } from "@/data/clinic";
 
 interface Settings {
@@ -67,6 +67,9 @@ export default function AdminSettings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [ical, setIcal] = useState({ appleId: "", appPassword: "", calendarName: "" });
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<{ success?: boolean; message: string } | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -79,6 +82,9 @@ export default function AdminSettings() {
           appearance: data.appearance || getDefaults().appearance,
           emailSettings: data.email || getDefaults().emailSettings,
         });
+        if (data.ical) {
+          setIcal({ appleId: data.ical.appleId || "", appPassword: data.ical.appPassword ? "••••••••" : "", calendarName: data.ical.calendarName || "" });
+        }
       }
     } catch { /* use defaults */ }
   }, []);
@@ -147,6 +153,7 @@ export default function AdminSettings() {
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "appearance", label: "Appearance", icon: Palette },
     { id: "email", label: "Email", icon: Mail },
+    { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "security", label: "Security", icon: Lock },
   ];
 
@@ -307,6 +314,89 @@ export default function AdminSettings() {
               <button onClick={() => saveSettings(settings)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                 <Save className="w-4 h-4" /> Save Email Settings
               </button>
+            </div>
+          )}
+
+          {activeTab === "calendar" && (
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900">iCloud Calendar Sync</h2>
+              <p className="text-sm text-gray-500">
+                Sync your Apple iCloud Calendar into the clinic dashboard. Events will appear in the appointments calendar view.
+              </p>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-amber-800">
+                    <p className="font-medium">Setup Instructions</p>
+                    <ol className="mt-1 space-y-1 list-decimal list-inside text-xs text-amber-700">
+                      <li>Go to <a href="https://appleid.apple.com/account/manage" target="_blank" rel="noopener noreferrer" className="underline font-medium">appleid.apple.com</a> → Sign In</li>
+                      <li>Go to <strong>App-Specific Passwords</strong> → Generate a password</li>
+                      <li>Enter your Apple ID and the generated password below</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Apple ID (Email)</label>
+                  <input type="email" value={ical.appleId} onChange={(ev) => setIcal({ ...ical, appleId: ev.target.value })} placeholder="your@icloud.com" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">App-Specific Password</label>
+                  <input type="password" value={ical.appPassword} onChange={(ev) => setIcal({ ...ical, appPassword: ev.target.value })} placeholder="xxxx-xxxx-xxxx-xxxx" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
+                  <p className="text-xs text-gray-400 mt-1">Generate at appleid.apple.com → App-Specific Passwords</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Calendar Name <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <input type="text" value={ical.calendarName} onChange={(ev) => setIcal({ ...ical, calendarName: ev.target.value })} placeholder="Leave blank to sync all calendars" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button onClick={async () => {
+                  const payload = { ...ical };
+                  if (payload.appPassword === "••••••••") delete (payload as Record<string, unknown>).appPassword;
+                  try {
+                    const s = sessionStorage.getItem("haven_auth");
+                    const headers: Record<string, string> = { "Content-Type": "application/json", "x-auth-token": s ? JSON.parse(s).token : "" };
+                    await fetch("/api/admin/settings", {
+                      method: "PUT", headers,
+                      body: JSON.stringify({ key: "ical", value: payload }),
+                    });
+                    showToast("Calendar settings saved");
+                  } catch { showToast("Failed to save"); }
+                }} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+                  <Save className="w-4 h-4" /> Save Settings
+                </button>
+
+                <button disabled={syncing || !ical.appleId} onClick={async () => {
+                  setSyncing(true); setSyncResult(null);
+                  try {
+                    const s = sessionStorage.getItem("haven_auth");
+                    const headers: Record<string, string> = { "Content-Type": "application/json", "x-auth-token": s ? JSON.parse(s).token : "" };
+                    const res = await fetch("/api/admin/calendar/sync", { method: "POST", headers });
+                    const data = await res.json();
+                    if (res.ok) {
+                      setSyncResult({ success: true, message: `Synced ${data.synced} events from ${(data.calendars || []).join(", ")}` });
+                    } else {
+                      setSyncResult({ success: false, message: data.error || "Sync failed" });
+                    }
+                  } catch { setSyncResult({ success: false, message: "Network error" }); }
+                  finally { setSyncing(false); }
+                }} className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  {syncing ? "Syncing..." : "Sync Now"}
+                </button>
+              </div>
+
+              {syncResult && (
+                <div className={`flex items-center gap-2 p-4 rounded-lg border text-sm ${syncResult.success ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+                  {syncResult.success ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                  {syncResult.message}
+                </div>
+              )}
             </div>
           )}
 

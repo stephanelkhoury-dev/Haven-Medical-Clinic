@@ -1,8 +1,20 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Search, Calendar, CalendarPlus, Phone, Plus, X, Trash2, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Search, Calendar, CalendarPlus, Phone, Plus, X, Trash2, ChevronLeft, ChevronRight, User, Cloud } from "lucide-react";
 import { type AppointmentRequest } from "@/data/admin";
+
+interface ICalEvent {
+  uid: string;
+  summary: string;
+  event_date: string;
+  event_time: string;
+  end_time: string;
+  location: string;
+  description: string;
+  calendar_name: string;
+}
+
 const statusOptions = ["all", "pending", "confirmed", "completed", "cancelled"] as const;
 
 interface ClientOption {
@@ -55,6 +67,7 @@ export default function AdminAppointments() {
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [calEmployee, setCalEmployee] = useState<string>("");
   const [calDate, setCalDate] = useState(() => new Date());
+  const [icalEvents, setIcalEvents] = useState<ICalEvent[]>([]);
 
   const authHeaders = () => ({
     "x-auth-token": sessionStorage.getItem("haven_auth") ? JSON.parse(sessionStorage.getItem("haven_auth")!).token : "",
@@ -78,6 +91,11 @@ export default function AdminAppointments() {
         const emps = await empRes.json();
         setEmployees(emps.filter((e: EmployeeOption) => e.active));
       }
+      // Fetch iCloud calendar events
+      try {
+        const icalRes = await fetch("/api/admin/calendar/sync", { headers: authHeaders() });
+        if (icalRes.ok) setIcalEvents(await icalRes.json());
+      } catch { /* no synced events */ }
     } catch { /* API unavailable */ }
   }, []);
 
@@ -445,6 +463,7 @@ export default function AdminAppointments() {
           calDate={calDate}
           setCalDate={setCalDate}
           onEdit={(apt) => { setEditing(apt); setIsNew(false); }}
+          icalEvents={icalEvents}
         />
       )}
     </div>
@@ -453,7 +472,7 @@ export default function AdminAppointments() {
 
 /* ── Employee Calendar View ───────────────────────────────────────────── */
 function EmployeeCalendarView({
-  appointments, employees, calEmployee, setCalEmployee, calDate, setCalDate, onEdit,
+  appointments, employees, calEmployee, setCalEmployee, calDate, setCalDate, onEdit, icalEvents,
 }: {
   appointments: AppointmentRequest[];
   employees: EmployeeOption[];
@@ -462,6 +481,7 @@ function EmployeeCalendarView({
   calDate: Date;
   setCalDate: (d: Date) => void;
   onEdit: (apt: AppointmentRequest) => void;
+  icalEvents: ICalEvent[];
 }) {
   const year = calDate.getFullYear();
   const month = calDate.getMonth();
@@ -488,8 +508,18 @@ function EmployeeCalendarView({
     }
   }
 
+  // Group iCloud events by date
+  const icalByDate: Record<string, ICalEvent[]> = {};
+  for (const ev of icalEvents) {
+    if (ev.event_date) {
+      if (!icalByDate[ev.event_date]) icalByDate[ev.event_date] = [];
+      icalByDate[ev.event_date].push(ev);
+    }
+  }
+
   const todayStr = new Date().toISOString().split("T")[0];
   const selectedApts = selectedDate ? (aptsByDate[selectedDate] || []) : [];
+  const selectedIcal = selectedDate ? (icalByDate[selectedDate] || []) : [];
 
   return (
     <div className="space-y-4">
@@ -534,6 +564,8 @@ function EmployeeCalendarView({
             const day = i + 1;
             const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
             const dayApts = aptsByDate[dateStr] || [];
+            const dayIcal = icalByDate[dateStr] || [];
+            const totalBadges = dayApts.length + dayIcal.length;
             const isToday = dateStr === todayStr;
             const isSelected = dateStr === selectedDate;
 
@@ -548,7 +580,7 @@ function EmployeeCalendarView({
                 <span className={`text-xs font-medium inline-flex items-center justify-center w-6 h-6 rounded-full ${
                   isToday ? "bg-primary text-white" : "text-gray-700"
                 }`}>{day}</span>
-                {dayApts.length > 0 && (
+                {(dayApts.length > 0 || dayIcal.length > 0) && (
                   <div className="mt-0.5 space-y-0.5">
                     {dayApts.slice(0, 2).map((a) => (
                       <div
@@ -563,8 +595,13 @@ function EmployeeCalendarView({
                         {a.time ? `${a.time} ` : ""}{a.name.split(" ")[0]}
                       </div>
                     ))}
-                    {dayApts.length > 2 && (
-                      <p className="text-[10px] text-gray-400 px-1">+{dayApts.length - 2} more</p>
+                    {dayApts.length < 2 && dayIcal.slice(0, 2 - dayApts.length).map((ev) => (
+                      <div key={ev.uid} className="text-[10px] truncate rounded px-1 py-0.5 bg-purple-100 text-purple-700">
+                        {ev.event_time ? `${ev.event_time} ` : ""}{ev.summary}
+                      </div>
+                    ))}
+                    {totalBadges > 2 && (
+                      <p className="text-[10px] text-gray-400 px-1">+{totalBadges - 2} more</p>
                     )}
                   </div>
                 )}
@@ -579,10 +616,10 @@ function EmployeeCalendarView({
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-3">
             {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
-            <span className="ml-2 text-gray-400 font-normal">({selectedApts.length} appointment{selectedApts.length !== 1 ? "s" : ""})</span>
+            <span className="ml-2 text-gray-400 font-normal">({selectedApts.length + selectedIcal.length} event{selectedApts.length + selectedIcal.length !== 1 ? "s" : ""})</span>
           </h3>
-          {selectedApts.length === 0 ? (
-            <p className="text-gray-400 text-sm">No appointments on this day.</p>
+          {selectedApts.length === 0 && selectedIcal.length === 0 ? (
+            <p className="text-gray-400 text-sm">No events on this day.</p>
           ) : (
             <div className="space-y-2">
               {selectedApts.sort((a, b) => (a.time || "").localeCompare(b.time || "")).map((apt) => (
@@ -610,6 +647,32 @@ function EmployeeCalendarView({
                   </div>
                 </div>
               ))}
+              {selectedIcal.length > 0 && (
+                <>
+                  {selectedApts.length > 0 && <div className="border-t border-gray-200 my-2" />}
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Cloud className="w-3.5 h-3.5 text-purple-500" />
+                    <span className="text-xs font-medium text-purple-600">iCloud Calendar</span>
+                  </div>
+                  {selectedIcal.sort((a, b) => (a.event_time || "").localeCompare(b.event_time || "")).map((ev) => (
+                    <div key={ev.uid} className="flex items-center justify-between bg-purple-50/50 rounded-lg px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                          <Cloud className="w-4 h-4 text-purple-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{ev.summary}</p>
+                          <p className="text-xs text-gray-500">{ev.calendar_name}{ev.location ? ` · ${ev.location}` : ""}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-600">{ev.event_time}{ev.end_time ? ` – ${ev.end_time}` : ""}</span>
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">iCloud</span>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           )}
         </div>
