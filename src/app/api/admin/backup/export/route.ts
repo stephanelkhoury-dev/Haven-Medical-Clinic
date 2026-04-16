@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
 
     for (const table of TABLES) {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const rows = await (sql as any)(`SELECT * FROM ${table}`);
+        const rows = await sql.query(`SELECT * FROM ${table}`);
         // Stringify JSONB columns so Excel can display them
         const cleaned = rows.map((r: Record<string, unknown>) => {
           const out: Record<string, unknown> = {};

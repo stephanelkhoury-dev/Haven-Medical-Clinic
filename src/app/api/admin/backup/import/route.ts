@@ -91,8 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Confirm mode — actually write to DB
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sql = getSQL() as any;
+    const sql = getSQL();
     const results: { table: string; inserted: number; updated: number; errors: string[] }[] = [];
 
     for (const [table, rows] of Object.entries(importData)) {
@@ -113,7 +112,7 @@ export async function POST(request: NextRequest) {
           }
 
           // Check if row exists
-          const existing = await sql(`SELECT ${pk} FROM ${table} WHERE ${pk} = $1`, [pkValue]);
+          const existing = await sql.query(`SELECT ${pk} FROM ${table} WHERE ${pk} = $1`, [pkValue]);
 
           const cols = Object.keys(row);
           const vals = Object.values(row).map(v =>
@@ -131,7 +130,7 @@ export async function POST(request: NextRequest) {
               return typeof v === "object" && v !== null ? JSON.stringify(v) : v;
             });
             if (setClauses) {
-              await sql(
+              await sql.query(
                 `UPDATE ${table} SET ${setClauses} WHERE ${pk} = $${updateVals.length + 1}`,
                 [...updateVals, pkValue]
               );
@@ -140,7 +139,7 @@ export async function POST(request: NextRequest) {
           } else {
             // Insert new row
             const placeholders = cols.map((_, i) => `$${i + 1}`).join(", ");
-            await sql(
+            await sql.query(
               `INSERT INTO ${table} (${cols.join(", ")}) VALUES (${placeholders})`,
               vals
             );

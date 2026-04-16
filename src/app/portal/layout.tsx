@@ -165,7 +165,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  // These routes handle their own auth (setup token / reset token)
+  const isPublicRoute = pathname === "/portal/setup" || pathname === "/portal/reset-password";
+
   useEffect(() => {
+    // Public routes (setup, reset-password) don't need auth
+    if (isPublicRoute) { setChecking(false); return; }
+
     const stored = localStorage.getItem(CLIENT_STORAGE_KEY);
     if (!stored) { setChecking(false); return; }
 
@@ -188,7 +194,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       localStorage.removeItem(CLIENT_STORAGE_KEY);
       setChecking(false);
     }
-  }, []);
+  }, [isPublicRoute]);
 
   const handleLogin = (client: ClientUser, token: string) => {
     setAuth({ client, token });
@@ -213,6 +219,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
+  }
+
+  // Public routes (setup, reset-password) render children directly
+  if (isPublicRoute) {
+    return <>{children}</>;
   }
 
   if (!auth.client) {
