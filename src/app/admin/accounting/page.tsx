@@ -127,7 +127,7 @@ export default function AccountingDashboard() {
       </div>
 
       {/* Quick Nav — front_desk sees: Entries, Expenses, Products */}
-      <div className={`grid grid-cols-2 ${isFrontDesk ? "sm:grid-cols-3" : "sm:grid-cols-4"} gap-3`}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Link href={`/admin/accounting/entries?period=${period}`}
           className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <Receipt className="w-5 h-5 text-primary mb-2" />
@@ -146,14 +146,12 @@ export default function AccountingDashboard() {
           <p className="text-gray-900 font-medium text-sm">Products</p>
           <p className="text-gray-400 text-xs">Sales tracking</p>
         </Link>
-        {!isFrontDesk && (
-          <Link href={`/admin/accounting/employees`}
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-            <Users className="w-5 h-5 text-primary mb-2" />
-            <p className="text-gray-900 font-medium text-sm">Employees</p>
-            <p className="text-gray-400 text-xs">Staff & splits</p>
-          </Link>
-        )}
+        <Link href={`/admin/accounting/employees`}
+          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <Users className="w-5 h-5 text-primary mb-2" />
+          <p className="text-gray-900 font-medium text-sm">Employees</p>
+          <p className="text-gray-400 text-xs">Staff & splits</p>
+        </Link>
       </div>
 
       {/* Secondary Nav — hidden for front_desk */}

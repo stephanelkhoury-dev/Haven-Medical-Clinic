@@ -2,7 +2,7 @@ import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth, isAuthError } from "@/lib/auth";
 
-const ALLOWED = ["admin", "finance"];
+const ALLOWED = ["admin", "finance", "editor", "front_desk"];
 
 export async function GET(request: NextRequest) {
   try {
