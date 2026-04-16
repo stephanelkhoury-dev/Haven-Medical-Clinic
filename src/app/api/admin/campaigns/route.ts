@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -30,6 +31,8 @@ export async function POST(request: NextRequest) {
     const id = crypto.randomUUID();
     await sql`INSERT INTO campaigns (id, subject, status, scheduled_at, sent_at, recipients, open_rate, click_rate, content)
       VALUES (${id}, ${body.subject}, ${body.status || "draft"}, ${body.scheduledAt || null}, ${body.sentAt || null}, ${body.recipients || 0}, ${body.openRate ?? null}, ${body.clickRate ?? null}, ${body.content || ""})`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "campaign", entityId: id, details: `Created campaign: ${body.subject}` });
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

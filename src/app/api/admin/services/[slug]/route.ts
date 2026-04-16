@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -27,6 +28,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       featured = ${body.featured || false},
       sub_services = ${JSON.stringify(body.subServices || [])}
       WHERE slug = ${slug}`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "updated", entityType: "service", entityId: slug, details: `Updated service: ${body.title}` });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -39,6 +42,8 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
     const sql = getDb();
     const { slug } = await params;
     await sql`DELETE FROM admin_services WHERE slug = ${slug}`;
+    const u = await getRequestUser(_request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "deleted", entityType: "service", entityId: slug, details: `Deleted service: ${slug}` });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

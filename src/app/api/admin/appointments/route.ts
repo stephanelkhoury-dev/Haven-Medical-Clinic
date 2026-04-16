@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { sendAppointmentConfirmation } from "@/lib/email";
+import { logActivity, getRequestUser, createNotification } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -43,6 +44,13 @@ export async function POST(request: NextRequest) {
         service: body.service, date: body.date || "", time: body.time || "",
       }).catch(() => {});
     }
+
+    // Log activity
+    const u = await getRequestUser(request);
+    if (u) {
+      logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "appointment", entityId: id, details: `Created appointment for ${body.name} — ${body.service} on ${body.date}` });
+    }
+    createNotification({ roleTarget: "front_desk", title: "New Appointment", message: `${body.name} — ${body.service} on ${body.date}`, type: "info", link: "/admin/appointments" });
 
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {

@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function PUT(
   request: NextRequest,
@@ -51,6 +52,9 @@ export async function PUT(
       period = ${period}
     WHERE id = ${id}`;
 
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "updated", entityType: "entry", entityId: id, details: `Updated entry: $${amount} — ${body.description || body.serviceType}` });
+
     return NextResponse.json({ id, employeeShare, clinicShare, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -66,6 +70,8 @@ export async function DELETE(
     const { id } = await params;
     const sql = getDb();
     await sql`DELETE FROM acc_entries WHERE id = ${id}`;
+    const u = await getRequestUser(_request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "deleted", entityType: "entry", entityId: id, details: `Deleted entry ${id}` });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

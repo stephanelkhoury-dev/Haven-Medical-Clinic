@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -40,6 +41,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     await sql`INSERT INTO admin_services (slug, title, short_description, category, icon_name, hero_image, overview, who_is_it_for, benefits, procedure_steps, duration, recovery, expected_results, faqs, related_slugs, price, price_from, price_note, featured, sub_services)
       VALUES (${body.slug}, ${body.title}, ${body.shortDescription || ""}, ${body.category || "aesthetic"}, ${body.iconName || "Sparkles"}, ${body.heroImage || ""}, ${body.overview || ""}, ${body.whoIsItFor || ""}, ${JSON.stringify(body.benefits || [])}, ${JSON.stringify(body.procedureSteps || [])}, ${body.duration || ""}, ${body.recovery || ""}, ${body.expectedResults || ""}, ${JSON.stringify(body.faqs || [])}, ${JSON.stringify(body.relatedSlugs || [])}, ${body.price ?? null}, ${body.priceFrom || false}, ${body.priceNote || ""}, ${body.featured || false}, ${JSON.stringify(body.subServices || [])})`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "service", entityId: body.slug, details: `Created service: ${body.title}` });
     return NextResponse.json(body);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

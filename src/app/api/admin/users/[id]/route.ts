@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 
 async function verifyAdmin(request: NextRequest) {
   const sql = getDb();
@@ -56,6 +57,8 @@ export async function PUT(
       await sql`DELETE FROM admin_sessions WHERE user_id = ${id}`;
     }
 
+    logActivity({ userId: caller.id as string, userName: "admin", userRole: caller.role as string, action: "updated", entityType: "user", entityId: id, details: `Updated user ${id}: role=${body.role}, active=${body.active}` });
+
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -84,6 +87,7 @@ export async function DELETE(
 
     await sql`DELETE FROM admin_sessions WHERE user_id = ${id}`;
     await sql`DELETE FROM admin_users WHERE id = ${id}`;
+    logActivity({ userId: caller.id as string, userName: "admin", userRole: caller.role as string, action: "deleted", entityType: "user", entityId: id, details: `Deleted user ${id}` });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

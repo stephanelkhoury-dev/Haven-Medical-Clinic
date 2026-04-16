@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,6 +43,9 @@ export async function POST(request: NextRequest) {
 
     await sql`INSERT INTO acc_expenses (id, date, description, amount, category, period, created_at)
       VALUES (${id}, ${date}, ${body.description || ''}, ${Number(body.amount) || 0}, ${body.category || 'general'}, ${period}, ${now})`;
+
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "expense", entityId: id, details: `New expense: $${body.amount} — ${body.description || body.category}` });
 
     return NextResponse.json({ id, date, description: body.description, amount: body.amount, category: body.category, period, createdAt: now });
   } catch (error: unknown) {

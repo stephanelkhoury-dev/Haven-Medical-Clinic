@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent, createContext, useContext } from "react";
+import { useState, useEffect, useRef, type FormEvent, createContext, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -25,6 +25,8 @@ import {
   Calculator,
   Shield,
   UserPlus,
+  Bell,
+  ScrollText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -69,6 +71,7 @@ const sidebarLinks: NavItem[] = [
   { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard, roles: ["admin", "finance"] },
   { label: "Accounting", href: "/admin/accounting", icon: Calculator, roles: ["admin", "finance", "front_desk"] },
   { label: "Users", href: "/admin/users", icon: Shield, roles: ["admin"] },
+  { label: "Activity Logs", href: "/admin/logs", icon: ScrollText, roles: ["admin"] },
   { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
 ];
 
@@ -183,10 +186,23 @@ function LoginScreen({ onLogin }: { onLogin: (user: User, token: string) => void
 }
 
 // ── Admin Layout ──────────────────────────────────────────────────────
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: "info" | "success" | "warning" | "error";
+  link: string;
+  read: boolean;
+  createdAt: string;
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [auth, setAuth] = useState<AuthState>({ user: null, token: null });
   const [checking, setChecking] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [bellOpen, setBellOpen] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -216,6 +232,52 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogin = (user: User, token: string) => {
     setAuth({ user, token });
+  };
+
+  // ── Notifications ────────────────────────────────────────────────
+  useEffect(() => {
+    if (!auth.token) return;
+    const fetchNotifs = async () => {
+      try {
+        const res = await fetch("/api/admin/notifications", {
+          headers: { "x-auth-token": auth.token! },
+        });
+        if (res.ok) setNotifications(await res.json());
+      } catch { /* ignore */ }
+    };
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 30000); // poll every 30s
+    return () => clearInterval(interval);
+  }, [auth.token]);
+
+  // Close bell dropdown when clicking outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setBellOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const markRead = async (id?: string) => {
+    if (!auth.token) return;
+    const body = id ? { id } : { markAllRead: true };
+    try {
+      await fetch("/api/admin/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-auth-token": auth.token },
+        body: JSON.stringify(body),
+      });
+      if (id) {
+        setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
+      } else {
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      }
+    } catch { /* ignore */ }
   };
 
   const handleLogout = async () => {
@@ -329,6 +391,61 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* Notification bell */}
+              <div className="relative" ref={bellRef}>
+                <button
+                  onClick={() => setBellOpen(!bellOpen)}
+                  className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+                {bellOpen && (
+                  <div className="absolute right-0 top-12 w-80 bg-white rounded-xl border border-gray-200 shadow-lg z-50 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                      {unreadCount > 0 && (
+                        <button onClick={() => markRead()} className="text-xs text-primary hover:underline">
+                          Mark all read
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+                      {notifications.length === 0 && (
+                        <div className="px-4 py-8 text-center text-sm text-gray-400">No notifications</div>
+                      )}
+                      {notifications.slice(0, 20).map((n) => (
+                        <div
+                          key={n.id}
+                          className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${!n.read ? "bg-blue-50/50" : ""}`}
+                          onClick={() => {
+                            if (!n.read) markRead(n.id);
+                            if (n.link) { window.location.href = n.link; setBellOpen(false); }
+                          }}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                              !n.read ? "bg-blue-500" : "bg-transparent"
+                            }`} />
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{n.title}</p>
+                              {n.message && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>}
+                              <p className="text-[10px] text-gray-400 mt-1">
+                                {new Date(n.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${ROLE_COLORS[auth.user.role]}`}>
                 {ROLE_LABELS[auth.user.role]}
               </span>

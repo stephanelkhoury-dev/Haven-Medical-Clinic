@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -29,6 +30,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     await sql`INSERT INTO blog_posts (slug, title, excerpt, content, category, image, author, date, read_time)
       VALUES (${body.slug}, ${body.title}, ${body.excerpt || ""}, ${body.content || ""}, ${body.category || ""}, ${body.image || ""}, ${body.author || ""}, ${body.date || new Date().toISOString().split("T")[0]}, ${body.readTime || "5 min read"})`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "blog", entityId: body.slug, details: `Published blog: ${body.title}` });
     return NextResponse.json(body);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

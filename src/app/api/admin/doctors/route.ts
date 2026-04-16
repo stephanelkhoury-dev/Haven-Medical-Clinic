@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -36,6 +37,8 @@ export async function POST(request: NextRequest) {
     const slug = body.slug || body.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     await sql`INSERT INTO doctors (id, name, title, specialty, image, bio, sort_order, slug, full_bio, education, languages, experience_years, certifications, gallery, social_links)
       VALUES (${id}, ${body.name}, ${body.title || ""}, ${body.specialty || ""}, ${body.image || ""}, ${body.bio || ""}, ${body.sortOrder ?? 0}, ${slug}, ${body.fullBio || ""}, ${JSON.stringify(body.education || [])}, ${body.languages || ""}, ${body.experienceYears ?? 0}, ${JSON.stringify(body.certifications || [])}, ${JSON.stringify(body.gallery || [])}, ${JSON.stringify(body.socialLinks || {})})`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "doctor", entityId: id, details: `Added doctor: ${body.name}` });
     return NextResponse.json({ id, slug, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

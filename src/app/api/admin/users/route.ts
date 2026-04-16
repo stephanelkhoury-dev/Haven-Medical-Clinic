@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 
 // Helper: verify admin role from token
 async function verifyAdmin(request: NextRequest) {
@@ -72,6 +73,8 @@ export async function POST(request: NextRequest) {
 
     await sql`INSERT INTO admin_users (id, username, password_hash, name, role, active, created_at)
       VALUES (${id}, ${body.username}, ${body.password}, ${body.name}, ${body.role}, true, ${now})`;
+
+    logActivity({ userId: caller.id as string, userName: "admin", userRole: caller.role as string, action: "created", entityType: "user", entityId: id, details: `Created user: ${body.username} (${body.role})` });
 
     return NextResponse.json({ id, username: body.username, name: body.name, role: body.role, active: true, createdAt: now });
   } catch (error: unknown) {

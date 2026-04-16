@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 export async function GET() {
   try {
@@ -25,6 +26,8 @@ export async function POST(request: NextRequest) {
     const id = `t-${Date.now()}`;
     await sql`INSERT INTO testimonials (id, name, treatment, text, rating)
       VALUES (${id}, ${body.name}, ${body.treatment || ""}, ${body.text || ""}, ${body.rating ?? 5})`;
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "testimonial", entityId: id, details: `Added testimonial from ${body.name}` });
     return NextResponse.json({ id, ...body });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 import { sendClientSetupEmail } from "@/lib/email";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser } from "@/lib/activity";
 
 // GET /api/admin/clients/[id]
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -65,6 +66,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       active = ${body.active !== false}
     WHERE id = ${id}`;
 
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "updated", entityType: "client", entityId: id, details: `Updated client: ${body.name}` });
+
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -78,6 +82,8 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
     const sql = getDb();
     const { id } = await params;
     await sql`DELETE FROM clients WHERE id = ${id}`;
+    const u = await getRequestUser(_request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "deleted", entityType: "client", entityId: id, details: `Deleted client ${id}` });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

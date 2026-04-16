@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 import { sendClientSetupEmail } from "@/lib/email";
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity, getRequestUser, createNotification } from "@/lib/activity";
 
 // GET /api/admin/clients — list all clients
 export async function GET(request: NextRequest) {
@@ -69,6 +70,11 @@ export async function POST(request: NextRequest) {
     } catch (emailErr) {
       console.error("Failed to send setup email:", emailErr);
     }
+
+    // Log activity
+    const u = await getRequestUser(request);
+    if (u) logActivity({ userId: u.id, userName: u.name, userRole: u.role, action: "created", entityType: "client", entityId: id, details: `Created client: ${body.name} (${body.email})` });
+    createNotification({ roleTarget: "admin", title: "New Client", message: `${body.name} was added`, type: "success", link: "/admin/clients" });
 
     return NextResponse.json({
       id,

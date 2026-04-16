@@ -543,6 +543,36 @@ export async function POST() {
       }
     }
 
+    // ── Activity logs table ──────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS activity_logs (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        user_name TEXT NOT NULL,
+        user_role TEXT NOT NULL DEFAULT '',
+        action TEXT NOT NULL,
+        entity_type TEXT NOT NULL DEFAULT '',
+        entity_id TEXT DEFAULT '',
+        details TEXT DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
+    // ── Notifications table ──────────────────────────────────────────
+    await sql`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL DEFAULT '',
+        role_target TEXT NOT NULL DEFAULT '',
+        title TEXT NOT NULL,
+        message TEXT NOT NULL DEFAULT '',
+        type TEXT NOT NULL DEFAULT 'info',
+        link TEXT DEFAULT '',
+        read BOOLEAN DEFAULT false,
+        created_at TEXT NOT NULL DEFAULT ''
+      )
+    `;
+
     return NextResponse.json({ success: true, message: "Database seeded successfully" });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
