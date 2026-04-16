@@ -11,11 +11,11 @@ export async function getRequestUser(request: NextRequest): Promise<{ id: string
     if (!token) return null;
     const sql = getDb();
     const rows = await sql`
-      SELECT u.id, u.name, u.role FROM admin_sessions s
+      SELECT u.id, u.name, u.role, s.expires_at FROM admin_sessions s
       JOIN admin_users u ON s.user_id = u.id
-      WHERE s.token = ${token} AND u.active = true AND s.expires_at > NOW()
+      WHERE s.token = ${token} AND u.active = true
     `;
-    if (rows.length === 0) return null;
+    if (rows.length === 0 || new Date(rows[0].expires_at as string) < new Date()) return null;
     return { id: rows[0].id as string, name: rows[0].name as string, role: rows[0].role as string };
   } catch { return null; }
 }

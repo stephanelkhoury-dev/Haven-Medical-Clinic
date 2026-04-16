@@ -23,13 +23,13 @@ export async function verifyAuth(
 
   const sql = getDb();
   const rows = await sql`
-    SELECT u.id, u.username, u.name, u.role
+    SELECT u.id, u.username, u.name, u.role, s.expires_at
     FROM admin_sessions s
     JOIN admin_users u ON s.user_id = u.id
-    WHERE s.token = ${token} AND u.active = true AND s.expires_at > NOW()
+    WHERE s.token = ${token} AND u.active = true
   `;
 
-  if (rows.length === 0) {
+  if (rows.length === 0 || new Date(rows[0].expires_at as string) < new Date()) {
     return NextResponse.json({ error: "Invalid session" }, { status: 401 });
   }
 
