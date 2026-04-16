@@ -67,13 +67,17 @@ export default function EntriesPage() {
   const [previewSplit, setPreviewSplit] = useState<{ employee: number; clinic: number } | null>(null);
   const [clients, setClients] = useState<ClientOption[]>([]);
 
+  const authHeaders = () => ({
+    "x-auth-token": sessionStorage.getItem("haven_auth") ? JSON.parse(sessionStorage.getItem("haven_auth")!).token : "",
+  });
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const empParam = employeeFilter ? `&employee_id=${employeeFilter}` : "";
       const [entriesRes, empRes, clientsRes] = await Promise.all([
         fetch(`/api/admin/accounting/entries?period=${period}${empParam}`),
-        fetch("/api/admin/accounting/employees"),
+        fetch("/api/admin/accounting/employees", { headers: authHeaders() }),
         fetch("/api/admin/clients"),
       ]);
       if (entriesRes.ok) setEntries(await entriesRes.json());

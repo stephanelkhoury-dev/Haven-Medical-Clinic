@@ -34,15 +34,17 @@ export default function EmployeesPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user?.role === "front_desk") router.replace("/admin/accounting");
+    // All roles can access employees now
   }, [user, router]);
 
-  if (user?.role === "front_desk") return null;
+  const authHeaders = () => ({
+    "x-auth-token": sessionStorage.getItem("haven_auth") ? JSON.parse(sessionStorage.getItem("haven_auth")!).token : "",
+  });
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/accounting/employees");
+      const res = await fetch("/api/admin/accounting/employees", { headers: authHeaders() });
       if (res.ok) setEmployees(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
@@ -62,7 +64,7 @@ export default function EmployeesPage() {
     try {
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify(editing),
       });
       if (res.ok) {
@@ -78,7 +80,7 @@ export default function EmployeesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`/api/admin/accounting/employees/${id}`, { method: "DELETE" });
+      await fetch(`/api/admin/accounting/employees/${id}`, { method: "DELETE", headers: authHeaders() });
       showToast("Employee deleted");
       setDeleteConfirm(null);
       loadData();
