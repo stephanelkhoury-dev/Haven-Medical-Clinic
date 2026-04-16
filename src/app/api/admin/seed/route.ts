@@ -373,19 +373,6 @@ export async function POST() {
       `;
     }
 
-    // Seed appointments
-    const existingAppointments = await sql`SELECT COUNT(*) as count FROM appointments`;
-    if (Number(existingAppointments[0].count) === 0) {
-      await sql`INSERT INTO appointments (id, name, phone, service, date, time, status, created_at) VALUES
-        ('1', 'Carla Mansour', '+961 70 123 456', 'Botox & Fillers', '2026-04-02', '10:00 AM', 'confirmed', '2026-03-28'),
-        ('2', 'Ahmad Khalil', '+961 71 234 567', 'Rhinoplasty', '2026-04-05', '9:00 AM', 'pending', '2026-03-29'),
-        ('3', 'Maya Lahoud', '+961 76 345 678', 'Facial Treatments', '2026-04-01', '2:00 PM', 'confirmed', '2026-03-27'),
-        ('4', 'Rita Saade', '+961 03 456 789', 'Laser Hair Removal', '2026-04-03', '11:00 AM', 'pending', '2026-03-30'),
-        ('5', 'Sami Boustani', '+961 70 567 890', 'Physiotherapy', '2026-03-31', '3:00 PM', 'completed', '2026-03-25'),
-        ('6', 'Nour Haddad', '+961 71 678 901', 'Deep Tissue Massage', '2026-03-30', '4:00 PM', 'cancelled', '2026-03-26')
-      `;
-    }
-
     // Seed blog posts
     const existingPosts = await sql`SELECT COUNT(*) as count FROM blog_posts`;
     if (Number(existingPosts[0].count) === 0) {
