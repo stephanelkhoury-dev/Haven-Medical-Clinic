@@ -32,6 +32,8 @@ export interface AppointmentRequest {
   createdAt: string;
   notes?: string;
   clientId?: string;
+  employeeId?: string;
+  employeeName?: string;
 }
 
 export interface SubscriptionPlan {

@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
       sortOrder: r.sort_order,
       active: r.active,
       createdAt: r.created_at,
+      services: r.services || [],
     }));
     return NextResponse.json(employees);
   } catch (error: unknown) {
@@ -38,8 +39,8 @@ export async function POST(request: NextRequest) {
     const id = `emp-${crypto.randomUUID().slice(0, 8)}`;
     const now = new Date().toISOString();
 
-    await sql`INSERT INTO acc_employees (id, name, role, specialty, split_rules, sort_order, active, created_at)
-      VALUES (${id}, ${body.name}, ${body.role || ''}, ${body.specialty || ''}, ${JSON.stringify(body.splitRules || [])}, ${body.sortOrder || 0}, ${body.active !== false}, ${now})`;
+    await sql`INSERT INTO acc_employees (id, name, role, specialty, split_rules, sort_order, active, created_at, services)
+      VALUES (${id}, ${body.name}, ${body.role || ''}, ${body.specialty || ''}, ${JSON.stringify(body.splitRules || [])}, ${body.sortOrder || 0}, ${body.active !== false}, ${now}, ${JSON.stringify(body.services || [])})`;
 
     return NextResponse.json({ id, ...body, createdAt: now });
   } catch (error: unknown) {

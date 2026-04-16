@@ -28,6 +28,7 @@ export async function GET(
       sortOrder: r.sort_order,
       active: r.active,
       createdAt: r.created_at,
+      services: r.services || [],
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -53,7 +54,8 @@ export async function PUT(
       specialty = ${body.specialty || ''},
       split_rules = ${JSON.stringify(body.splitRules || [])},
       sort_order = ${body.sortOrder || 0},
-      active = ${body.active !== false}
+      active = ${body.active !== false},
+      services = ${JSON.stringify(body.services || [])}
     WHERE id = ${id}`;
 
     return NextResponse.json({ id, ...body });

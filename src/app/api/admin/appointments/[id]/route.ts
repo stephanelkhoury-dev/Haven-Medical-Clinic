@@ -22,7 +22,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       time = ${body.time || ""},
       status = ${body.status || "pending"},
       notes = ${body.notes || ""},
-      client_id = ${body.clientId || ""}
+      client_id = ${body.clientId || ""},
+      employee_id = ${body.employeeId || ""},
+      employee_name = ${body.employeeName || ""}
       WHERE id = ${id}`;
 
     // Send status change email if status changed and email exists

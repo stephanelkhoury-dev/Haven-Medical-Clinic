@@ -21,12 +21,19 @@ interface Employee {
   splitRules: SplitRule[];
   sortOrder: number;
   active: boolean;
+  services: string[];
+}
+
+interface ServiceOption {
+  slug: string;
+  title: string;
 }
 
 export default function EmployeesPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [allServices, setAllServices] = useState<ServiceOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -44,8 +51,15 @@ export default function EmployeesPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/accounting/employees", { headers: authHeaders() });
-      if (res.ok) setEmployees(await res.json());
+      const [empRes, svcRes] = await Promise.all([
+        fetch("/api/admin/accounting/employees", { headers: authHeaders() }),
+        fetch("/api/admin/services"),
+      ]);
+      if (empRes.ok) setEmployees(await empRes.json());
+      if (svcRes.ok) {
+        const svcs = await svcRes.json();
+        setAllServices(svcs.map((s: { slug: string; title: string }) => ({ slug: s.slug, title: s.title })));
+      }
     } catch { /* ignore */ }
     setLoading(false);
   }, []);
@@ -145,7 +159,7 @@ export default function EmployeesPage() {
         </div>
         <button
           onClick={() => {
-            setEditing({ id: "", name: "", role: "operator", specialty: "", splitRules: [{ serviceType: "all", employeePercent: 0, clinicPercent: 100, label: "All Services" }], sortOrder: employees.length + 1, active: true });
+            setEditing({ id: "", name: "", role: "operator", specialty: "", splitRules: [{ serviceType: "all", employeePercent: 0, clinicPercent: 100, label: "All Services" }], sortOrder: employees.length + 1, active: true, services: [] });
             setIsNew(true);
           }}
           className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm transition-colors"
@@ -175,6 +189,18 @@ export default function EmployeesPage() {
                   <Trash2 className="w-3.5 h-3.5 text-red-500/40" />
                 </button>
               </div>
+            </div>
+            <div className="space-y-1.5 mt-3">
+              <p className="text-gray-400 text-xs uppercase tracking-wider">Services</p>
+              {(emp.services && emp.services.length > 0) ? (
+                <div className="flex flex-wrap gap-1">
+                  {emp.services.map((s) => (
+                    <span key={s} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{allServices.find(a => a.slug === s)?.title || s}</span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-400 text-xs italic">All services</p>
+              )}
             </div>
             <div className="space-y-1.5 mt-3">
               <p className="text-gray-400 text-xs uppercase tracking-wider">Split Rules</p>
@@ -294,6 +320,33 @@ export default function EmployeesPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Services */}
+              <div>
+                <label className="text-gray-600 text-xs uppercase tracking-wider mb-1 block">Services This Employee Performs</label>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
+                  {allServices.map((svc) => (
+                    <label key={svc.slug} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5">
+                      <input
+                        type="checkbox"
+                        checked={editing.services?.includes(svc.slug) || false}
+                        onChange={(e) => {
+                          const current = editing.services || [];
+                          if (e.target.checked) {
+                            setEditing({ ...editing, services: [...current, svc.slug] });
+                          } else {
+                            setEditing({ ...editing, services: current.filter((s) => s !== svc.slug) });
+                          }
+                        }}
+                        className="accent-primary"
+                      />
+                      {svc.title}
+                    </label>
+                  ))}
+                  {allServices.length === 0 && <p className="text-gray-400 text-xs">No services found. Add services in the Services page first.</p>}
+                </div>
+                <p className="text-gray-400 text-xs mt-1">Leave empty = employee handles all services</p>
               </div>
             </div>
 

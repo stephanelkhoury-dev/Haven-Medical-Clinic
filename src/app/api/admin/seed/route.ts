@@ -321,8 +321,11 @@ export async function POST() {
 
     // Add client_id to appointments & acc_entries if not exist
     await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS client_id TEXT DEFAULT ''`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS employee_id TEXT DEFAULT ''`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS employee_name TEXT DEFAULT ''`;
     await sql`ALTER TABLE acc_entries ADD COLUMN IF NOT EXISTS client_id TEXT DEFAULT ''`;
     await sql`ALTER TABLE acc_entries ADD COLUMN IF NOT EXISTS client_name TEXT DEFAULT ''`;
+    await sql`ALTER TABLE acc_employees ADD COLUMN IF NOT EXISTS services JSONB DEFAULT '[]'`;
 
     // ── Client sessions table ──────────────────────────────────────────
     await sql`
