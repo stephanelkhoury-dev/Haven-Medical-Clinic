@@ -9,11 +9,12 @@ async function verifyAdmin(request: NextRequest) {
   if (!token) return null;
 
   const rows = await sql`
-    SELECT u.id, u.role FROM admin_sessions s
+    SELECT u.id, u.role, s.expires_at FROM admin_sessions s
     JOIN admin_users u ON s.user_id = u.id
-    WHERE s.token = ${token} AND u.active = true AND s.expires_at > NOW()
+    WHERE s.token = ${token} AND u.active = true
   `;
   if (rows.length === 0) return null;
+  if (new Date(rows[0].expires_at as string) < new Date()) return null;
   return rows[0];
 }
 
