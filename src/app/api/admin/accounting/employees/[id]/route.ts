@@ -1,11 +1,17 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth, isAuthError } from "@/lib/auth";
+
+const ALLOWED = ["admin", "finance"];
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await verifyAuth(request, ALLOWED);
+    if (isAuthError(auth)) return auth;
+
     const { id } = await params;
     const sql = getDb();
     const rows = await sql`SELECT * FROM acc_employees WHERE id = ${id}`;
@@ -34,6 +40,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await verifyAuth(request, ALLOWED);
+    if (isAuthError(auth)) return auth;
+
     const { id } = await params;
     const sql = getDb();
     const body = await request.json();
@@ -55,10 +64,13 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await verifyAuth(request, ALLOWED);
+    if (isAuthError(auth)) return auth;
+
     const { id } = await params;
     const sql = getDb();
     await sql`DELETE FROM acc_entries WHERE employee_id = ${id}`;

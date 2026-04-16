@@ -1,8 +1,12 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth, isAuthError } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await verifyAuth(request, ["admin", "finance"]);
+    if (isAuthError(auth)) return auth;
+
     const sql = getDb();
     const { searchParams } = new URL(request.url);
     const period = searchParams.get("period") || new Date().toISOString().slice(0, 7);

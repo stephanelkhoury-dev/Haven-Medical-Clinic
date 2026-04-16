@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../layout";
 import { ArrowLeft, RefreshCw, ChevronLeft, ChevronRight, Loader2, Check, Clock, DollarSign, Users, X } from "lucide-react";
 
 interface PayrollRecord {
@@ -27,6 +29,15 @@ function periodLabel(p: string) {
 }
 
 export default function PayrollPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user?.role === "front_desk") router.replace("/admin/accounting");
+  }, [user, router]);
+
+  if (user?.role === "front_desk") return null;
+
   const [period, setPeriod] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;

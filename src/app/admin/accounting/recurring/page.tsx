@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../layout";
 import { ArrowLeft, Plus, Trash2, X, Save, Loader2, RefreshCw, Play, Pause, Calendar } from "lucide-react";
 
 interface RecurringExpense {
@@ -22,12 +24,20 @@ function formatUSD(n: number) {
 }
 
 export default function RecurringExpensesPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [items, setItems] = useState<RecurringExpense[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<RecurringExpense> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.role === "front_desk") router.replace("/admin/accounting");
+  }, [user, router]);
+
+  if (user?.role === "front_desk") return null;
   const [generating, setGenerating] = useState(false);
 
   const loadData = useCallback(async () => {

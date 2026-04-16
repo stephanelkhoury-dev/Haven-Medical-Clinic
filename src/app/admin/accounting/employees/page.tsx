@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../layout";
 import { ArrowLeft, Plus, Pencil, Trash2, X, Save, Loader2 } from "lucide-react";
 
 interface SplitRule {
@@ -22,12 +24,20 @@ interface Employee {
 }
 
 export default function EmployeesPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.role === "front_desk") router.replace("/admin/accounting");
+  }, [user, router]);
+
+  if (user?.role === "front_desk") return null;
 
   const loadData = useCallback(async () => {
     setLoading(true);

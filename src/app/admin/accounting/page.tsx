@@ -74,13 +74,16 @@ export default function AccountingDashboard() {
   const [loading, setLoading] = useState(true);
 
   const loadSummary = useCallback(async () => {
+    if (isFrontDesk) { setLoading(false); return; }
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/accounting/summary?period=${period}`);
+      const res = await fetch(`/api/admin/accounting/summary?period=${period}`, {
+        headers: { "x-auth-token": sessionStorage.getItem("haven_auth") ? JSON.parse(sessionStorage.getItem("haven_auth")!).token : "" },
+      });
       if (res.ok) setSummary(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
-  }, [period]);
+  }, [period, isFrontDesk]);
 
   useEffect(() => { loadSummary(); }, [loadSummary]);
 
@@ -123,13 +126,25 @@ export default function AccountingDashboard() {
         </div>
       </div>
 
-      {/* Quick Nav */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Quick Nav — front_desk sees: Entries, Expenses, Products */}
+      <div className={`grid grid-cols-2 ${isFrontDesk ? "sm:grid-cols-3" : "sm:grid-cols-4"} gap-3`}>
         <Link href={`/admin/accounting/entries?period=${period}`}
           className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <Receipt className="w-5 h-5 text-primary mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Entries</p>
+          <p className="text-gray-900 font-medium text-sm">Daily Entries</p>
           <p className="text-gray-400 text-xs">Add & manage</p>
+        </Link>
+        <Link href={`/admin/accounting/expenses?period=${period}`}
+          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <TrendingDown className="w-5 h-5 text-red-500 mb-2" />
+          <p className="text-gray-900 font-medium text-sm">Expenses</p>
+          <p className="text-gray-400 text-xs">Track costs</p>
+        </Link>
+        <Link href={`/admin/accounting/products?period=${period}`}
+          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <ShoppingBag className="w-5 h-5 text-primary mb-2" />
+          <p className="text-gray-900 font-medium text-sm">Products</p>
+          <p className="text-gray-400 text-xs">Sales tracking</p>
         </Link>
         {!isFrontDesk && (
           <Link href={`/admin/accounting/employees`}
@@ -137,20 +152,6 @@ export default function AccountingDashboard() {
             <Users className="w-5 h-5 text-primary mb-2" />
             <p className="text-gray-900 font-medium text-sm">Employees</p>
             <p className="text-gray-400 text-xs">Staff & splits</p>
-          </Link>
-        )}
-        <Link href={`/admin/accounting/expenses?period=${period}`}
-          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-          <TrendingDown className="w-5 h-5 text-red-500 mb-2" />
-          <p className="text-gray-900 font-medium text-sm">Expenses</p>
-          <p className="text-gray-400 text-xs">Track costs</p>
-        </Link>
-        {!isFrontDesk && (
-          <Link href={`/admin/accounting/products?period=${period}`}
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary/50 transition-colors group">
-            <ShoppingBag className="w-5 h-5 text-primary mb-2" />
-            <p className="text-gray-900 font-medium text-sm">Products</p>
-            <p className="text-gray-400 text-xs">Sales tracking</p>
           </Link>
         )}
       </div>

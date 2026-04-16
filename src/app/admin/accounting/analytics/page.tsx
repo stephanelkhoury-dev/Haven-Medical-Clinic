@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../layout";
 import {
   ArrowLeft,
   TrendingUp,
@@ -113,8 +115,17 @@ function ChangeIndicator({ value, suffix = "%" }: { value: number | null; suffix
 }
 
 export default function AccountingAnalytics() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.role === "front_desk") router.replace("/admin/accounting");
+  }, [user, router]);
+
+  if (user?.role === "front_desk") return null;
+
   const [months, setMonths] = useState(6);
   const [exporting, setExporting] = useState(false);
   const [useCustomRange, setUseCustomRange] = useState(false);

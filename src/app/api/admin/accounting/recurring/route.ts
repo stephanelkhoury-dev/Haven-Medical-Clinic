@@ -1,8 +1,14 @@
 import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth, isAuthError } from "@/lib/auth";
 
-export async function GET() {
+const ALLOWED = ["admin", "finance"];
+
+export async function GET(request: NextRequest) {
   try {
+    const auth = await verifyAuth(request, ALLOWED);
+    if (isAuthError(auth)) return auth;
+
     const sql = getDb();
     const rows = await sql`SELECT * FROM acc_recurring ORDER BY description`;
     
@@ -26,6 +32,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await verifyAuth(request, ALLOWED);
+    if (isAuthError(auth)) return auth;
+
     const sql = getDb();
     const body = await request.json();
     const id = crypto.randomUUID();
