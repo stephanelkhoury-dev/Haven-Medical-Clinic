@@ -7,19 +7,19 @@ function getTransporter() {
   if (_transporter) return _transporter;
 
   _transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    host: (process.env.SMTP_HOST || "smtp.gmail.com").trim(),
     port: Number(process.env.SMTP_PORT) || 587,
     secure: false,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: (process.env.SMTP_USER || "").trim(),
+      pass: (process.env.SMTP_PASS || "").trim(),
     },
   });
 
   return _transporter;
 }
 
-const FROM = process.env.SMTP_FROM || "Haven Medical <havenmedicalcliniclb@gmail.com>";
+const FROM = (process.env.SMTP_FROM || "Haven Medical <havenmedicalcliniclb@gmail.com>").trim();
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.haven-beautyclinic.com";
 const LOGO_URL = `${BASE_URL}/images/email-logo.png`;
 const PHONE = "+961 71 888 930";
