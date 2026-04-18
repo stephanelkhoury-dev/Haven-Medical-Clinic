@@ -87,6 +87,16 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   const openMega = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setServicesOpen(true);
@@ -101,11 +111,14 @@ export default function Header() {
   const servicesNav = navigation.find(n => n.children);
 
   return (
+    <>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-[70] transition-all duration-500 ${
         scrolled
           ? "glass border-b border-border-light shadow-sm"
-          : "bg-transparent"
+          : mobileOpen
+            ? "bg-white"
+            : "bg-transparent"
       }`}
     >
       {/* Top bar */}
@@ -300,10 +313,19 @@ export default function Header() {
         </button>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — inside header to share stacking context */}
       {mobileOpen && (
-        <div id="mobile-nav" className="lg:hidden glass border-t border-border-light" role="navigation" aria-label="Mobile navigation">
-          <div className="max-w-7xl mx-auto px-6 py-6 space-y-4">
+        <div id="mobile-nav" className="fixed inset-0 top-0 z-[65] lg:hidden" role="navigation" aria-label="Mobile navigation">
+          <div className="absolute inset-0 bg-white" aria-hidden="true" />
+          <div className="relative h-full overflow-y-auto overscroll-contain pt-24 pb-10 px-6 space-y-4 [&]:[-webkit-overflow-scrolling:touch]">
+            {/* Close button at top-right as safety fallback */}
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-6 right-6 p-2 text-dark hover:text-primary transition-colors rounded-lg z-10"
+              aria-label="Close navigation menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
             {navigation.map((item) =>
               item.children ? (
                 <div key={item.label}>
@@ -383,6 +405,8 @@ export default function Header() {
           </div>
         </div>
       )}
+
     </header>
+    </>
   );
 }
